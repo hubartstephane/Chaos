@@ -125,7 +125,7 @@ namespace chaos
 		CHAOS_API int GetMipmapLevelCount(int width, int height);
 		CHAOS_API int GetMipmapLevelCount(int width);
 		/** Get Format/Internal Format pair from the description */
-		CHAOS_API GLPixelFormat GetGLPixelFormat(PixelFormat const& pixel_format);
+		CHAOS_API GLPixelFormat GetGLPixelFormat(PixelFormat pixel_format);
 
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D) from dimension */
 		CHAOS_API TextureType GetTexture2DTypeFromSize(int width, int height);

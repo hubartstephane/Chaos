@@ -171,7 +171,6 @@ namespace chaos
 	//  v
 	//
 
-
 	GPUTexture * GPUTextureLoader::GenTextureObject(CubeMapImages const * cubemap, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters) const
 	{
 		assert(cubemap != nullptr);
@@ -215,12 +214,12 @@ namespace chaos
 		{
 			// ensure the image is valid and not empty
 			ImageDescription image = cubemap->GetImageFaceDescription((CubeMapImageType)i);
-			if (image.data == nullptr || !image.pixel_format.IsValid())
+			if (image.data == nullptr || !IsValidFormat(image.pixel_format))
 				continue;
 			subimage_face_info[i].valid = true;
 
 			// test whether a conversion/copy is required
-			if ((image.pixel_format.component_count == 1) && (pixel_format.component_count != 1))
+			if (IsLuminanceFormat(image.pixel_format) && !IsLuminanceFormat(pixel_format))
 				subimage_face_info[i].conversion_required = true;
 
 			if (is_single_image)

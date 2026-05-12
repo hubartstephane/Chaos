@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** create a renderbuffer */
-		GPURenderbuffer* GenRenderbufferObject(PixelFormat const& pixel_format, glm::ivec2 const& size);
+		GPURenderbuffer* GenRenderbufferObject(PixelFormat pixel_format, glm::ivec2 const& size);
 	};
 
 #endif

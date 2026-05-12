@@ -173,7 +173,7 @@ namespace chaos
 			return false;
 		if (HasDepthStencilAttachment())
 			return false;
-		if (!texture->GetSurfaceDescription().GetPixelFormat().IsDepthStencilPixel())
+		if (!IsDepthStencilFormat(texture->GetSurfaceDescription().GetPixelFormat()))
 			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
@@ -196,7 +196,7 @@ namespace chaos
 			return false;
 		if (HasDepthStencilAttachment())
 			return false;
-		if (!renderbuffer->GetSurfaceDescription().GetPixelFormat().IsDepthStencilPixel())
+		if (!IsDepthStencilFormat(renderbuffer->GetSurfaceDescription().GetPixelFormat()))
 			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
@@ -235,7 +235,7 @@ namespace chaos
 			return false;
 		if (IsSurfaceInUse(texture))
 			return false;
-		if (!texture->GetSurfaceDescription().GetPixelFormat().IsColorPixel())
+		if (!IsColorFormat(texture->GetSurfaceDescription().GetPixelFormat()))
 			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
@@ -256,7 +256,7 @@ namespace chaos
 			return false;
 		if (IsSurfaceInUse(renderbuffer))
 			return false;
-		if (!renderbuffer->GetSurfaceDescription().GetPixelFormat().IsColorPixel())
+		if (!IsColorFormat(renderbuffer->GetSurfaceDescription().GetPixelFormat()))
 			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
@@ -266,15 +266,15 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, PixelFormat const & pixel_format, glm::ivec2 const & in_size, char const * name, GenTextureParameters const & gen_texture_parameters)
+	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, PixelFormat pixel_format, glm::ivec2 const & in_size, char const * name, GenTextureParameters const & gen_texture_parameters)
 	{
 		if (!IsSurfaceSizeCompatible(in_size))
 			return false;
 		if (!IsColorAttachmentValid(color_index, name))
 			return false;
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 			return false;
-		if (!pixel_format.IsColorPixel())
+		if (!IsColorFormat(pixel_format))
 			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;

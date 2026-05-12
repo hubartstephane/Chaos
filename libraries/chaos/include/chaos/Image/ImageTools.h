@@ -32,16 +32,16 @@ namespace chaos
 		static void FillImageBackground(ImageDescription& image_description, glm::vec4 const& color);
 
 		/** generate a free image corresponding to a given pixel format */
-		static FIBITMAP* GenFreeImage(PixelFormat const& pixel_format, int width, int height);
+		static FIBITMAP* GenFreeImage(PixelFormat pixel_format, int width, int height);
 		/** generate a free image from a description */
 		static FIBITMAP* GenFreeImage(ImageDescription const& src_desc);
 		/** generate a free image from a texture */
 		static FIBITMAP* GenFreeImage(GLuint texture_id, GLint level);
 
 		/** get the free image description frm a type */
-		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat const& pixel_format, int* bpp = nullptr);
+		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat pixel_format, int* bpp = nullptr);
 		/** the free image preferred file format for a given PixelFormat */
-		static FREE_IMAGE_FORMAT GetPreferredFreeImageFormat(PixelFormat const& pixel_format);
+		static FREE_IMAGE_FORMAT GetPreferredFreeImageFormat(PixelFormat pixel_format);
 
 		/** load an image from a buffer */
 		static FIBITMAP* LoadImageFromBuffer(Buffer<char> buffer);
@@ -71,18 +71,18 @@ namespace chaos
 		/** copy pixels */
 		static void CopyPixels(ImageDescription const& src_desc, ImageDescription& dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, ImageTransform image_transform = ImageTransform::None);
 		/** convert image into another pixel format + central symetry if required */
-		static ImageDescription ConvertPixels(ImageDescription const& src_desc, PixelFormat const& pixel_format, char* conversion_buffer, ImageTransform image_transform = ImageTransform::None);
+		static ImageDescription ConvertPixels(ImageDescription const& src_desc, PixelFormat pixel_format, char* conversion_buffer, ImageTransform image_transform = ImageTransform::None);
 
 		/** create a ImageTexture with DWORD alignment requirements with a given buffer */
-		static ImageDescription GetImageDescriptionForAlignedTexture(PixelFormat const& pixel_format, int width, int height, char* buffer);
+		static ImageDescription GetImageDescriptionForAlignedTexture(PixelFormat pixel_format, int width, int height, char* buffer);
 		/** compute the memory requirement for a texture with DWORD aligned rows texture */
-		static int GetMemoryRequirementForAlignedTexture(PixelFormat const& pixel_format, int width, int height);
+		static int GetMemoryRequirementForAlignedTexture(PixelFormat pixel_format, int width, int height);
 
 		/** Generate an image from lambda */
 		template<typename T, typename GENERATOR>
 		static FIBITMAP* GenFreeImage(int width, int height, GENERATOR const& generator)
 		{
-			FIBITMAP* result = GenFreeImage(PixelFormat::GetPixelFormat<T>(), width, height);
+			FIBITMAP* result = GenFreeImage(PixelToFormat_v<T>, width, height);
 			if (result != nullptr)
 			{
 				ImageDescription image_desc = GetImageDescription(result);

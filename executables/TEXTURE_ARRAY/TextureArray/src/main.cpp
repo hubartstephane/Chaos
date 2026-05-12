@@ -114,7 +114,7 @@ protected:
 
 	chaos::shared_ptr<chaos::GPUTexture> GenerateTextureArray(chaos::PixelFormat pixel_format)
 	{
-		if (!pixel_format.IsValid())
+		if (pixel_format == chaos::PixelFormat::Unknown)
 			return nullptr;
 
 		chaos::GPUTextureArrayGenerator generator(GetGPUDevice());
@@ -143,13 +143,13 @@ protected:
 			chaos::PixelFormat::RGBAFloat
 		};
 
-		int next_format = (current_pixel_format + delta + int(pixel_formats.size())) % int(pixel_formats.size());
+		int next_format = (current_pixel_format_index + delta + int(pixel_formats.size())) % int(pixel_formats.size());
 
 		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateTextureArray(pixel_formats[next_format]);
 		if (new_texture != nullptr)
 		{
 			texture = new_texture;
-			current_pixel_format = next_format;
+			current_pixel_format_index = next_format;
 		}
 	}
 
@@ -231,7 +231,7 @@ protected:
 	// the bitmap used to generate the slices
 	std::vector<FIBITMAP *> bitmaps;
 
-	int current_pixel_format = 0;
+	int current_pixel_format_index = 0;
 
 
 	// rendering for the box

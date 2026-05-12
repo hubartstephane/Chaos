@@ -12,7 +12,7 @@ namespace chaos
 	public:
 
 		/** the format for the generation (valid if texture & renderbuffer are null) */
-		PixelFormat pixel_format;
+		PixelFormat pixel_format = PixelFormat::Unknown;
 		/** the size for the generation (valid if texture & renderbuffer are null) */
 		glm::ivec2 size = { 0, 0 };
 		/** the texture generation parameter */
@@ -45,7 +45,7 @@ namespace chaos
 		/** color attachment method */
 		bool AddColorAttachment(int color_index, GPURenderbuffer* renderbuffer, char const* name = nullptr);
 		/** color attachment method */
-		bool AddColorAttachment(int color_index, PixelFormat const& pixel_format, glm::ivec2 const& in_size, char const* name = nullptr, GenTextureParameters const& gen_texture_parameters = {});
+		bool AddColorAttachment(int color_index, PixelFormat pixel_format, glm::ivec2 const& in_size, char const* name = nullptr, GenTextureParameters const& gen_texture_parameters = {});
 
 		/** get the dimension of the framebuffer that will be generated */
 		glm::ivec2 GetSize() const;

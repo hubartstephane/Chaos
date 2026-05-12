@@ -118,13 +118,13 @@ namespace chaos
 		CHAOS_API ImageDescription GetImageDescription(FT_Bitmap const& bitmap);
 
 		/** generate a bitmap from a glyph slot */
-		CHAOS_API FIBITMAP* GenerateImage(FT_GlyphSlot glyph, PixelFormat const& pixel_format = PixelFormat::Gray);
+		CHAOS_API FIBITMAP* GenerateImage(FT_GlyphSlot glyph, PixelFormat pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a bitmap */
-		CHAOS_API FIBITMAP* GenerateImage(FT_Bitmap const & bitmap, PixelFormat const& pixel_format = PixelFormat::Gray);
+		CHAOS_API FIBITMAP* GenerateImage(FT_Bitmap const & bitmap, PixelFormat pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a font an a string */
-		CHAOS_API FIBITMAP* GenerateImage(FT_Face face, char const* str, PixelFormat const& pixel_format = PixelFormat::Gray);
+		CHAOS_API FIBITMAP* GenerateImage(FT_Face face, char const* str, PixelFormat pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a font an a character */
-		CHAOS_API FIBITMAP* GenerateImage(FT_Face face, uint32_t charcode, PixelFormat const& pixel_format = PixelFormat::Gray);
+		CHAOS_API FIBITMAP* GenerateImage(FT_Face face, uint32_t charcode, PixelFormat pixel_format = PixelFormat::Gray);
 		/** generate a bitmap glyph from a character */
 		CHAOS_API FT_BitmapGlyph GetBitmapGlyph(FT_Face face, uint32_t charcode, bool accept_notfound_glyph);
 		/** generate a cache with all glyph required for a string */

@@ -1,7 +1,7 @@
 #include "chaos/Chaos.h"
 
 
-void TestMergedAtlas(std::vector<FIBITMAP*> & atlas_bitmaps, chaos::PixelFormat const & pixel_format, boost::filesystem::path const & dst_p, int index)
+void TestMergedAtlas(std::vector<FIBITMAP*> & atlas_bitmaps, chaos::PixelFormat pixel_format, boost::filesystem::path const & dst_p, int index)
 {
 	std::string dir_name = chaos::StringTools::Printf("Test_%d", index);
 
@@ -92,7 +92,7 @@ protected:
     boost::filesystem::path dst_p;
     if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
     {
-      for (chaos::PixelFormat const & pixel_format : pixel_formats)
+      for (chaos::PixelFormat pixel_format : pixel_formats)
       {
         TestMergedAtlas(atlas_bitmaps, pixel_format, dst_p, int(&pixel_format - &pixel_formats[0]));
       }

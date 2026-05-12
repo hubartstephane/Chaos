@@ -38,7 +38,7 @@ namespace chaos
 			using pixel_type = typename decltype(value)::type;
 
 			// check we are working with correct pixel format
-			if (image_description.pixel_format != PixelFormat::GetPixelFormat<pixel_type>())
+			if (image_description.pixel_format != PixelToFormat_v<pixel_type>)
 				return false;
 
 			// take the color with the most precision ...
@@ -75,7 +75,7 @@ namespace chaos
 		assert(image != nullptr);
 
 		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
-		if (pixel_format.IsValid())
+		if (pixel_format != PixelFormat::Unknown)
 		{
 			if (pixel_format.component_count == 1) // GRAY
 			{
@@ -132,13 +132,13 @@ namespace chaos
 #endif
 	}
 
-	FIBITMAP * ImageTools::GenFreeImage(PixelFormat const & pixel_format, int width, int height)
+	FIBITMAP * ImageTools::GenFreeImage(PixelFormat pixel_format, int width, int height)
 	{
 		assert(width >= 0);
 		assert(height >= 0);
 
 		// test whether pixel format is valid and supported
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 			return nullptr;
 
 		// get freeimage format
@@ -186,32 +186,40 @@ namespace chaos
 		return result;
 	}
 
-	FREE_IMAGE_FORMAT ImageTools::GetPreferredFreeImageFormat(PixelFormat const & pixel_format)
+	FREE_IMAGE_FORMAT ImageTools::GetPreferredFreeImageFormat(PixelFormat pixel_format)
 	{
-		return (pixel_format.component_type == PixelComponentType::UnsignedChar) ? FIF_PNG : FIF_EXR;
+		PixelDescription pixel_description = GetPixelDescription(pixel_format);
+		return (pixel_description.component_type == PixelComponentType::UnsignedChar) ? FIF_PNG : FIF_EXR;
 	}
 
-	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat const & pixel_format, int * bpp)
+	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat pixel_format, int * bpp)
 	{
-		if (pixel_format.component_type == PixelComponentType::UnsignedChar)
+		int tmp_bpp = 0;
+		if (bpp == nullptr)
+			bpp = &tmp_bpp; // so we can assign value through the pointer without caring anymore
+
+		if (pixel_format == PixelFormat::BGR)
 		{
-			if (pixel_format.component_count == 1 || pixel_format.component_count == 3 || pixel_format.component_count == 4)
-			{
-				if (bpp != nullptr)
-					*bpp = pixel_format.component_count * 8;
-				return FIT_BITMAP;
-			}
+			*bpp = 24;
+			return FIT_BITMAP;
 		}
-		else if (pixel_format.component_type == PixelComponentType::Float)
+		if (pixel_format == PixelFormat::BGRA)
 		{
-			if (pixel_format.component_count == 1)
-				return FIT_FLOAT;
-			if (pixel_format.component_count == 3)
-				return FIT_RGBF;
-			if (pixel_format.component_count == 4)
-				return FIT_RGBAF;
+			*bpp = 32;
+			return FIT_BITMAP;
 		}
-		else if (pixel_format.component_type == PixelComponentType::DepthStencil)
+		if (pixel_format == PixelFormat::Gray)
+		{
+			*bpp = 8;
+			return FIT_BITMAP;
+		}
+		if (pixel_format == PixelFormat::RGBFloat)
+			return FIT_RGBF;
+		if (pixel_format == PixelFormat::RGBAFloat)
+			return FIT_RGBAF;
+		if (pixel_format == PixelFormat::GrayFloat)
+			return FIT_FLOAT;
+		if (pixel_format == PixelFormat::DepthStencil)
 		{
 			assert(0);
 		}
@@ -222,30 +230,28 @@ namespace chaos
 	{
 		assert(image != nullptr);
 
-		PixelFormat result;
-
 		FREE_IMAGE_TYPE image_type = FreeImage_GetImageType(image);
 		if (image_type == FIT_BITMAP)
 		{
 			int bpp = FreeImage_GetBPP(image); // ignore other format than 8, 24 and 32 bpp
-			if (bpp != 8 && bpp != 24 && bpp != 32)
-				return result;
 
-			result.component_type = PixelComponentType::UnsignedChar;
-			result.component_count = bpp / 8;
+			if (bpp == 24)
+				return PixelFormat::BGR;
+			if (bpp == 32)
+				return PixelFormat::BGRA;
+			if (bpp == 8)
+				return PixelFormat::Gray;
 		}
-		else if (image_type == FIT_FLOAT || image_type == FIT_RGBF || image_type == FIT_RGBAF) // floating points format are accepted
+		else
 		{
-			result.component_type = PixelComponentType::Float;
-
+			if (image_type == FIT_RGBF)
+				return PixelFormat::RGBFloat;
+			if (image_type == FIT_RGBAF)
+				return PixelFormat::RGBAFloat;
 			if (image_type == FIT_FLOAT)
-				result.component_count = 1;
-			else if (image_type == FIT_RGBF)
-				result.component_count = 3;
-			else if (image_type == FIT_RGBAF)
-				result.component_count = 4;
+				return PixelFormat::GrayFloat;
 		}
-		return result;
+		return PixelFormat::Unknown;
 	}
 
 	ImageDescription ImageTools::GetImageDescription(FIBITMAP * image)
@@ -254,7 +260,7 @@ namespace chaos
 
 		// test whether we can handle that format
 		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
-		if (pixel_format.IsValid())
+		if (pixel_format != PixelFormat::Unknown)
 		{
 			ImageDescription result;
 			result.width = FreeImage_GetWidth(image);
@@ -287,7 +293,7 @@ namespace chaos
 		{
 			using src_pixel_type = typename decltype(value)::type;
 
-			if (src_desc.pixel_format != PixelFormat::GetPixelFormat<src_pixel_type>())
+			if (src_desc.pixel_format != PixelToFormat_v<src_pixel_type>)
 				return false;
 
 			// all possible DST pixel types
@@ -295,7 +301,7 @@ namespace chaos
 			{
 				using dst_pixel_type = typename decltype(value)::type;
 
-				if (dst_desc.pixel_format != PixelFormat::GetPixelFormat<dst_pixel_type>())
+				if (dst_desc.pixel_format != PixelToFormat_v<dst_pixel_type>)
 					return false;
 
 				ImagePixelAccessor<src_pixel_type> src_acc(src_desc);
@@ -347,18 +353,18 @@ namespace chaos
 		});
 	}
 
-	int ImageTools::GetMemoryRequirementForAlignedTexture(PixelFormat const & pixel_format, int width, int height)
+	int ImageTools::GetMemoryRequirementForAlignedTexture(PixelFormat pixel_format, int width, int height)
 	{
-		return ((width * pixel_format.GetPixelSize() + 3) & ~3) // aligned rows
+		return ((width * GetPixelSize(pixel_format) + 3) & ~3) // aligned rows
 			* height
 			+ 3; // for base alignment
 	}
 
-	ImageDescription ImageTools::GetImageDescriptionForAlignedTexture(PixelFormat const & pixel_format, int width, int height, char * buffer)
+	ImageDescription ImageTools::GetImageDescriptionForAlignedTexture(PixelFormat pixel_format, int width, int height, char * buffer)
 	{
 		ImageDescription result;
 
-		int pixel_size = pixel_format.GetPixelSize();
+		int pixel_size = GetPixelSize(pixel_format);
 		int line_size = width * pixel_size;
 		int pitch_size = ((line_size + 3) & ~3);
 		int padding = (pitch_size - line_size);
@@ -376,7 +382,7 @@ namespace chaos
 		return result;
 	}
 
-	ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & pixel_format, char * conversion_buffer, ImageTransform image_transform)
+	ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat pixel_format, char * conversion_buffer, ImageTransform image_transform)
 	{
 		ImageDescription result = GetImageDescriptionForAlignedTexture(pixel_format, src_desc.width, src_desc.height, conversion_buffer);
 		assert(result.IsValid(false));
@@ -397,22 +403,22 @@ namespace chaos
 
 		// ignore unhandled pixel format
 		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 			return false;
 
 		// should never happens ..
-		if (pixel_format.IsDepthStencilPixel())
+		if (IsDepthStencilFormat(pixel_format))
 		{
 			assert(0);
 			return false;
 		}
 
 		// multiple components => not grayscale
-		if (pixel_format.component_count != 1)
+		if (!IsLuminanceFormat(pixel_format))
 			return false;
 
-		// a 'luminance' image is a grayscale
-		if (pixel_format.component_type == PixelComponentType::Float)
+		// a 'luminance' image is a grayscale ... this is not a palette image
+		if (pixel_format == PixelFormat::GrayFloat)
 			return true;
 
 		// 1 component of type UNSIGNED CHAR :
@@ -479,7 +485,7 @@ namespace chaos
 
 		// test whether pixel format is valid
 		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 		{
 			if (can_delete_src)
 				FreeImage_Unload(image);

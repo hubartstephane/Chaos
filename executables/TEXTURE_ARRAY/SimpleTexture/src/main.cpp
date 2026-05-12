@@ -216,7 +216,7 @@ protected:
 		// test for background
 		if (index == GENERATE_BACKGROUND)
 		{
-			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelComponentType::UnsignedChar, 4), TEXTURE_SIZE, TEXTURE_SIZE);
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat::BGRA, TEXTURE_SIZE, TEXTURE_SIZE);
 			if (image != nullptr)
 			{
 				chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
@@ -230,7 +230,7 @@ protected:
 
 		if (index == GENERATE_BACKGROUND_GRAY)
 		{
-			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelComponentType::UnsignedChar, 1), TEXTURE_SIZE, TEXTURE_SIZE);
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat::Gray, TEXTURE_SIZE, TEXTURE_SIZE);
 			if (image != nullptr)
 			{
 				chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
@@ -244,7 +244,7 @@ protected:
 
 		if (index == GENERATE_FLOAT_BACKGROUND)
 		{
-			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelComponentType::Float, 4), TEXTURE_SIZE, TEXTURE_SIZE);
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat::RGBAFloat, TEXTURE_SIZE, TEXTURE_SIZE);
 			if (image != nullptr)
 			{
 				chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);

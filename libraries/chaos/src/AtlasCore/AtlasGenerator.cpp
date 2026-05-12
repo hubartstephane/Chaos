@@ -237,7 +237,7 @@ namespace chaos
 		return false;
 	}
 
-	std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(AtlasBitmapInfoInputVector const& entries, PixelFormat const& pixel_format) const
+	std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(AtlasBitmapInfoInputVector const& entries, PixelFormat pixel_format) const
 	{
 		std::vector<bitmap_ptr> result;
 
@@ -497,11 +497,11 @@ namespace chaos
 
 		// test whether a correct pixel format has been found
 		PixelFormat pixel_format = pixel_format_merger.GetResult();
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 		{
 			if (entries.size() != 0)
 				return false;
-			pixel_format = (params.merge_params.pixel_format.IsValid()) ? params.merge_params.pixel_format : PixelFormat::BGRA;
+			pixel_format = (IsValidFormat(params.merge_params.pixel_format)) ? params.merge_params.pixel_format : PixelFormat::BGRA;
 		}
 
 		// compute final atlas size

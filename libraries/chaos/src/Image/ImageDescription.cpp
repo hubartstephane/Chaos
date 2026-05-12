@@ -3,14 +3,14 @@
 
 namespace chaos
 {
-	ImageDescription::ImageDescription(void * in_data, int in_width, int in_height, PixelFormat const & in_pixel_format, int in_padding):
+	ImageDescription::ImageDescription(void * in_data, int in_width, int in_height, PixelFormat in_pixel_format, int in_padding):
 		data(in_data),
 		width(in_width),
 		height(in_height),
 		pixel_format(in_pixel_format),
 		padding_size(in_padding)
 	{
-		line_size  = width * pixel_format.GetPixelSize();
+		line_size  = width * GetPixelSize(pixel_format);
 		pitch_size = line_size + padding_size;
 
 		assert(IsValid(true));
@@ -40,10 +40,10 @@ namespace chaos
 				if (!accept_uninitialized_content)
 					return false;
 		// the format should be well known
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 			return false;
 		// test data consistency
-		if (line_size != width * pixel_format.GetPixelSize())
+		if (line_size != width * GetPixelSize(pixel_format))
 			return false;
 		if (pitch_size < 0 || padding_size < 0)
 			return false;
@@ -68,7 +68,7 @@ namespace chaos
 		if (y < 0 || y + wanted_height > height)
 			return result;
 
-		int pixel_size = pixel_format.GetPixelSize();
+		int pixel_size = GetPixelSize(pixel_format);
 
 		result.width        = wanted_width;
 		result.height       = wanted_height;

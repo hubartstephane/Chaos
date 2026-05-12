@@ -4,10 +4,10 @@
 namespace chaos
 {
 
-	GPURenderbuffer * GPURenderbufferLoader::GenRenderbufferObject(PixelFormat const & pixel_format, glm::ivec2 const & size)
+	GPURenderbuffer * GPURenderbufferLoader::GenRenderbufferObject(PixelFormat pixel_format, glm::ivec2 const & size)
 	{
 		// test arguments
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 			return nullptr;
 		if (size.x <= 0 || size.y <= 0)
 			return nullptr;

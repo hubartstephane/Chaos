@@ -145,7 +145,7 @@ namespace chaos
 	protected:
 
 		/** internal method to generate the texture array */
-		GPUTexture* GenTextureObjectHelper(GPUTextureArraySliceRegistry& slice_registry, PixelFormat const& pixel_format, int width, int height, GenTextureParameters const& parameters) const;
+		GPUTexture* GenTextureObjectHelper(GPUTextureArraySliceRegistry& slice_registry, PixelFormat pixel_format, int width, int height, GenTextureParameters const& parameters) const;
 
 	protected:
 

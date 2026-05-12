@@ -59,19 +59,19 @@ namespace chaos
 		PixelFormat GetPixelFormat(GLenum internal_format)
 		{
 			if (internal_format == GL_R8)
-				return PixelFormat(PixelComponentType::UnsignedChar, 1);
+				return PixelFormat::Gray;
 			if (internal_format == GL_RGB8)
-				return PixelFormat(PixelComponentType::UnsignedChar, 3);
+				return PixelFormat::BGR;
 			if (internal_format == GL_RGBA8)
-				return PixelFormat(PixelComponentType::UnsignedChar, 4);
+				return PixelFormat::BGRA;
 			if (internal_format == GL_R32F)
-				return PixelFormat(PixelComponentType::Float, 1);
+				return PixelFormat::GrayFloat;
 			if (internal_format == GL_RGB32F)
-				return PixelFormat(PixelComponentType::Float, 3);
+				return PixelFormat::RGBFloat;
 			if (internal_format == GL_RGBA32F)
-				return PixelFormat(PixelComponentType::Float, 4);
+				return PixelFormat::RGBAFloat;
 			if (internal_format == GL_DEPTH24_STENCIL8)
-				return PixelFormat(PixelComponentType::DepthStencil, 1);
+				return PixelFormat::DepthStencil;
 			return PixelFormat();
 		}
 
@@ -101,12 +101,13 @@ namespace chaos
 					if (height > 0)
 					{
 						PixelFormat pixel_format = GetTexturePixelFormat(texture_id, level);
-						if (pixel_format.IsValid())
+						if (pixel_format != PixelFormat::Unknown)
 						{
 							GLPixelFormat gl_pixel_format = GetGLPixelFormat(pixel_format);
 							if (gl_pixel_format.IsValid())
 							{
-								GLenum type = (pixel_format.component_type == PixelComponentType::UnsignedChar) ? GL_UNSIGNED_BYTE : GL_FLOAT;
+								PixelDescription pixel_description = GetPixelDescription(pixel_format);
+								GLenum type = (pixel_description.component_type == PixelComponentType::UnsignedChar) ? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 								int buffer_size = ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, width, height);
 
@@ -117,7 +118,7 @@ namespace chaos
 
 									glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-									glPixelStorei(GL_PACK_ROW_LENGTH, desc.pitch_size / desc.pixel_format.GetPixelSize());
+									glPixelStorei(GL_PACK_ROW_LENGTH, desc.pitch_size / GetPixelSize(desc.pixel_format));
 
 									glGetTextureImage(texture_id, level, gl_pixel_format.format, type, buffer_size, desc.data);
 								}
@@ -199,31 +200,23 @@ namespace chaos
 			return BitTools::bsr(width) + 1;
 		}
 
-		GLPixelFormat GetGLPixelFormat(PixelFormat const& pixel_format) // format / internal format
+		GLPixelFormat GetGLPixelFormat(PixelFormat pixel_format) // format / internal format
 		{
 			// XXX : GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
-			if (pixel_format.component_type == PixelComponentType::UnsignedChar)
-			{
-				if (pixel_format.component_count == 1)
-					return GLPixelFormat(GL_RED, GL_R8);
-				if (pixel_format.component_count == 3)
-					return GLPixelFormat(GL_BGR, GL_RGB8); // FreeImage produce BGR(A) images
-				if (pixel_format.component_count == 4)
-					return GLPixelFormat(GL_BGRA, GL_RGBA8);
-			}
-			else if (pixel_format.component_type == PixelComponentType::Float)
-			{
-				if (pixel_format.component_count == 1)
-					return GLPixelFormat(GL_RED, GL_R32F);
-				if (pixel_format.component_count == 3)
-					return GLPixelFormat(GL_RGB, GL_RGB32F);
-				if (pixel_format.component_count == 4)
-					return GLPixelFormat(GL_RGBA, GL_RGBA32F);
-			}
-			else if (pixel_format.component_type == PixelComponentType::DepthStencil)
-			{
+			if (pixel_format == PixelFormat::Gray)
+				return GLPixelFormat(GL_RED, GL_R8);
+			if (pixel_format == PixelFormat::BGR)
+				return GLPixelFormat(GL_BGR, GL_RGB8); // FreeImage produce BGR(A) images
+			if (pixel_format == PixelFormat::BGRA)
+				return GLPixelFormat(GL_BGRA, GL_RGBA8);
+			if (pixel_format == PixelFormat::GrayFloat)
+				return GLPixelFormat(GL_RED, GL_R32F);
+			if (pixel_format == PixelFormat::RGBFloat)
+				return GLPixelFormat(GL_RGB, GL_RGB32F);
+			if (pixel_format == PixelFormat::RGBAFloat)
+				return GLPixelFormat(GL_RGBA, GL_RGBA32F);
+			if (pixel_format == PixelFormat::DepthStencil)
 				return GLPixelFormat(GL_NONE, GL_DEPTH24_STENCIL8);
-			}
 			return GLPixelFormat(GL_NONE, GL_NONE);
 		}
 

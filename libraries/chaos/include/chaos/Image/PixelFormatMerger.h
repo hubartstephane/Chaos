@@ -17,7 +17,7 @@ namespace chaos
 	public:
 
 		/** if valid, the resulting pixel format should be set to this */
-		PixelFormat pixel_format;
+		PixelFormat pixel_format = PixelFormat::Unknown;
 		/** if false the pixel_format cannot be 'upgraded' with incomming format */
 		bool upgrade_pixel_format = true;
 		/** if set to false, all luminances formats will become RGB */
@@ -45,24 +45,23 @@ namespace chaos
 		/** reset the merger */
 		void Reset(PixelFormatMergeParams const& in_params = {});
 		/** the merge method */
-		void Merge(PixelFormat src);
+		void Merge(PixelFormat in_pixel_format);
 		/** get the result */
-		PixelFormat GetResult() const { return result; }
-		/** check whether the result is available */
-		bool IsResultAvailable() const { return result_is_available; }
-		/** returns whether all incomming format match the result */
-		bool AreIncommingFormatIdentical() const { return identical_incomming_format; }
+		PixelFormat GetResult() const;
 
 	protected:
 
-		/** the result */
-		PixelFormat result;
-		/** whether a valid result is available */
-		bool result_is_available = false;
+		/** apply wanted parameters to a pixel format */
+		PixelFormat ApplyParametersToFormat(PixelFormat in_pixel_format) const;
+
+	protected:
+
 		/** the parameter for the merge */
 		PixelFormatMergeParams params;
-		/** true whether all incomming format are identical (no conversion required) */
-		bool identical_incomming_format = true;
+		/** the result */
+		PixelFormat pixel_format;
+		/** an intermdiate description for working easier */
+		PixelDescription pixel_description;
 	};
 
 

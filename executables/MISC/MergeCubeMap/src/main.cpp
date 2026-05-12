@@ -39,11 +39,12 @@ protected:
 			texture = new_texture;
 			imgui_user_message.Clear();
 
-			chaos::PixelFormat pf = pixel_formats[index];
+			chaos::PixelFormat pixel_format = pixel_formats[index];
+			chaos::PixelDescription pixel_description = GetPixelDescription(pixel_format);
 
-			char const * component_type = (pf.component_type == chaos::PixelComponentType::UnsignedChar) ? "unsigned char" : "float";
+			char const * component_type = (pixel_description.component_type == chaos::PixelComponentType::UnsignedChar) ? "unsigned char" : "float";
 
-			imgui_user_message.AddLine(chaos::StringTools::Printf("format : index = [%d] component = [%d] type = [%s]", index, pf.component_count, component_type).c_str());
+			imgui_user_message.AddLine(chaos::StringTools::Printf("format : index = [%d] component = [%d] type = [%s]", index, pixel_description.component_count, component_type).c_str());
 		}
 	}
 
@@ -53,7 +54,7 @@ protected:
 			return nullptr;
 
 		chaos::PixelFormat pixel_format = pixel_formats[index];
-		if (!pixel_format.IsValid())
+		if (pixel_format != chaos::PixelFormat::Unknown)
 			return nullptr;
 
 		chaos::PixelFormatMergeParams merge_params;

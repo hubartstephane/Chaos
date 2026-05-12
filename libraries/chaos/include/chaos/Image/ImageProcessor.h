@@ -37,7 +37,7 @@ namespace chaos
 			meta::for_each<PixelTypes>([src_desc, func, &result](auto value) -> bool // XXX: value is an instance of identity<pixel_type>
 			{
 				using pixel_type = typename decltype(value)::type;
-				if (src_desc.pixel_format == PixelFormat::GetPixelFormat<pixel_type>())
+				if (src_desc.pixel_format == PixelToFormat_v<pixel_type>)
 				{
 					result = func(ImagePixelAccessor<pixel_type>(src_desc));
 					return true;

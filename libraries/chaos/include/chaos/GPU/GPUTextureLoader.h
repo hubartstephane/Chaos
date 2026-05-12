@@ -41,7 +41,7 @@ namespace chaos
 		{
 			GPUTexture* result = nullptr;
 
-			PixelFormat pixel_format = PixelFormat::GetPixelFormat<T>();
+			PixelFormat pixel_format = PixelToFormat_v<T>;
 
 			int buffer_size = ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, width, height);
 

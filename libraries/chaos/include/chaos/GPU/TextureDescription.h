@@ -36,13 +36,13 @@ namespace chaos
 	public:
 
 		/** the format of the surface (RGB / RGBA ...) */
-		PixelFormat pixel_format;
+		PixelFormat pixel_format = PixelFormat::Unknown;
 		/** the image width */
-		int    width = 0;
+		int width = 0;
 		/** the image height */
-		int    height = 0;
+		int height = 0;
 		/** the image depth */
-		int    depth = 0;
+		int depth = 0;
 
 	public:
 

@@ -23,7 +23,7 @@ namespace chaos
 		/** check whether the object is valid (the required PIXEL_TYPE does not correspond to the one for the bitmap) */
 		bool IsValid() const
 		{
-			PixelFormat accessor_format = PixelFormat::GetPixelFormat<type>();
+			PixelFormat accessor_format = PixelToFormat_v<type>;
 			if (accessor_format != description.pixel_format)
 				return false;
 			return true;

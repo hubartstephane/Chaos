@@ -146,11 +146,11 @@ namespace chaos
 				return nullptr;
 
 		PixelFormat pixel_format = pixel_format_merger.GetResult();
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 		{
 			if (generators.size() > 0)
 				return nullptr;
-			pixel_format = (merge_params.pixel_format.IsValid()) ? merge_params.pixel_format : PixelFormat::BGRA;
+			pixel_format = (IsValidFormat(merge_params.pixel_format)) ? merge_params.pixel_format : PixelFormat::BGRA;
 		}
 
 		// create the texture and fill the slices
@@ -172,7 +172,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUTexture * GPUTextureArrayGenerator::GenTextureObjectHelper(GPUTextureArraySliceRegistry & slice_registry, PixelFormat const & pixel_format, int width, int height, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureArrayGenerator::GenTextureObjectHelper(GPUTextureArraySliceRegistry & slice_registry, PixelFormat pixel_format, int width, int height, GenTextureParameters const & parameters) const
 	{
 		// the number of slices
 		int slice_count = (int)slice_registry.slices.size();
@@ -193,13 +193,14 @@ namespace chaos
 		// and allocate the buffer
 		char* conversion_buffer = nullptr;
 
-		if (pixel_format.component_count != 1) // destination is not GRAY, the RED texture + SWIZZLE cannot be used on independant slices
+		if (!IsLuminanceFormat(pixel_format)) // destination is not GRAY, the RED texture + SWIZZLE cannot be used on independant slices
 		{
 			size_t required_allocation = 0;
 			for (size_t i = 0; i < slice_count; ++i)
 			{
 				ImageDescription const& desc = slice_registry.slices[i].description;
-				if (desc.pixel_format.component_count == 1)
+
+				if (IsLuminanceFormat(desc.pixel_format))
 					required_allocation = std::max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, desc.width, desc.height)); // slice is GRAY
 			}
 			if (required_allocation > 0)
@@ -232,7 +233,7 @@ namespace chaos
 		{
 			ImageDescription const & image = slice_registry.slices[i].description;
 
-			ImageDescription effective_image = (pixel_format.component_count != 1 && image.pixel_format.component_count == 1)?
+			ImageDescription effective_image = (!IsLuminanceFormat(pixel_format) && IsLuminanceFormat(image.pixel_format))?
 				ImageTools::ConvertPixels(image, pixel_format, conversion_buffer, ImageTransform::None) :
 				image;
 

@@ -16,7 +16,7 @@
 
 namespace chaos
 {
-	FIBITMAP * FontTools::GenerateImage(FT_GlyphSlot glyph, PixelFormat const & pixel_format)
+	FIBITMAP * FontTools::GenerateImage(FT_GlyphSlot glyph, PixelFormat pixel_format)
 	{
 		assert(glyph != nullptr);
 
@@ -79,9 +79,9 @@ namespace chaos
 		}
 	}
 
-	FIBITMAP * FontTools::GenerateImage(FT_Bitmap const & bitmap, PixelFormat const & pixel_format)
+	FIBITMAP * FontTools::GenerateImage(FT_Bitmap const & bitmap, PixelFormat pixel_format)
 	{
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 			return nullptr;
 
 		int mode = bitmap.pixel_mode;
@@ -104,7 +104,7 @@ namespace chaos
 			{
 				using pixel_type = typename decltype(value)::type;
 
-				if (dst_desc.pixel_format != PixelFormat::GetPixelFormat<pixel_type>())
+				if (dst_desc.pixel_format != PixelToFormat_v<pixel_type>)
 					return false;
 
 				int w = dst_desc.width;
@@ -204,7 +204,7 @@ namespace chaos
 		return result;
 	}
 
-	FIBITMAP * FontTools::GenerateImage(FT_Face face, uint32_t charcode, PixelFormat const & pixel_format)
+	FIBITMAP * FontTools::GenerateImage(FT_Face face, uint32_t charcode, PixelFormat pixel_format)
 	{
 		assert(face != nullptr);
 
@@ -245,13 +245,13 @@ namespace chaos
 		}
 	}
 
-	FIBITMAP * FontTools::GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format)
+	FIBITMAP * FontTools::GenerateImage(FT_Face face, char const * str, PixelFormat pixel_format)
 	{
 		assert(face != nullptr);
 		assert(str != nullptr);
 
 		FIBITMAP * result = nullptr;
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 			return result;
 
 		// generate all required glyph
@@ -316,7 +316,7 @@ namespace chaos
 				using pixel_type = typename decltype(value)::type;
 
 				// skip other types
-				if (dst_desc.pixel_format != PixelFormat::GetPixelFormat<pixel_type>())
+				if (dst_desc.pixel_format != PixelToFormat_v<pixel_type>)
 					return false;
 
 				// fill the background with empty data

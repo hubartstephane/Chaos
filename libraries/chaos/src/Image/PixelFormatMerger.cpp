@@ -34,13 +34,38 @@ namespace chaos
 
 	PixelFormatMerger::PixelFormatMerger(PixelFormatMergeParams const & in_params) : params(in_params)
 	{
-		if (in_params.pixel_format.IsValid())
+		assert(!IsDepthStencilFormat(in_params.pixel_format));
+
+		if (IsValidFormat(in_params.pixel_format))
 		{
-			result = in_params.pixel_format;
-			result_is_available = true;
+			pixel_format = ApplyParametersToFormat(in_params.pixel_format);
+			pixel_description = GetPixelDescription(pixel_format);
 		}
-		else
-			params.upgrade_pixel_format = true; // well, if no format is given as input, we want to take care of all incomming formats
+	}
+
+	PixelFormat PixelFormatMerger::ApplyParametersToFormat(PixelFormat in_pixel_format) const
+	{
+		if (IsValidFormat(in_pixel_format))
+		{
+			if (!params.accept_luminance)
+			{
+				if (in_pixel_format == PixelFormat::Gray)
+					in_pixel_format = PixelFormat::BGR;
+				else if (in_pixel_format == PixelFormat::GrayFloat)
+					in_pixel_format = PixelFormat::RGBFloat;
+			}
+
+			if (!params.accept_float)
+			{
+				if (in_pixel_format == PixelFormat::RGBFloat)
+					in_pixel_format = PixelFormat::BGR;
+				else if (in_pixel_format == PixelFormat::RGBAFloat)
+					in_pixel_format = PixelFormat::BGRA;
+				else if (in_pixel_format == PixelFormat::GrayFloat)
+					in_pixel_format = PixelFormat::Gray;
+			}
+		}
+		return in_pixel_format;
 	}
 
 	void PixelFormatMerger::Reset(PixelFormatMergeParams const & in_params)
@@ -48,31 +73,30 @@ namespace chaos
 		operator = (PixelFormatMerger(in_params)); // copy from a newly created instance
 	}
 
-	void PixelFormatMerger::Merge(PixelFormat src)
+	PixelFormat PixelFormatMerger::GetResult() const
 	{
-		assert(src.IsValid());
-		assert(!src.IsDepthStencilPixel());
+		return GetPixelFormat(pixel_description);
+	}
 
-		PixelFormat input_format = src;
+	void PixelFormatMerger::Merge(PixelFormat in_pixel_format)
+	{
+		assert(IsValidFormat(in_pixel_format));
+		assert(!IsDepthStencilFormat(in_pixel_format));
 
-		if (!params.accept_luminance && src.component_count == 1) // transform luminance into RGB
-			src.component_count = 3;
+		in_pixel_format = ApplyParametersToFormat(in_pixel_format);
 
-		if (!params.accept_float && src.component_type == PixelComponentType::Float) // transform float into unsigned char
-			src.component_type = PixelComponentType::UnsignedChar;
-
-		if (!result_is_available)
+		if (!IsValidFormat(pixel_format)) // no result yet
 		{
-			result = src;
-			result_is_available = true;
+			pixel_format = in_pixel_format;
+			pixel_description = GetPixelDescription(in_pixel_format);
 		}
-		else if (params.upgrade_pixel_format)
+		else
 		{
-			result.component_type = std::max(result.component_type, src.component_type);
-			result.component_count = std::max(result.component_count, src.component_count);
+			PixelDescription in_pixel_description = GetPixelDescription(in_pixel_format);
+			pixel_description.component_type  = std::max(pixel_description.component_type, in_pixel_description.component_type);
+			pixel_description.component_count = std::max(pixel_description.component_count, in_pixel_description.component_count);
+			// at this point, pixel_format does not match pixel_description, but this doesn't care because all we bother is that it is not 'Unknown'
 		}
-
-		identical_incomming_format &= (input_format == result);
 	}
 
 }; // namespace chaos

@@ -251,7 +251,7 @@ namespace chaos
 
 		// find the final format
 		PixelFormat pixel_format = GetMergedPixelFormat(merge_params);
-		if (!pixel_format.IsValid())
+		if (pixel_format == PixelFormat::Unknown)
 			return {};
 
 		// find the final format and size

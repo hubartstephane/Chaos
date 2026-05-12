@@ -66,7 +66,8 @@ namespace chaos
 		if (mipmap_level < 0 || mipmap_level >= GetMipmapCount())
 			return false;
 
-		if (image_description.pixel_format.component_type != PixelComponentType::UnsignedChar && image_description.pixel_format.component_type != PixelComponentType::Float)
+		PixelDescription pixel_description = GetPixelDescription(image_description.pixel_format);
+		if (pixel_description.component_type != PixelComponentType::UnsignedChar && pixel_description.component_type != PixelComponentType::Float)
 			return false;
 
 		if (offset.x < 0 || offset.y < 0 || offset.z < 0)
@@ -92,7 +93,8 @@ namespace chaos
 
 		GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(image_description.pixel_format);
 
-		GLenum gl_component_type = (image_description.pixel_format.component_type == PixelComponentType::UnsignedChar) ?
+		PixelDescription pixel_description = GetPixelDescription(image_description.pixel_format);
+		GLenum gl_component_type = (pixel_description.component_type == PixelComponentType::UnsignedChar) ?
 			GL_UNSIGNED_BYTE :
 			GL_FLOAT;
 
@@ -125,7 +127,8 @@ namespace chaos
 
 		GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(image_description.pixel_format);
 
-		GLenum gl_component_type = (image_description.pixel_format.component_type == PixelComponentType::UnsignedChar)?
+		PixelDescription pixel_description = GetPixelDescription(image_description.pixel_format);
+		GLenum gl_component_type = (pixel_description.component_type == PixelComponentType::UnsignedChar)?
 			GL_UNSIGNED_BYTE:
 			GL_FLOAT;
 
@@ -259,7 +262,7 @@ namespace chaos
 	{
 		char* result = (char*)desc.data;
 
-		int pixel_size = desc.pixel_format.GetPixelSize();
+		int pixel_size = GetPixelSize(desc.pixel_format);
 		int row_length = desc.pitch_size / pixel_size;
 		int skip_pixel = 0;
 

@@ -18,6 +18,7 @@ if [ ! -f $PREMAKE5_PATH ]; then
 fi
 
 # start premake
-$PREMAKE5_PATH --verbose $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua 2>&1 | tee generate.log
+LOG_FILENAME=generate-solution.log
+$PREMAKE5_PATH --verbose $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua 2>&1 | tee $LOG_FILENAME
 
-echo "output to file: generate.log"
+echo "output to file: " $LOG_FILENAME

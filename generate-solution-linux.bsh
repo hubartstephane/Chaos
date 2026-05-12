@@ -26,6 +26,7 @@ if [[ "$(uname -m)" == *arm* ]]; then
 fi
 
 # start premake
-premake5 $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua --os=linux "$PREMAKE_LINUX_DISPLAY_SERVER" "$PREMAKE_ARCH_ARG" 2>&1 | tee generate.log
+LOG_FILENAME=generate-solution.log
+premake5 $TARGET --file=$SCRIPT_PATH/premake_scripts/premake5.lua --os=linux "$PREMAKE_LINUX_DISPLAY_SERVER" "$PREMAKE_ARCH_ARG" 2>&1 | tee $LOG_FILENAME
 
-echo "output to file: generate.log"
+echo "output to file: " $LOG_FILENAME

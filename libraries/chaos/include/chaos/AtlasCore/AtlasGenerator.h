@@ -27,12 +27,6 @@ namespace chaos
 			atlas_padding(in_padding),
 			merge_params(in_merge_params) {}
 
-		/** whether we have to use power of 2 values */
-		bool force_power_of_2 = true;
-		/** whether we have to use square bitmap */
-		bool force_square = true;
-		/** whether each image in the atlas should have extra border that is the duplication of the origin image (usefull for texel interpolation in shaders) */
-		bool duplicate_image_border = true;
 		/** the width of an atlas bitmap */
 		int atlas_width = 0;
 		/** the height of an atlas bitmap */
@@ -43,6 +37,12 @@ namespace chaos
 		int atlas_max_height = 0;
 		/** some padding for the bitmap : should be even */
 		int atlas_padding = 0;
+		/** whether we have to use power of 2 values */
+		bool force_power_of_2 = true;
+		/** whether we have to use square bitmap */
+		bool force_square = true;
+		/** whether each image in the atlas should have extra border that is the duplication of the origin image (usefull for texel interpolation in shaders) */
+		bool duplicate_image_border = true;
 		/** the background color */
 		glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		/** parameters for merging different pixel format */

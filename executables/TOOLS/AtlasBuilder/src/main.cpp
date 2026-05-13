@@ -1,158 +1,5 @@
 #include "chaos/Chaos.h"
 
-#if 0
-
-class MyWindow : public chaos::SimpleWin32Window
-{
-public:
-
-	void WorkWithImage(char const* filename, FIBITMAP* bitmap)
-	{
-		std::vector<FIBITMAP*> split_images;
-
-		int SrcImageNumberW = 2;
-		int SrcImageNumberH = 4;
-
-		int SrcBitmapWidth  = FreeImage_GetWidth(bitmap) / SrcImageNumberW;
-		int SrcBitmapHeight = FreeImage_GetHeight(bitmap) / SrcImageNumberH;
-
-		int DstImageNumberW = 2;
-		int DstImageNumberH = 4;
-
-		int DstFullImageNumberW = 2;
-		int DstFullImageNumberH = 4;
-
-		int DstBitmapWidth = 190;
-		int DstBitmapHeight = 250;
-
-
-		int OffsetX = 0;
-		int OffsetY = 0;
-
-		// split the image
-		for (int i = 0; i < SrcImageNumberH; ++i)
-		{
-			for (int j = 0; j < SrcImageNumberW; ++j)
-			{
-				int left   = j * SrcBitmapWidth;
-				int top    = i * SrcBitmapHeight;
-
-				left += (SrcBitmapWidth - DstBitmapWidth) / 2;
-				top += (SrcBitmapHeight - DstBitmapHeight) / 2;
-
-				left += OffsetX;
-				top  += OffsetY;
-
-				int right  = left + DstBitmapWidth;
-				int bottom = top + DstBitmapHeight;
-
-				FIBITMAP* split_image = FreeImage_Copy(bitmap, left, top, right, bottom);
-
-				chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(split_image);
-
-				split_images.push_back(split_image);
-			}
-		}
-		// reconstitute the image
-		FIBITMAP* new_bitmap = FreeImage_Allocate(DstBitmapWidth * DstFullImageNumberW, DstBitmapHeight * DstFullImageNumberH, 32);
-		if (new_bitmap != nullptr)
-		{
-			RGBQUAD background = { 0, 0, 0, 0 };
-			FreeImage_SetBackgroundColor(new_bitmap, &background);
-			FreeImage_FillBackground(new_bitmap, &background);
-
-			for (size_t i = 0; i < split_images.size(); ++i)
-			{
-				int PosX = ((int)i) % DstImageNumberW;
-				int PosY = ((int)i) / DstImageNumberW;
-
-				FIBITMAP* split_image = split_images[i];
-				if (split_image == nullptr)
-					continue;
-
-				int left = PosX * DstBitmapWidth;
-				int top = PosY * DstBitmapHeight;
-				int alpha = 255;
-				FreeImage_Paste(new_bitmap, split_image, left, top, alpha);
-
-			}
-
-			chaos::Application* application = chaos::Application::GetInstance();
-			if (application != nullptr)
-			{
-				boost::filesystem::path const& user_path = application->GetApplicationUserLocalPath();
-
-				boost::filesystem::path dest = user_path / boost::filesystem::path(filename).filename();
-
-				FreeImage_Save(FREE_IMAGE_FORMAT::FIF_PNG, new_bitmap, dest.string().c_str());
-			}
-
-			FreeImage_Unload(new_bitmap);
-		}
-
-		for (FIBITMAP* image : split_images)
-			FreeImage_Unload(image);
-	}
-
-
-
-
-
-	virtual BOOL OnDragFile(char const* filename, POINT const& pt) override
-	{
-		FIBITMAP* bitmap = chaos::ImageTools::LoadImageFromFile(filename);
-		if (bitmap != nullptr)
-		{
-			WorkWithImage(filename, bitmap);
-			FreeImage_Unload(bitmap);
-		}
-		return TRUE;
-	}
-
-	virtual LRESULT OnWindowSize(int width, int height) override
-	{
-		InvalidateRect(GetHwnd(), nullptr, true);
-		return SimpleWin32Window::OnWindowSize(width, height);
-	}
-};
-
-
-class MyApplication : public chaos::Application
-{
-
-public:
-
-	MyApplication()
-	{
-	}
-
-protected:
-
-	virtual int Main() override
-	{
-		boost::filesystem::path user_temp = CreateUserLocalTempDirectory();
-		chaos::WinTools::ShowFile(user_temp);
-
-
-		chaos::SimpleWin32CreateParam create_params;
-		create_params.x         = 10;
-		create_params.y         = 10;
-		create_params.nWidth    = 300;
-		create_params.nHeight   = 300;
-		create_params.dwExStyle = 0;
-		//  create_params.dwStyle   = WS_POPUP;
-
-		chaos::SimpleWin32Class<MyWindow> c("class1");
-		c.CreateWindowHinstance(NULL, "my_window", create_params);
-		chaos::SimpleWin32Window::SimpleMessageLoop();
-		
-		return 0;
-	}
-};
-
-#endif
-
-
 class ImageGenerationParams
 {
 public:
@@ -276,11 +123,8 @@ public:
 		return result;
 	}
 
-	bool GenerateImages(ImageGenerationParams const& image_generation_params)
+	bool GenerateImageDirectory()
 	{
-		if (!image_generation_params.IsValid())
-			return false;
-
 		if (image_generation_directory.empty())
 		{
 			boost::filesystem::path dst_path = GetApplicationTemporaryPath() / "GeneratedImages";
@@ -290,19 +134,35 @@ public:
 					return false;
 			image_generation_directory = std::move(dst_path);
 		}
+		return true;
+	}
 
+	bool ClearImages()
+	{
+		if (!GenerateImageDirectory())
+			return false;
 		ClearDirectory(image_generation_directory);
 		chaos::WinTools::ShowFile(image_generation_directory);
+		return true;
+	}
+
+	bool GenerateImages(ImageGenerationParams const& image_generation_params)
+	{
+		if (!image_generation_params.IsValid())
+			return false;
+
+		if (!ClearImages())
+			return false;
 
 		std::vector<std::pair<FREE_IMAGE_FORMAT, char const* >> format_maps =
 		{
-			{FIF_BMP, "bmp"},
-			{FIF_JPEG, "jpg"},
+		//	{FIF_BMP, "bmp"},
+		//	{FIF_JPEG, "jpg"},
 			{FIF_PNG, "png"},
-			{FIF_DDS, "dds"},
-			{FIF_GIF, "gif"},
-			{FIF_HDR, "hdr"},
-			{FIF_EXR, "exr"}
+		//	{FIF_DDS, "dds"},
+		//	{FIF_GIF, "gif"},
+		//	{FIF_HDR, "hdr"},
+		//	{FIF_EXR, "exr"}
 		};
 
 		std::random_device rd;
@@ -350,7 +210,6 @@ protected:
 
 	virtual int MainBody() override
 	{
-		//chaos::WinTools::ShowFile(GetResourcesPath());
 		return chaos::SimpleWindowApplication::MainBody();
 	}
 
@@ -369,6 +228,16 @@ protected:
 
 // ---------------------------------------------------------------------------------
 
+class ImageFileInfo
+{
+public:
+
+	boost::filesystem::path path;
+	boost::filesystem::path filename;
+	chaos::bitmap_ptr       image;
+	glm::ivec2              image_size = {0, 0};
+};
+
 class AtlasBuilderWindow : public chaos::Window
 {
 	CHAOS_DECLARE_OBJECT_CLASS(AtlasBuilderWindow, chaos::Window);
@@ -379,29 +248,322 @@ public:
 	{
 		chaos::ImGuiTools::FullViewportWindow("content", 0, [this]()
 		{
-			ImGuiDrawImageGenerationPanel();
-			ImGuiDrawAtlasGenerationPanel();		
+			ImVec2 avail1 = ImGui::GetContentRegionAvail();
+
+			if (ImGui::BeginChild("ImageGenerationPanel", ImVec2(avail1.x, 300.0f), ImGuiChildFlags_Borders))
+			{
+				ImGuiDrawImageGenerationPanel();
+
+				ImGui::EndChild();
+			}
+
+			float spacing = ImGui::GetStyle().ItemSpacing.x;
+			ImVec2 avail2 = ImGui::GetContentRegionAvail();
+
+			ImVec2 panel_size = {(avail2.x - spacing) * 0.5f, avail2.y};
+
+			if (ImGui::BeginChild("AtlasGenerationPanel", panel_size, ImGuiChildFlags_Borders))
+			{
+				ImGuiDrawAtlasGenerationPanel();
+
+				ImGui::EndChild();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::BeginChild("AtlasPanel", panel_size, ImGuiChildFlags_Borders))
+			{
+				ImGuiDrawAtlas();
+
+				ImGui::EndChild();
+			}		
 		});
 	}
 
 	virtual void OnDropFile(int count, char const** paths) override
 	{
+		for (int i = 0 ; i < count ; ++i)
+		{
+			boost::filesystem::path path = paths[i];
 
+			auto it = std::ranges::find_if(image_files, [&](ImageFileInfo const & info)
+			{
+				return info.path == path;	
+			});
 
+			if (it != image_files.end())
+				continue;
 
+			if (FIBITMAP * image = chaos::ImageTools::LoadImageFromFile(paths[i]))
+			{
+				chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
+
+				ImageFileInfo info;
+				info.path = std::move(path);
+				info.filename = info.path.filename();
+				info.image = chaos::bitmap_ptr(image);
+				info.image_size = { image_description.width, image_description.height };
+				image_files.push_back(std::move(info));
+			}
+		}
+		GenerateAtlas();
 	}
 
 protected:
 
+	void Title(char const * title)
+	{
+		ImGui::SetWindowFontScale(1.5f);
+		ImGui::Text("%s", title);
+		ImGui::SetWindowFontScale(1.0f);
+
+		ImGui::Dummy({1.0f, 20.0f});
+	}
+
+	void GenerateAtlas()
+	{
+		if (!IsAtlasGenerationParamsValid(atlas_generation_params))
+			return;
+
+		chaos::AtlasInput input;
+		for (ImageFileInfo const & info : image_files)
+		{
+			input.AddBitmap(info.image.get(), false, info.filename.string().c_str(), 0);
+		}
+
+		chaos::AtlasGenerator generator;
+		generator.ComputeResult(input, atlas, atlas_generation_params);
+
+		atlas_textures.clear();
+
+		for (chaos::bitmap_ptr const & bitmap : atlas.GetBitmaps())
+		{
+			if (chaos::GPUTexture * texture = chaos::GPUTextureLoader(GetGPUDevice()).GenTextureObject(bitmap.get()))
+				atlas_textures.push_back(texture);
+		}	
+	}
+
+	bool IsAtlasGenerationParamsValid(chaos::AtlasGeneratorParams const & params) const
+	{
+
+
+
+
+
+		return true;
+	}
+
 	void ImGuiDrawAtlasGenerationPanel()
 	{
-		ImGui::SeparatorText("Generate altas");
+		Title("Generate atlas");
+
+		if (ImGui::BeginTable("image_generation_params", 2, 0))
+		{
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed);
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthStretch);
+
+			// Atlas width
+			ImGui::TableNextColumn();
+			ImGui::Text("Atlas width");
+
+			ImGui::TableNextColumn();
+			ImGui::InputInt("##atlas_width", &atlas_generation_params.atlas_width);
+
+			// Atlas height
+			ImGui::TableNextColumn();
+			ImGui::Text("Atlas height");
+
+			ImGui::TableNextColumn();
+			ImGui::InputInt("##atlas_height", &atlas_generation_params.atlas_height);
+
+			// Atlas max width
+			ImGui::TableNextColumn();
+			ImGui::Text("Atlas max width");
+
+			ImGui::TableNextColumn();
+			ImGui::InputInt("##atlas_max_width", &atlas_generation_params.atlas_max_width);
+
+			// Atlas max height
+			ImGui::TableNextColumn();
+			ImGui::Text("Atlas max height");
+
+			ImGui::TableNextColumn();
+			ImGui::InputInt("##atlas_max_height", &atlas_generation_params.atlas_max_height);
+
+			// Atlas padding
+			ImGui::TableNextColumn();
+			ImGui::Text("Atlas padding");
+
+			ImGui::TableNextColumn();
+			ImGui::InputInt("##atlas_padding", &atlas_generation_params.atlas_padding);
+
+			// Power of 2 
+			ImGui::TableNextColumn();
+			ImGui::Text("Force power of 2");
+
+			ImGui::TableNextColumn();
+			ImGui::Checkbox("##force_power_of_2", &atlas_generation_params.force_power_of_2);
+
+			// Force square 
+			ImGui::TableNextColumn();
+			ImGui::Text("Force square");
+
+			ImGui::TableNextColumn();
+			ImGui::Checkbox("##force_square", &atlas_generation_params.force_square);
+
+			// Duplicate image border
+			ImGui::TableNextColumn();
+			ImGui::Text("Image border duplication");
+
+			ImGui::TableNextColumn();
+			ImGui::Checkbox("##duplicate_image_border", &atlas_generation_params.duplicate_image_border);
+
+			// background color
+			ImGui::TableNextColumn();
+			ImGui::Text("Background color");
+
+			ImGui::TableNextColumn();
+			ImGui::ColorEdit4("##background_color", &atlas_generation_params.background_color.r);
+
+			ImGui::EndTable();
+		}
+
+		bool generation_required = false;
+
+		chaos::ImGuiTools::ConditionalDisable(!IsAtlasGenerationParamsValid(atlas_generation_params), [&]()
+		{
+			if (ImGui::Button("Generate"))
+				generation_required = true;
+		});
+
+		ImGui::SameLine();
+		if (ImGui::Button("Clear"))
+			ClearAtlas();
+
+		ImGui::Dummy({1.0f, 20.0f});
+
+		Title("File list");
+
+		// draw file list
+		std::optional<int> image_to_remove;
+		if (ImGui::BeginTable("objects", 4, ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersV))
+		{
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed);
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed);
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed);
+
+			for (int i = 0 ; i < image_files.size() ; ++i)
+			{
+				ImGui::PushID(i);
+
+				ImGui::TableNextColumn();
+				ImGui::Text("%s", image_files[i].filename.string().c_str());
+
+				ImGui::TableNextColumn();
+				chaos::PixelFormat pixel_format = chaos::ImageTools::GetPixelFormat(image_files[i].image.get());
+				ImGui::Text("  %s  ", EnumToString(pixel_format));
+
+				ImGui::TableNextColumn();
+				ImGui::Text("  %d x %d  ", image_files[i].image_size.x, image_files[i].image_size.y);
+			
+				ImGui::TableNextColumn();
+				if (ImGui::Button("X"))
+					image_to_remove = i;
+
+				ImGui::PopID();
+			}
+			ImGui::EndTable();
+		}
+
+		if (image_to_remove.has_value())
+		{
+			image_files.erase(image_files.begin() + image_to_remove.value());
+			generation_required = true;
+		}
+	
+		if (generation_required)
+			GenerateAtlas();
+
+		ImGui::Dummy({ 1.0f, 50.0f });
+
+		char const * text = "Drag & Drop image files here";
+
+		float col_width = ImGui::GetColumnWidth();
+		float text_width = ImGui::CalcTextSize(text).x;
+
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (col_width - text_width) * 0.5f);
+		ImGui::Text("%s", text);
+	}
+
+	void ImGuiDrawAtlas()
+	{
+		Title("Atlas");
+
+		if (atlas.GetBitmapCount() == 0)
+			return;
+
+		glm::ivec2 dimension = atlas.GetAtlasDimension();
+		size_t bitmap_count = atlas.GetBitmapCount();
+
+		ImGui::Text("width  = %d", dimension.x);
+		ImGui::Text("height = %d", dimension.y);
+		ImGui::Text("Layer count = %d", (int)bitmap_count);
+
+		ImGui::Dummy({ 1.0f, 20.0f });
+
+		ImVec2 avail = ImGui::GetContentRegionAvail();
+
+		ImVec2 image_dimension = { 0.0f, 0.0f };
+		float spacing = ImGui::GetStyle().ItemSpacing.x;
+		image_dimension.x = (avail.x - 2.0f * spacing) / 3.0f;
+		image_dimension.y = image_dimension.x * (float(dimension.y) / float(dimension.x));
+
+		int index = 0;
+		for (chaos::shared_ptr<chaos::GPUTexture> const & texture : atlas_textures)
+		{
+			ImGui::Image(
+				(ImTextureID)(intptr_t)texture->GetResourceID(),
+				image_dimension,
+				ImVec2(0, 1),		// axis Y for texture may be inverted
+				ImVec2(1, 0),
+				ImVec4(1, 1, 1, 1), // tint
+				ImVec4(1, 1, 1, 1)  // border
+			);
+
+			if (ImGui::IsItemHovered())
+			{
+				ImVec2 mouse_pos = ImGui::GetMousePos();
+
+				// get current image size and position
+				ImVec2 rect_min = ImGui::GetItemRectMin();
+				ImVec2 rect_max = ImGui::GetItemRectMax();
+				ImVec2 rect_size = { rect_max.x - rect_min.x, rect_max.y - rect_min.y };
+
+				// get mouse position relative to the image
+				ImVec2 relative_pos;
+				relative_pos.x = (mouse_pos.x - rect_min.x) / rect_size.x;
+				relative_pos.y = (mouse_pos.y - rect_min.y) / rect_size.y;
+
+
+
+
+
+				
+			}
+
+
+			if ((index % 3) != 2)
+				ImGui::SameLine();
+			++index;
+		}
+
 	}
 
 	void ImGuiDrawImageGenerationPanel()
 	{
-		ImGui::SeparatorText("Generate images");
-
+		Title("Generate images");
+		
 		bool count_valid      = image_generation_params.IsCountValid();
 		bool min_size_x_valid = image_generation_params.IsMinSizeXValid();
 		bool min_size_y_valid = image_generation_params.IsMinSizeYValid();
@@ -466,10 +628,12 @@ protected:
 		chaos::ImGuiTools::ConditionalDisable(!valid, [&]()
 		{
 			if (ImGui::Button("Generate"))
-			{
 				GenerateImages();
-			}
 		});	
+
+		ImGui::SameLine();
+		if (ImGui::Button("Clear"))
+			ClearImages();
 	}
 
 	bool GenerateImages() const
@@ -477,6 +641,15 @@ protected:
 		if (AtlasBuilderApplication* application = chaos::Application::GetInstance())
 		{
 			return application->GenerateImages(image_generation_params);
+		}
+		return false;
+	}
+
+	bool ClearImages()
+	{
+		if (AtlasBuilderApplication* application = chaos::Application::GetInstance())
+		{
+			return application->ClearImages();
 		}
 		return false;
 	}
@@ -491,9 +664,24 @@ protected:
 		ImGui::PopStyleColor(1);
 	}
 
+	void ClearAtlas()
+	{
+		atlas.Clear();
+		image_files.clear();
+		atlas_textures.clear();
+	}
+
 protected:
 
 	ImageGenerationParams image_generation_params;
+
+	chaos::AtlasGeneratorParams atlas_generation_params;
+
+	std::vector<ImageFileInfo> image_files;
+
+	chaos::Atlas atlas;
+
+	std::vector<chaos::shared_ptr<chaos::GPUTexture>> atlas_textures;
 };
 
 // ---------------------------------------------------------------------------------

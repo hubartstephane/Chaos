@@ -9,14 +9,14 @@ namespace chaos
 
 	bool DoLoadFromJSON(JSONReadConfiguration config, AtlasGeneratorParams& dst)
 	{
-		JSONTools::GetAttribute(config, "force_power_of_2", dst.force_power_of_2);
-		JSONTools::GetAttribute(config, "force_square", dst.force_square);
-		JSONTools::GetAttribute(config, "duplicate_image_border", dst.duplicate_image_border);
 		JSONTools::GetAttribute(config, "atlas_width", dst.atlas_width);
 		JSONTools::GetAttribute(config, "atlas_height", dst.atlas_height);
 		JSONTools::GetAttribute(config, "atlas_max_width", dst.atlas_max_width);
 		JSONTools::GetAttribute(config, "atlas_max_height", dst.atlas_max_height);
 		JSONTools::GetAttribute(config, "atlas_padding", dst.atlas_padding);
+		JSONTools::GetAttribute(config, "force_power_of_2", dst.force_power_of_2);
+		JSONTools::GetAttribute(config, "force_square", dst.force_square);
+		JSONTools::GetAttribute(config, "duplicate_image_border", dst.duplicate_image_border);
 		JSONTools::GetAttribute(config, "background_color", dst.background_color);
 		JSONTools::GetAttribute(config, "merge_params", dst.merge_params);
 		return true;
@@ -26,14 +26,15 @@ namespace chaos
 	{
 		if (!PrepareSaveObjectIntoJSON(json))
 			return false;
-		JSONTools::SetAttribute(json, "force_power_of_2", src.force_power_of_2);
-		JSONTools::SetAttribute(json, "force_square", src.force_square);
-		JSONTools::SetAttribute(json, "duplicate_image_border", src.duplicate_image_border);
+
 		JSONTools::SetAttribute(json, "atlas_width", src.atlas_width);
 		JSONTools::SetAttribute(json, "atlas_height", src.atlas_height);
 		JSONTools::SetAttribute(json, "atlas_max_width", src.atlas_max_width);
 		JSONTools::SetAttribute(json, "atlas_max_height", src.atlas_max_height);
 		JSONTools::SetAttribute(json, "atlas_padding", src.atlas_padding);
+		JSONTools::SetAttribute(json, "force_power_of_2", src.force_power_of_2);
+		JSONTools::SetAttribute(json, "force_square", src.force_square);
+		JSONTools::SetAttribute(json, "duplicate_image_border", src.duplicate_image_border);
 		JSONTools::SetAttribute(json, "background_color", src.background_color);
 		JSONTools::SetAttribute(json, "merge_params", src.merge_params);
 		return true;

@@ -64,8 +64,8 @@ namespace chaos
 		{
 			token_lines.clear();
 
-			bounding_box.bottomleft = glm::vec2(0.0f, 0.0f);
-			bounding_box.topright = glm::vec2(0.0f, 0.0f);
+			bounding_box.bottomleft = { 0.0f, 0.0f };
+			bounding_box.topright = { 0.0f, 0.0f };
 		}
 
 		size_t GeneratorResult::GetTokenCount() const

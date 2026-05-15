@@ -102,12 +102,12 @@ chaos::box2 Game::GetWorldBox(bool use_padding) const
 
 void Game::ResetPlayerCachedInputs()
 {
-	stick_position = glm::vec2(0.0f, 0.0f);
+	stick_position = { 0.0f, 0.0f };
 }
 
 void Game::UpdatePlayerDisplacement(float delta_time)
 {
-	glm::vec2 stick_to_apply = glm::vec2(0.0f, 0.0f);
+	glm::vec2 stick_to_apply = { 0.0f, 0.0f };
 
 	if (stick_position.x != 0.0f || stick_position.y != 0.0f)
 	{
@@ -115,7 +115,7 @@ void Game::UpdatePlayerDisplacement(float delta_time)
 	}
 	else
 	{
-		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
+		glm::vec2 simulated_stick = { 0.0f, 0.0f };
 
 		GLFWwindow * glfw_window = window->GetGLFWHandler();
 
@@ -145,7 +145,7 @@ void Game::UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & dire
 
 	// take camera box, recenter to SCREEN SPACE and SCALE DOWN
 	chaos::box2 world_box = GetWorldBox(false);
-	world_box.position = glm::vec2(0.0f, 0.0f);
+	world_box.position = { 0.0f, 0.0f };
 	world_box.half_size *= screen_safe_aera;
 
 	// apply joystick displacement
@@ -177,7 +177,7 @@ void Game::UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & dire
 
 	// FIX !!! we only use screen space coordinate, the having a world that is still at 0 position is not a bad idea
 	//         to avoid float issues
-	world_position = glm::vec2(0.0f, 0.0f);
+	world_position = { 0.0f, 0.0f };
 }
 
 bool Game::FindPlayerCollision()
@@ -609,7 +609,7 @@ void Game::DisplayFullscreen(chaos::GPURenderContext * render_context, glm::ivec
   // get a box that fit the texture size and wanted aspect
   chaos::box2 shrinked_texture_box = chaos::SetBoxAspect(texture_box, world_aspect, chaos::SetBoxAspectMethod::Shrink);
 
-  glm::vec2 min_texture_coord = glm::vec2(0.0f, 0.0f);
+  glm::vec2 min_texture_coord = { 0.0f, 0.0f };
   glm::vec2 max_texture_coord = glm::vec2(1.0f, 1.0f);
 
   auto texture_corners = GetBoxCorners(shrinked_texture_box);
@@ -772,7 +772,7 @@ void Game::ResetWorld()
 	player_absolute_speed = initial_player_absolute_speed;
 	life  = initial_life;
 	level = initial_level;
-	player_speed = glm::vec2(0.0f, 0.0f);
+	player_speed = { 0.0f, 0.0f };
 
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)

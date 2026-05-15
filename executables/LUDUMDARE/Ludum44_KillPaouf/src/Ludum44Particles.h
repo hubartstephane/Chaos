@@ -15,7 +15,7 @@ class ParticleBase : public chaos::TMParticle
 {
 public:
 
-	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
+	glm::vec2 velocity = { 0.0f, 0.0f };
 };
 
 // =====================================

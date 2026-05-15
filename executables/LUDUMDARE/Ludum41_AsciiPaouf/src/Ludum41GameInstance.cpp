@@ -440,7 +440,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 	for (size_t i = 0 ; i < count ; ++i)
 	{
 		particles[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		particles[i].bounding_box.position  = glm::vec2(0.0f, 0.0f);
+		particles[i].bounding_box.position  = { 0.0f, 0.0f };
 		particles[i].bounding_box.half_size = 0.5f * glm::vec2(ludum_game->ball_size, ludum_game->ball_size);
 
 		if (full_init)

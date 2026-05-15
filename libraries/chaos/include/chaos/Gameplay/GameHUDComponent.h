@@ -414,9 +414,9 @@ namespace chaos
 		/** the hotpoint of the first particle */
 		Hotpoint hotpoint = Hotpoint::BottomLeft;
 		/** the position of the very first particle */
-		glm::vec2 position = glm::vec2(0.0f, 0.0f);
+		glm::vec2 position = { 0.0f, 0.0f };
 		/** the particle size of the particle (special meaning, see .cpp) */
-		glm::vec2 particle_size = glm::vec2(0.0f, 0.0f);
+		glm::vec2 particle_size = { 0.0f, 0.0f };
 		/** the offset to apply between each particles */
 		glm::vec2 particle_offset = glm::vec2(20.0f, 0.0f);
 

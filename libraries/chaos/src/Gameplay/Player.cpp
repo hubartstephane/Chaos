@@ -151,7 +151,7 @@ namespace chaos
 	void Player::CacheKeyboardPlayerDisplacementInputs()
 	{
 		// test whether the stick position can be overriden
-		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
+		glm::vec2 simulated_stick = { 0.0f, 0.0f };
 
 		if (CheckKeyDown(Key::Left))
 			simulated_stick.x -= 1.0f;
@@ -219,8 +219,8 @@ namespace chaos
 		previous_left_trigger = left_trigger;
 		previous_right_trigger = right_trigger;
 
-		left_stick_position  = glm::vec2(0.0f, 0.0f);
-		right_stick_position = glm::vec2(0.0f, 0.0f);
+		left_stick_position  = { 0.0f, 0.0f };
+		right_stick_position = { 0.0f, 0.0f };
 		left_trigger  = 0.0f;
 		right_trigger = 0.0f;
 	}

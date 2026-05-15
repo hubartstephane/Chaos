@@ -1163,7 +1163,7 @@ namespace chaos
 		canvas_size.y = canvas_size.x / viewport_wanted_aspect;
 
 		box2 result;
-		result.position = glm::vec2(0.0f, 0.0f);
+		result.position = { 0.0f, 0.0f };
 		result.half_size = canvas_size * 0.5f;
 		return result;
 	}

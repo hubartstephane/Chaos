@@ -204,7 +204,7 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 	Particle p;
 	p.id = def.id;
 	p.life_time = 0.0f;
-	p.velocity = glm::vec2(0.0f, 0.0f);
+	p.velocity = { 0.0f, 0.0f };
 	p.half_size = 0.5f * glm::vec2(def.size, def.size * ratio);
 
 	float world_distance_2 = glm::length2(2.0f * game_info.world_box.half_size);
@@ -213,7 +213,7 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 	{
 		while (count > 0)
 		{
-			p.position = glm::vec2(0.0f, 0.0f); // screen space particle at center
+			p.position = { 0.0f, 0.0f }; // screen space particle at center
 			particles.push_back(p);
 			--count;
 		}

@@ -30,7 +30,7 @@ namespace chaos
 		{
 			if ((target_bottomleft.x + target_size.x < scissor_bottomleft.x) || (target_bottomleft.x > scissor_bottomleft.x + scissor_size.x))
 			{
-				start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
+				start_instance = last_instance = { 0, 0 }; // nothing to render at all
 				return;
 			}
 		}
@@ -39,7 +39,7 @@ namespace chaos
 		{
 			if ((target_bottomleft.y + target_size.y < scissor_bottomleft.y) || (target_bottomleft.y > scissor_bottomleft.y + scissor_size.y))
 			{
-				start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
+				start_instance = last_instance = { 0, 0 }; // nothing to render at all
 				return;
 			}
 		}

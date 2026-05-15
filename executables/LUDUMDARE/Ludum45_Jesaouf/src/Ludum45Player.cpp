@@ -133,7 +133,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 
 		float input_factor = 1.0f;
 
-		glm::vec2 direction = glm::vec2(0.0f, 0.0f);
+		glm::vec2 direction = { 0.0f, 0.0f };
 		// compute the normalized direction
 		if (left_length_2 > 0.0f || right_length_2 > 0.0f)
 		{
@@ -147,14 +147,14 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 			if (l)
 				direction = glm::normalize(player_velocity);
 			else
-				direction = glm::vec2(0.0f, 0.0f);
+				direction = { 0.0f, 0.0f };
 
 			input_factor = 0.0f;
 		}
 
 		// split current velocity into normal and its tangeantial
-		glm::vec2 normal_velocity      = glm::vec2(0.0f, 0.0f);
-		glm::vec2 tangeantial_velocity = glm::vec2(0.0f, 0.0f);
+		glm::vec2 normal_velocity      = { 0.0f, 0.0f };
+		glm::vec2 tangeantial_velocity = { 0.0f, 0.0f };
 		if (glm::length2(player_velocity) > 0.0f)
 		{
 			normal_velocity      = player_velocity * glm::dot(glm::normalize(player_velocity), direction);

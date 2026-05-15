@@ -165,7 +165,7 @@ namespace chaos
 			/** object information */
 			boost::filesystem::path image_path;
 			/** object information */
-			glm::vec2 image_size = glm::vec2(0.0f, 0.0f);
+			glm::vec2 image_size = { 0.0f, 0.0f };
 
 			/** deduced reduced image/path (can be used as a key in atlas) */
 			std::string atlas_key;
@@ -234,7 +234,7 @@ namespace chaos
 			/** object information */
 			glm::ivec2  size = glm::ivec2(32, 32);
 			/** object information */
-			glm::ivec2  tile_size = glm::ivec2(0, 0);
+			glm::ivec2  tile_size = { 0, 0 };
 			/** object information */
 			int         columns = 0;
 			/** object information */

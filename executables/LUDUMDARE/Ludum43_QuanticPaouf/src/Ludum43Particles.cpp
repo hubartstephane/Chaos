@@ -22,7 +22,7 @@ void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl:
 template<typename T>
 static bool ApplyAffectorToParticles(float delta_time, T& particle, ParticleAffector const & affector, bool & in_inner_radius, float inner_radius_factor, glm::vec2 & result_velocity, float particle_radius_factor)
 {
-	result_velocity = glm::vec2(0.0f, 0.0f);
+	result_velocity = { 0.0f, 0.0f };
 
 	glm::vec2 & particle_position = particle.bounding_box.position;
 	glm::vec2 & particle_velocity = particle.velocity;
@@ -155,7 +155,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 
 	bool in_danger_zone = false;
 
-	glm::vec2 sum_velocity = glm::vec2(0.0f, 0.0f);
+	glm::vec2 sum_velocity = { 0.0f, 0.0f };
 
 	// enemies
 	size_t enemy_count = enemy_particles.size();
@@ -218,7 +218,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 	// update and clamp the velocity
 	bool apply_slowdown = (particle.acceleration == glm::vec2(0.0f, 0.0f));
 	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, game->player_slowing_factor, max_velocity_factor * game->player_max_velocity);
-	particle.acceleration = glm::vec2(0.0f, 0.0f);
+	particle.acceleration = { 0.0f, 0.0f };
 	return false;
 }
 
@@ -293,7 +293,7 @@ bool ParticleAtomLayerTrait::UpdateParticle(float delta_time, ParticleAtom& part
 	bool in_waken_up_zone = false;
 	bool affected = false;
 
-	glm::vec2 player_sum_velocity = glm::vec2(0.0f, 0.0f);
+	glm::vec2 player_sum_velocity = { 0.0f, 0.0f };
 
 	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle, in_waken_up_zone, WAKEN_RADIUS_RATIO, player_sum_velocity, particle.particle_radius_factor);
 
@@ -311,7 +311,7 @@ bool ParticleAtomLayerTrait::UpdateParticle(float delta_time, ParticleAtom& part
 	}
 
 	// danger affectors
-	glm::vec2 enemy_sum_velocity = glm::vec2(0.0f, 0.0f);
+	glm::vec2 enemy_sum_velocity = { 0.0f, 0.0f };
 
 	size_t enemy_count = update_data.enemy_particles.size();
 	for (size_t i = 0; i < enemy_count; ++i)

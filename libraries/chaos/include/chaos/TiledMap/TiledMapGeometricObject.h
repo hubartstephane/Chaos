@@ -45,7 +45,7 @@ namespace chaos
 			/** object information */
 			bool visible = true;
 			/** object information */
-			glm::vec2 position = glm::vec2(0.0f, 0.0f); // XXX : bottomleft, but due to inverted axis Y, this is the point the greatest Y
+			glm::vec2 position = { 0.0f, 0.0f }; // XXX : bottomleft, but due to inverted axis Y, this is the point the greatest Y
 
 			// XXX : the position is :
 			//         - Ellipse, Rectangle, Text : TOP-LEFT corner (this is the rotation pivot)
@@ -94,7 +94,7 @@ namespace chaos
 		public:
 
 			/** object information */
-			glm::vec2 size = glm::vec2(0.0f, 0.0f);
+			glm::vec2 size = { 0.0f, 0.0f };
 		};
 
 		// ==========================================
@@ -154,7 +154,7 @@ namespace chaos
 			/** object information */
 			std::vector<glm::vec2> points;
 			/** object information */
-			glm::vec2 size = glm::vec2(0.0f, 0.0f);
+			glm::vec2 size = { 0.0f, 0.0f };
 		};
 
 		// ==========================================
@@ -180,7 +180,7 @@ namespace chaos
 			/** object information */
 			std::vector<glm::vec2> points;
 			/** object information */
-			glm::vec2 size = glm::vec2(0.0f, 0.0f);
+			glm::vec2 size = { 0.0f, 0.0f };
 		};
 
 		// ==========================================

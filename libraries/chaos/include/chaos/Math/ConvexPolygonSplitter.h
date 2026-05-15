@@ -6,7 +6,7 @@ namespace chaos
 	{
 	public:
 
-		glm::vec2 intersection = glm::vec2(0.0f, 0.0f);
+		glm::vec2 intersection = { 0.0f, 0.0f };
 
 		float t1 = 0.0f;
 		float t2 = 0.0f;

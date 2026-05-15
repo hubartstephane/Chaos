@@ -70,7 +70,7 @@ protected:
 
 	float spawn_per_second = 10.0f;
 
-	glm::vec2 particle_start_velocity = glm::vec2(0.0f, 0.0f);
+	glm::vec2 particle_start_velocity = { 0.0f, 0.0f };
 
 	std::string target_layer;
 

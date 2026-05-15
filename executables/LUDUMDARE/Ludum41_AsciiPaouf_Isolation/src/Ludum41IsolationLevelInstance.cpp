@@ -273,8 +273,8 @@ chaos::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(chaos::Player* player)
 	for (ParticleObject& particle : particles)
 	{
 		particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		particle.bounding_box.position = glm::vec2(0.0f, 0.0f);
-		particle.bounding_box.half_size = glm::vec2(0.0f, 0.0f);
+		particle.bounding_box.position = { 0.0f, 0.0f };
+		particle.bounding_box.half_size = { 0.0f, 0.0f };
 	}
 
 

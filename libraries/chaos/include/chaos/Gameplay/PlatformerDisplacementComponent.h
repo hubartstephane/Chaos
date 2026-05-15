@@ -157,7 +157,7 @@ namespace chaos
 		PlatformerDisplacementState displacement_state = PlatformerDisplacementState::Grounded;
 
 		/** the current velocity of the pawn */
-		glm::vec2 pawn_velocity = glm::vec2(0.0f, 0.0f);
+		glm::vec2 pawn_velocity = { 0.0f, 0.0f };
 
 		/** the current Y position where the jump started */
 		float current_jump_start_y = 0.0f;

@@ -27,7 +27,7 @@ namespace chaos
 		/** the characters to generate / the characters in the font bitmap */
 		std::string characters;
 		/** number of uniform grid cells for the bitmaps */
-		glm::ivec2 grid_size = glm::ivec2(0, 0);
+		glm::ivec2 grid_size = { 0, 0 };
 
 		/** width of the glyph */
 		int glyph_width = 64;

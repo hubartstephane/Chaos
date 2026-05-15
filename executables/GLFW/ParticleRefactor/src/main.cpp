@@ -112,7 +112,7 @@ protected:
 		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
 
 		glm::vec2 world_size     = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
-		glm::vec2 world_position = glm::vec2(0.0f, 0.0f);
+		glm::vec2 world_position = { 0.0f, 0.0f };
 
 		glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
 		glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f);

@@ -575,11 +575,11 @@ namespace chaos
 			int   best_atlas_index = -1;
 			float best_score = -1.0f;
 
-			glm::ivec2 best_position = glm::ivec2(0, 0);
+			glm::ivec2 best_position = { 0, 0 };
 
 			for (size_t j = 0; j < atlas_definitions.size(); ++j)
 			{
-				glm::ivec2 position = glm::ivec2(0, 0);
+				glm::ivec2 position = { 0, 0 };
 
 				// score < 0	=> failure
 				// score == 0	=> perfect match, no need to search in other page
@@ -607,7 +607,7 @@ namespace chaos
 				def.potential_bottomleft_corners.push_back(glm::ivec2(0, 0));
 
 				best_atlas_index = int(atlas_definitions.size());
-				best_position = glm::ivec2(0, 0);
+				best_position = { 0, 0 };
 
 				atlas_definitions.push_back(std::move(def));
 			}

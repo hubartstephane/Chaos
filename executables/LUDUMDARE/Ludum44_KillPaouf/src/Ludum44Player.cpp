@@ -35,7 +35,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 
 	ParticlePlayer * player_particle = &particles[0];
 
-	player_particle->velocity = glm::vec2(0.0f, 0.0f);
+	player_particle->velocity = { 0.0f, 0.0f };
 
 	float left_length_2 = glm::length2(left_stick_position);
 	float right_length_2 = glm::length2(right_stick_position);

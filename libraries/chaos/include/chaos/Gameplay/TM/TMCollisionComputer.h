@@ -49,7 +49,7 @@ namespace chaos
 		char const* wangset_name = nullptr;
 
 		/** the difference of position between src_box and dst_box before any reaction is computed */
-		glm::vec2 delta_position = glm::vec2(0.0f, 0.0f);
+		glm::vec2 delta_position = { 0.0f, 0.0f };
 
 	protected:
 

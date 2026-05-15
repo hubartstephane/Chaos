@@ -120,7 +120,7 @@ protected:
 		chaos::ParticleTextGenerator::GeneratorParams generator_params;
 		generator_params.line_height = 50;
 		generator_params.font_info_name = "font_info1"; // the default character set
-		generator_params.position = glm::vec2(0.0f, 0.0f);
+		generator_params.position = { 0.0f, 0.0f };
 		generator_params.hotpoint = chaos::Hotpoint::BottomLeft;
 		generator_params.character_spacing = 0.0f;
 		generator_params.line_spacing = 0.0f;

@@ -252,7 +252,7 @@ namespace chaos
 		uint64_t collision_mask = 0;
 
 		/** the current offset */
-		glm::vec2 offset = glm::vec2(0.0f, 0.0f);
+		glm::vec2 offset = { 0.0f, 0.0f };
 
 		/** the parent layer */
 		weak_ptr<TMLayerInstance> parent_layer;

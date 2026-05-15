@@ -74,7 +74,7 @@ namespace chaos
 			/** object information */
 			boost::filesystem::path image_path;
 			/** object information */
-			glm::ivec2 size = glm::ivec2(0, 0);
+			glm::ivec2 size = { 0, 0 };
 			/** object information */
 			glm::vec4 transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		};
@@ -148,9 +148,9 @@ namespace chaos
 		public:
 
 			/** the dimension of the chunk */
-			glm::ivec2 size = glm::ivec2(0, 0);
+			glm::ivec2 size = { 0, 0 };
 			/** the offset of the chunk */
-			glm::ivec2 offset = glm::ivec2(0, 0);
+			glm::ivec2 offset = { 0, 0 };
 			/** the indices for this chunk */
 			std::vector<Tile> tile_indices;
 		};
@@ -199,11 +199,11 @@ namespace chaos
 		public:
 
 			/** object information */
-			glm::ivec2 size = glm::ivec2(0, 0);
+			glm::ivec2 size = { 0, 0 };
 			/** the chunk of tiles */
 			std::vector<TileLayerChunk> tile_chunks;
 			/** cache the tile size for better performance (see TileMap) */
-			glm::ivec2 tile_size = glm::ivec2(0, 0);
+			glm::ivec2 tile_size = { 0, 0 };
 		};
 
 		// ==========================================

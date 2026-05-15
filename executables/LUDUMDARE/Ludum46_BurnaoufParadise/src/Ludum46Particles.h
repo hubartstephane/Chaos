@@ -12,7 +12,7 @@ class ParticleBase : public  chaos::TMParticle
 {
 public:
 
-	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
+	glm::vec2 velocity = { 0.0f, 0.0f };
 	float life = 0.0f;
 	float duration = 0.0f;
 
@@ -177,7 +177,7 @@ class ParticleBlood : public ParticleAnimated
 {
 public:
 
-	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
+	glm::vec2 acceleration = { 0.0f, 0.0f };
 
 };
 

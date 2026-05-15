@@ -214,7 +214,7 @@ namespace chaos
 		glm::vec2& pawn_position = pawn_box.position;
 
 		// sum the forces
-		glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
+		glm::vec2 sum_forces = { 0.0f, 0.0f };
 
 		if (displacement_state == PlatformerDisplacementState::Falling || displacement_state == PlatformerDisplacementState::JumpingDown) // do not fall otherway
 			sum_forces += glm::vec2(0.0f, -displacement_info.gravity);

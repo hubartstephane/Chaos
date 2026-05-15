@@ -586,7 +586,7 @@ protected:
 
 		// create the very single sphere
 		chaos::box3 creation_box;
-		creation_box.position  = glm::vec3(0.0f, 0.0f, 0.0f);
+		creation_box.position  = { 0.0f, 0.0f, 0.0f };
 		creation_box.half_size = glm::vec3(5.0f, 7.0f, 9.0f);
 
 		CreateNewBox(creation_box);

@@ -275,7 +275,7 @@ protected:
 		t2.b = glm::vec2(0.0f, 5.0f);
 		t2 = chaos::PrepareTriangleForCollision(t2); // ensure the triangle order is good for collision function
 
-		glm::vec2 p = glm::vec2(0.0f, 0.0f);
+		glm::vec2 p = { 0.0f, 0.0f };
 		p.x = 5.0f * (float)std::cos(realtime * M_2_PI);
 		p.y = 5.0f * (float)std::sin(10.0f * realtime * M_2_PI);
 
@@ -1152,8 +1152,8 @@ protected:
 	chaos::ImGuiUserMessageObject imgui_user_message;
 
 	// some objects for collisions tests
-	glm::vec3 position_object1 = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 position_object2 = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 position_object1 = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 position_object2 = { 0.0f, 0.0f, 0.0f };
 	float     rotation_object1 = 0.0f;
 	float     rotation_object2 = 0.0f;
 

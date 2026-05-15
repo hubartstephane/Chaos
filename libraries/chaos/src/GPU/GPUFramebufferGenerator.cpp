@@ -96,7 +96,7 @@ namespace chaos
 	void GPUFramebufferGenerator::Clear()
 	{
 		attachment_info.clear();
-		size = glm::ivec2(0, 0);
+		size = { 0, 0 };
 	}
 
 	bool GPUFramebufferGenerator::IsSurfaceSizeCompatible(GPUSurface * surface, int mipmap) const
@@ -145,7 +145,7 @@ namespace chaos
 		// compute size if required
 		if (size == glm::ivec2(0, 0))
 		{
-			glm::ivec2 new_size = glm::ivec2(0, 0);
+			glm::ivec2 new_size = { 0, 0 };
 			if (info.texture != nullptr)
 				new_size = info.texture->GetSurfaceDescription().GetSize(info.texture_mipmap);
 			else if (info.renderbuffer != nullptr)

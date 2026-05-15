@@ -299,7 +299,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
         // move type
         if (spawn_move_type == SPAWN_MOVE_STATIC)
         {
-            particle.velocity = glm::vec2(0.0f, 0.0f);
+            particle.velocity = { 0.0f, 0.0f };
         }
         else if (spawn_move_type == SPAWN_MOVE_FORWARD)
         {

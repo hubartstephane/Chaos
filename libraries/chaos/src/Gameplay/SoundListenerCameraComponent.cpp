@@ -20,7 +20,7 @@ namespace chaos
 				if (sound_manager != nullptr)
 				{
 					glm::vec3 position = glm::vec3(camera->GetCameraBox(false).position, 0.0f);
-					glm::vec3 speed    = glm::vec3(0.0f, 0.0f, 0.0f);
+					glm::vec3 speed    = { 0.0f, 0.0f, 0.0f };
 					sound_manager->SetListenerPosition(position, speed);
 				}
 			}

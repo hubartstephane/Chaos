@@ -23,7 +23,7 @@ class ParticleBase : public chaos::TMParticle
 {
 public:
 
-	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
+	glm::vec2 velocity = { 0.0f, 0.0f };
 };
 
 // ===========================================================================
@@ -88,7 +88,7 @@ class ParticlePlayer : public ParticleAffector
 {
 public:
 
-	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
+	glm::vec2 acceleration = { 0.0f, 0.0f };
 	float particle_radius_factor = 2.0f; // 2.0f         // very usefull to prevent floating atoms between player and a field
 	float life = 0.0f;
 

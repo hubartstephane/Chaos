@@ -134,8 +134,8 @@ protected:
   float max_speed = 500.0f;
   float acceleration_factor = 500.0f;
   float slowdown_factor = 500.0f;
-	glm::vec2 world_position = glm::vec2(0.0f, 0.0f);
-  glm::vec2 player_speed = glm::vec2(0.0f, 0.0f);
+	glm::vec2 world_position = { 0.0f, 0.0f };
+  glm::vec2 player_speed = { 0.0f, 0.0f };
 
 	// initial values
 	int   level_particle_increment = 10;
@@ -158,7 +158,7 @@ protected:
 	chaos::Window * window = nullptr;
 
 	// stick position
-	glm::vec2 stick_position = glm::vec2(0.0f, 0.0f);
+	glm::vec2 stick_position = { 0.0f, 0.0f };
 
 	// background data
 	chaos::shared_ptr<chaos::GPUMesh> fullscreen_mesh;

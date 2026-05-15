@@ -55,9 +55,9 @@ namespace chaos
 		int height = 0;
 
 		/** the bottom-left texture coordinate */
-		glm::vec2 bottomleft_texcoord = glm::vec2(0.0f, 0.0f);
+		glm::vec2 bottomleft_texcoord = { 0.0f, 0.0f };
 		/** the top-right texture coordinate */
-		glm::vec2 topright_texcoord = glm::vec2(0.0f, 0.0f);
+		glm::vec2 topright_texcoord = { 0.0f, 0.0f };
 	};
 
 	/**
@@ -371,7 +371,7 @@ namespace chaos
 		/** atlas count */
 		int atlas_count = 0;
 		/** atlas dimension */
-		glm::ivec2 dimension = glm::ivec2(0, 0);
+		glm::ivec2 dimension = { 0, 0 };
 	};
 
 	/**

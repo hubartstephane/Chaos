@@ -69,7 +69,7 @@ namespace chaos
 		{
 			box2 result;
 			result.position = position;
-			result.half_size = glm::vec2(0.0f, 0.0f);
+			result.half_size = { 0.0f, 0.0f };
 			return result;
 		}
 
@@ -142,7 +142,7 @@ namespace chaos
 				char const * values = attribute->Value();
 				if (values != nullptr)
 				{
-					glm::vec2 p = glm::vec2(0.0f, 0.0f);
+					glm::vec2 p = { 0.0f, 0.0f };
 
 					int coord = 0;
 					int i = 0;
@@ -152,7 +152,7 @@ namespace chaos
 						if (coord == 2)
 						{
 							result.push_back(p * REVERSE_Y_AXIS);
-							p = glm::vec2(0.0f, 0.0f); // flush the point if both axis are found
+							p = { 0.0f, 0.0f }; // flush the point if both axis are found
 							coord = 0;
 						}
 

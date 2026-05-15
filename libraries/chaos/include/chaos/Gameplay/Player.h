@@ -197,15 +197,15 @@ namespace chaos
 
 #if 1
 		/** the current stick position */
-		glm::vec2 left_stick_position = glm::vec2(0.0f, 0.0f);
-		glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
+		glm::vec2 left_stick_position = { 0.0f, 0.0f };
+		glm::vec2 right_stick_position = { 0.0f, 0.0f };
 		float left_trigger = 0.0f;
 		float right_trigger = 0.0f;
 
 		// shu48
 		/** the previous stick position */
-		glm::vec2 previous_left_stick_position = glm::vec2(0.0f, 0.0f);
-		glm::vec2 previous_right_stick_position = glm::vec2(0.0f, 0.0f);
+		glm::vec2 previous_left_stick_position = { 0.0f, 0.0f };
+		glm::vec2 previous_right_stick_position = { 0.0f, 0.0f };
 		float previous_left_trigger = 0.0f;
 		float previous_right_trigger = 0.0f;
 #endif

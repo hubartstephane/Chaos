@@ -796,7 +796,7 @@ namespace chaos
 			// shu48
 
 			// default block to render
-			glm::ivec2 start_instance = glm::ivec2(0, 0);
+			glm::ivec2 start_instance = { 0, 0 };
 			glm::ivec2 last_instance  = glm::ivec2(1, 1);
 
 			RepeatedBoxScissor scissor;
@@ -812,7 +812,7 @@ namespace chaos
 				last_instance = scissor.last_instance;
 				if (this == reference_layer || IsGeometryEmpty(layer_box))
 				{
-					start_instance = glm::ivec2(0, 0);
+					start_instance = { 0, 0 };
 					last_instance = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
 				}
 			}

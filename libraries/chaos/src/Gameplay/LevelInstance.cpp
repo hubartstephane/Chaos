@@ -370,7 +370,7 @@ namespace chaos
 	{
 		// by default, the camera box has same size than the canvas
 		obox2 result;
-		result.position = glm::vec3(0.0f, 0.0f, 0.0f);
+		result.position = { 0.0f, 0.0f };
 		result.half_size = GetGame()->GetCanvasBox().half_size;
 		result.rotation = 0.0f;
 

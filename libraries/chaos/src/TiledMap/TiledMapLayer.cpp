@@ -275,7 +275,7 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "width", chunk_size.x); // for non infinite layer, the size of the chunk is the size of the map
 			XMLTools::ReadAttribute(element, "height", chunk_size.y);
 
-			glm::ivec2 chunk_offset = glm::ivec2(0, 0);
+			glm::ivec2 chunk_offset = { 0, 0 };
 			XMLTools::ReadAttribute(element, "x", chunk_offset.x);
 			XMLTools::ReadAttribute(element, "y", chunk_offset.y);
 

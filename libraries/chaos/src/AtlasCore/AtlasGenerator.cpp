@@ -464,6 +464,8 @@ namespace chaos
 		input = &in_input;
 		output = &in_output;
 
+		params.atlas_padding = std::max(params.atlas_padding, 0); // fix negative padding
+
 		// due to special image treatment we may want to have an extra padding (see texel interpolation and  AtlasGenerator::GenerateBitmaps(...)
 		if (params.duplicate_image_border) // shu47
 			++params.atlas_padding;
@@ -655,6 +657,8 @@ namespace chaos
 
 	void AtlasGenerator::InsertAtlasBitmapLayoutInAtlas(AtlasBitmapLayout& layout, AtlasDefinition& atlas_def, glm::ivec2 const& position)
 	{
+
+
 		layout.bitmap_index = int(&atlas_def - &atlas_definitions[0]);
 		layout.x = position.x + params.atlas_padding;
 		layout.y = position.y + params.atlas_padding;

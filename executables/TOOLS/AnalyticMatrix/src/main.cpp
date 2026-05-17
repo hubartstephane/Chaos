@@ -1011,7 +1011,13 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	chaos::ImGuiApplicationData imgui_application_data;
-	imgui_application_data.imgui_object_class = MyImGuiObject::GetStaticClass();
-	return chaos::RunApplication<chaos::ImGuiApplication>(argc, argv, env, &imgui_application_data);
+	chaos::ImGuiWindowData imgui_window_data;
+	imgui_window_data.imgui_object_class = MyImGuiObject::GetStaticClass();
+
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.startup_windows =
+	{
+		{ "main_window", chaos::ImGuiWindow::GetStaticClass(), {}, {}, &imgui_window_data}
+	};
+	return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }

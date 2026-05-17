@@ -22,4 +22,3 @@
 #include "chaos/Windowing/WindowApplication.h"
 #include "chaos/Windowing/MonitorTools.h"
 #include "chaos/Windowing/ImGuiWindow.h"
-#include "chaos/Windowing/ImGuiApplication.h"

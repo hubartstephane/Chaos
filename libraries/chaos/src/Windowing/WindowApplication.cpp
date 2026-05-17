@@ -272,62 +272,13 @@ namespace chaos
 					if (GetArguments().size() > 0)
 						create_params.title = PathTools::PathToName(GetArguments()[0]);
 				// create the window
-				Window* window = CreateTypedWindow(creation_info.window_name, creation_info.window_class, creation_info.window_placement_info, create_params, nullptr);
+				Window* window = CreateTypedWindow(creation_info.window_name, creation_info.window_class, creation_info.window_placement_info, create_params, creation_info.window_data);
 				if (window == nullptr)
 					return false;
 				window->SetWindowCategory(WindowCategory::MainWindow);
 			}
 		}
 		return true;
-	}
-
-
-
-
-
-
-	Window* WindowApplication::CreateMainWindow()
-	{
-#if 0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		WindowCreateParams create_params = simple_window_application->main_window_create_params;
-
-		// gives a title to the window (if necessary)
-		if (StringTools::IsEmpty(create_params.title))
-			if (GetArguments().size() > 0)
-				create_params.title = PathTools::PathToName(GetArguments()[0]);
-		// create the window
-		Window* result = CreateTypedWindow("main_window", simple_window_application->main_window_class, simple_window_application->main_window_placement_info, create_params);
-		if (result == nullptr)
-			return nullptr;
-
-
-
-
-
-		result->SetWindowCategory(WindowCategory::MainWindow);
-		return result;
-
-#endif
-
-		return nullptr;
 	}
 
 	int WindowApplication::MainBody()

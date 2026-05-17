@@ -278,10 +278,6 @@ namespace chaos
 		/** create the initial windows */
 		virtual bool CreateStartupWindows();
 
-
-		/** create the main window */
-		virtual Window* CreateMainWindow();
-
 		/** update the delta_time according to context */
 		float ComputeEffectiveDeltaTime(float real_delta_time) const;
 

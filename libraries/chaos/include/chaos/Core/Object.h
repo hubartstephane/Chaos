@@ -11,11 +11,12 @@
 // That's why the class member is not private (because users will have to redefines the privacy)
 //
 
-#define CHAOS_DECLARE_OBJECT_CLASS(CLASS, ...)\
+#define CHAOS_DECLARE_OBJECT_CLASS(CLASS, PARENT_CLASS)\
 public:\
+using Super = PARENT_CLASS;\
 static chaos::SubClassOf<CLASS> GetStaticClass(){ return CLASS##_class;}\
 virtual chaos::Class const * GetClass() const { return CLASS##_class; }\
-static inline chaos::Class const * CLASS##_class = DeclareObjectClass<CLASS __VA_OPT__(,) __VA_ARGS__>(#CLASS)
+static inline chaos::Class const * CLASS##_class = DeclareObjectClass<CLASS, PARENT_CLASS>(#CLASS)
 
 namespace chaos
 {
@@ -80,7 +81,11 @@ namespace chaos
 		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = EmptyClass>
 		static ClassRegistration DeclareObjectClass(std::string name);
 
-		CHAOS_DECLARE_OBJECT_CLASS(Object);
+	public:
+
+		static chaos::SubClassOf<Object> GetStaticClass() { return Object_class; }
+		virtual chaos::Class const* GetClass() const { return Object_class; }
+		static inline Class const* Object_class = DeclareObjectClass<Object>("Object");
 
 	public:
 

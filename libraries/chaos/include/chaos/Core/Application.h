@@ -89,7 +89,7 @@ namespace chaos
 		/** store the application parameters */
 		virtual void StoreParameters(int argc, char** argv, char** env);
 		/** store and check the application data */
-		virtual bool StoreApplicationData(ApplicationData const* in_application_data);
+		virtual bool SetApplicationData(ApplicationData const* in_application_data);
 		/** Initialize the application with the main data */
 		virtual bool Initialize(JSONReadConfiguration config);
 		/** Initialization custom point */

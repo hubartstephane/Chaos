@@ -20,11 +20,7 @@ namespace chaos
 		assert(glfwGetCurrentContext() == shared_context);
 
 		// create the game
-		GameApplicationData const * game_application_data = auto_cast(application_data);
-		if (game_application_data == nullptr)
-			return false;
-
-		game = game_application_data->game_class.CreateInstance();
+		game = GetGameApplicationData()->game_class.CreateInstance();
 		if (game == nullptr)
 			return false;
 		GiveChildConfiguration(game.get(), "game");
@@ -87,10 +83,15 @@ namespace chaos
 		GameApplicationData const * game_application_data = auto_cast(in_application_data);
 		if (game_application_data == nullptr)
 		{
-			ApplicationLog::Error("Application requires [GameApplicationData] class");
+			ApplicationLog::Error("GameApplication requires [GameApplicationData] class");
 			return false;
 		}
 		return true;
+	}
+
+	GameApplicationData const* GameApplication::GetGameApplicationData() const
+	{
+		return auto_cast(application_data);
 	}
 
 }; // namespace chaos

@@ -50,6 +50,9 @@ namespace chaos
 		/** override */
 		virtual bool IsApplicationDataValid(ApplicationData const * in_application_data) const override;
 
+		/** get the casted application data */
+		GameApplicationData const* GetGameApplicationData() const;
+
 	protected:
 
 		/** pointer on the game */

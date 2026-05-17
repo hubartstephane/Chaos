@@ -114,15 +114,15 @@ namespace chaos
 		return false;
 	}
 
-	Window* WindowApplication::CreateTypedWindow(CreateWindowFunc create_func, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, ObjectRequest request)
+	Window* WindowApplication::CreateTypedWindow(char const * name, CreateWindowFunc create_func, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, WindowData const * window_data)
 	{
-		if (FindWindow(request) != nullptr)
+		if (FindWindow(name) != nullptr)
 		{
 			ApplicationLog::Error("WindowApplication::CreateTypedWindow(...) name already used");
 			return nullptr;
 		}
 
-		return WithGLFWContext(nullptr, [this, create_func, &placement_info , &create_params, &request]() -> Window*
+		return WithGLFWContext(nullptr, [&]() -> Window*
 		{
 			// create the window class
 			shared_ptr<Window> result = create_func();
@@ -130,12 +130,12 @@ namespace chaos
 				return nullptr;
 			windows.push_back(result.get());
 			// set the name
-			result->SetObjectNaming(request);
+			result->SetName(name);
 			// set the configuration
 			GiveChildConfiguration(result.get(), StringTools::Join("/", "windows", result->GetName()));
 
 			// create the window
-			if (!result->CreateGLFWWindow(GetGPUDevice(), placement_info, create_params, shared_context, glfw_hints))
+			if (!result->CreateGLFWWindow(GetGPUDevice(), placement_info, create_params, window_data, shared_context, glfw_hints))
 			{
 				result->Destroy();
 				return nullptr; // the shared_ptr destruction will handle the object lifetime
@@ -259,11 +259,53 @@ namespace chaos
 		return result;
 	}
 
+	bool WindowApplication::CreateStartupWindows()
+	{
+		if (WindowApplicationData const * window_application_data = GetWindowApplicationData())
+		{
+			for (WindowCreationInfo const& creation_info : window_application_data->startup_windows)
+			{
+				WindowCreateParams create_params = creation_info.window_create_params;
+
+				// gives a title to the window (if necessary)
+				if (StringTools::IsEmpty(create_params.title))
+					if (GetArguments().size() > 0)
+						create_params.title = PathTools::PathToName(GetArguments()[0]);
+				// create the window
+				Window* window = CreateTypedWindow(creation_info.window_name, creation_info.window_class, creation_info.window_placement_info, create_params, nullptr);
+				if (window == nullptr)
+					return false;
+				window->SetWindowCategory(WindowCategory::MainWindow);
+			}
+		}
+		return true;
+	}
+
+
+
+
+
+
 	Window* WindowApplication::CreateMainWindow()
 	{
-		WindowApplicationData const* simple_window_application = auto_cast(application_data);
-		if (simple_window_application == nullptr)
-			return nullptr;
+#if 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		WindowCreateParams create_params = simple_window_application->main_window_create_params;
 
@@ -272,19 +314,26 @@ namespace chaos
 			if (GetArguments().size() > 0)
 				create_params.title = PathTools::PathToName(GetArguments()[0]);
 		// create the window
-		Window* result = CreateTypedWindow(simple_window_application->main_window_class, simple_window_application->main_window_placement_info, create_params, "main_window");
+		Window* result = CreateTypedWindow("main_window", simple_window_application->main_window_class, simple_window_application->main_window_placement_info, create_params);
 		if (result == nullptr)
 			return nullptr;
 
+
+
+
+
 		result->SetWindowCategory(WindowCategory::MainWindow);
 		return result;
+
+#endif
+
+		return nullptr;
 	}
 
 	int WindowApplication::MainBody()
 	{
-		// create the main window
-		Window* main_window = CreateMainWindow();
-		if (main_window == nullptr)
+		// create the startup windows
+		if (!CreateStartupWindows())
 			return -1;
 
 		// run the main loop as long as there are main windows
@@ -958,7 +1007,7 @@ namespace chaos
 
 		WindowPlacementInfo placement_info;
 		placement_info.size = { 800, 800 };
-		return CreateTypedWindow(create_func, placement_info, create_params, name);
+		return CreateTypedWindow(name, create_func, placement_info, create_params, nullptr);
 	}
 
 	void  WindowApplication::DestroyNamedWindow(char const* name)
@@ -1129,10 +1178,15 @@ namespace chaos
 		WindowApplicationData const* window_application_data = auto_cast(in_application_data);
 		if (window_application_data == nullptr)
 		{
-			ApplicationLog::Error("Application requires [WindowApplicationData] class");
+			ApplicationLog::Error("WindowApplication requires [WindowApplicationData] class");
 			return false;
 		}
 		return true;
+	}
+
+	WindowApplicationData const* WindowApplication::GetWindowApplicationData() const
+	{
+		return auto_cast(application_data);
 	}
 
 }; // namespace chaos

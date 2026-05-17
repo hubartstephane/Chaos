@@ -577,7 +577,7 @@ namespace chaos
 		if (window_application->GetArguments().size() > 0)
 			create_params.title = PathTools::PathToName(window_application->GetArguments()[0]);
 
-		Window * main_window = window_application->CreateTypedWindow(window_class, window_placement_info, create_params, "main_window");
+		Window * main_window = window_application->CreateTypedWindow("main_window", window_class, window_placement_info, create_params, nullptr);
 		if (main_window == nullptr)
 			return false;
 

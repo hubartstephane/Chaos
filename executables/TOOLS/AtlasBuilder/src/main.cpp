@@ -238,9 +238,9 @@ public:
 	glm::ivec2              image_size = {0, 0};
 };
 
-class AtlasBuilderWindow : public chaos::Window
+class MyWindow : public chaos::Window
 {
-	CHAOS_DECLARE_OBJECT_CLASS(AtlasBuilderWindow, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(MyWindow, chaos::Window);
 
 public:
 
@@ -692,6 +692,9 @@ protected:
 int main(int argc, char ** argv, char ** env)
 {
 	chaos::WindowApplicationData window_application_data;
-	window_application_data.main_window_class = AtlasBuilderWindow::GetStaticClass();
+	window_application_data.startup_windows =
+	{
+		{ "main_window", MyWindow::GetStaticClass(), {}, {}, nullptr}
+	};
 	return chaos::RunApplication<AtlasBuilderApplication>(argc, argv, env, &window_application_data);
 }

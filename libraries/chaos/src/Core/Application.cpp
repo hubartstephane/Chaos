@@ -147,11 +147,6 @@ namespace chaos
 		return true;
 	}
 	
-	bool Application::IsApplicationDataValid(ApplicationData const* in_application_data) const
-	{
-		return true; // at this point, no requirement
-	}
-
 	int Application::Run(int argc, char ** argv, char ** env, ApplicationData const * in_application_data)
 	{
 		int result = -1;
@@ -166,21 +161,21 @@ namespace chaos
 			InitializeLogging();
 			// initialize global variables using parameters (requires logger)
 			InitializeGlobalVariables(argc, argv);
-			// store the application data
-			StoreApplicationData(in_application_data);
-
-			// initialize, run, and finalize the application
-			if (InitializeConfigurationSystem())
+			// set the application data
+			if (SetApplicationData(in_application_data))
 			{
-				if (Initialize(GetJSONReadConfiguration()))
+				// initialize, run, and finalize the application
+				if (InitializeConfigurationSystem())
 				{
-					result = Main();
-					SavePersistentPropertiesToFile(true); // save the persistent data to file
+					if (Initialize(GetJSONReadConfiguration()))
+					{
+						result = Main();
+						SavePersistentPropertiesToFile(true); // save the persistent data to file
+					}
+					// finalization (even if initialization failed)
+					Finalize();
 				}
-				// finalization (even if initialization failed)
-				Finalize();
 			}
-
 			FinalizeStandardLibraries();
 		}
 		return result;
@@ -242,12 +237,18 @@ namespace chaos
 		application_temporary_path = WinTools::GetTemporaryPath() / "chaos" / application_name;
 	}
 
-	bool Application::StoreApplicationData(ApplicationData const* in_application_data)
+	bool Application::SetApplicationData(ApplicationData const* in_application_data)
 	{
+		assert(application_data == nullptr);
 		if (!IsApplicationDataValid(in_application_data))
 			return false;
 		application_data = in_application_data;
 		return true;
+	}
+
+	bool Application::IsApplicationDataValid(ApplicationData const* in_application_data) const
+	{
+		return true; // at this point, no requirement
 	}
 
 	char const* Application::GetApplicationName()

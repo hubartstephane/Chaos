@@ -4,8 +4,29 @@ namespace chaos
 
 	class WindowApplication;
 	class WindowApplicationData;
+	class WindowCreationInfo;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	* WindowCreationInfo: information to create windows
+	*/
+
+	class WindowCreationInfo
+	{
+	public:
+
+		/** name of the window */
+		char const * window_name = nullptr;
+		/** class of the window */
+		SubClassOf<Window> window_class;
+		/** placement of the window */
+		WindowPlacementInfo window_placement_info;
+		/** creation params */
+		WindowCreateParams window_create_params;
+		/** window data */
+		WindowData const * window_data = nullptr;
+	};
 
 	/**
 	* WindowApplicationData: information for WindowApplication
@@ -17,12 +38,7 @@ namespace chaos
 
 	public:
 
-		/** class of the main window */
-		SubClassOf<Window> main_window_class;
-		/** placement of the main window */
-		WindowPlacementInfo main_window_placement_info;
-		/** main window other creation params */
-		WindowCreateParams main_window_create_params;
+		std::vector<WindowCreationInfo> startup_windows;
 	};
 
 	/**
@@ -51,11 +67,6 @@ namespace chaos
 		AutoCastable<Window> FindWindow(ObjectRequest request);
 		/** get the window per name */
 		AutoConstCastable<Window> FindWindow(ObjectRequest request) const;
-
-		/** gets the main window of the application */
-		AutoCastable<Window> GetMainWindow() { return FindWindow("main_window"); }
-		/** gets the main window of the application */
-		AutoConstCastable<Window> GetMainWindow() const { return FindWindow("main_window"); }
 
 		/** require application end */
 		virtual void Quit();
@@ -186,7 +197,7 @@ namespace chaos
 		virtual void RunMessageLoop(LightweightFunction<bool()> loop_condition_func = {});
 
 		/** create a window */
-		Window* CreateTypedWindow(CreateWindowFunc create_func, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, ObjectRequest = {});
+		Window* CreateTypedWindow(char const * name, CreateWindowFunc create_func, WindowPlacementInfo placement_info = {}, WindowCreateParams const& create_params = {}, WindowData const* window_data = nullptr);
 
 		/** enable or disable ImGui menu */
 		static void SetImGuiMenuEnabled(bool enabled);
@@ -264,6 +275,10 @@ namespace chaos
 		virtual int Main() override;
 		/** The main body method */
 		virtual int MainBody();
+		/** create the initial windows */
+		virtual bool CreateStartupWindows();
+
+
 		/** create the main window */
 		virtual Window* CreateMainWindow();
 
@@ -367,6 +382,9 @@ namespace chaos
 
 		/** override */
 		virtual bool IsApplicationDataValid(ApplicationData const * in_application_data) const override;
+
+		/** get the casted application data */
+		WindowApplicationData const* GetWindowApplicationData() const;
 
 	protected:
 

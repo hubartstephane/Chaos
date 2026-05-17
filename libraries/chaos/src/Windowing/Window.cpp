@@ -232,37 +232,41 @@ namespace chaos
 			JSONTools::GetAttribute(config, "default_fullscreen", placement_info.fullscreen);
 	}
 
-	bool Window::CreateGLFWWindow(GPUDevice * in_gpu_device, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context_window, GLFWHints const & glfw_hints)
+	bool Window::CreateGLFWWindow(GPUDevice * in_gpu_device, WindowPlacementInfo in_placement_info, WindowCreateParams const & in_create_params, WindowData const * in_window_data, GLFWwindow* in_share_context_window, GLFWHints const & in_glfw_hints)
 	{
 		assert(glfw_window == nullptr);
+
+		// set the data before anything happens
+		if (!SetWindowData(in_window_data))
+			return false;
 
 		// create the GPURenderContext
 		if (!CreateRenderContext(in_gpu_device))
 			return false;
 
 		// prepare window creation
-		glfwWindowHint(GLFW_RESIZABLE, (create_params.resizable)? 1 : 0);
-		glfwWindowHint(GLFW_VISIBLE, (create_params.start_visible)? 1 : 0);
-		glfwWindowHint(GLFW_DECORATED, (create_params.decorated)? 1 : 0);
-		glfwWindowHint(GLFW_FLOATING, (create_params.toplevel)? 1 : 0);
-		glfwWindowHint(GLFW_FOCUSED, (create_params.focused)? 1 : 0);
+		glfwWindowHint(GLFW_RESIZABLE, (in_create_params.resizable)? 1 : 0);
+		glfwWindowHint(GLFW_VISIBLE, (in_create_params.start_visible)? 1 : 0);
+		glfwWindowHint(GLFW_DECORATED, (in_create_params.decorated)? 1 : 0);
+		glfwWindowHint(GLFW_FLOATING, (in_create_params.toplevel)? 1 : 0);
+		glfwWindowHint(GLFW_FOCUSED, (in_create_params.focused)? 1 : 0);
 		glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
 
-		glfw_hints.ApplyHints();
+		in_glfw_hints.ApplyHints();
 
-		initial_toplevel  = create_params.toplevel;
-		initial_decorated = create_params.decorated;
-		double_buffer     = glfw_hints.double_buffer;
+		initial_toplevel  = in_create_params.toplevel;
+		initial_decorated = in_create_params.decorated;
+		double_buffer     = in_glfw_hints.double_buffer;
 	
 		// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
 		// use a random size that will be corrected later in SetWindowPlacement call
-		glfw_window = glfwCreateWindow(500, 500, create_params.title.c_str(), nullptr, share_context_window);
+		glfw_window = glfwCreateWindow(500, 500, in_create_params.title.c_str(), nullptr, in_share_context_window);
 		if (glfw_window == nullptr)
 			return false;
 		glfwMakeContextCurrent(glfw_window);
 
 		// set vsync
-		if (GlobalVariables::UnlimitedFPS.Get() || glfw_hints.unlimited_fps)
+		if (GlobalVariables::UnlimitedFPS.Get() || in_glfw_hints.unlimited_fps)
 			glfwSwapInterval(0);
 
 		// set the callbacks
@@ -272,8 +276,8 @@ namespace chaos
 		// prepare cursor mode
 		SetCursorMode(CursorMode::Disabled);
 		// set the window position
-		UpdatePlacementInfoAccordingToConfig(placement_info);
-		SetWindowPlacement(placement_info);
+		UpdatePlacementInfoAccordingToConfig(in_placement_info);
+		SetWindowPlacement(in_placement_info);
 		// initialize ImGui
 		if (!CreateImGuiContext())
 			return false;
@@ -284,7 +288,7 @@ namespace chaos
 		if (!Initialize())
 			return false;
 		// now that the window is fully placed ... we can show it
-		if (create_params.start_visible)
+		if (in_create_params.start_visible)
 			glfwShowWindow(glfw_window);
 
 		return true;
@@ -851,10 +855,10 @@ namespace chaos
 		{
 			if (fullscreen_monitor != nullptr) // is currently fullscreen
 			{
-				if (non_fullscreen_data.has_value())
+				if (non_fullscreen_placement.has_value())
 				{
-					placement_info.position   = non_fullscreen_data->position; // absolute placement of the window (monitor not defined)
-					placement_info.size       = non_fullscreen_data->size;
+					placement_info.position   = non_fullscreen_placement->position; // absolute placement of the window (monitor not defined)
+					placement_info.size       = non_fullscreen_placement->size;
 					placement_info.fullscreen = false;
 					SetWindowPlacement(placement_info);
 				}
@@ -883,10 +887,10 @@ namespace chaos
 				// store current information (if not already fullscreen)
 				if (fullscreen_monitor == nullptr)
 				{
-					NonFullScreenWindowData data;
-					data.position = GetWindowPosition(true); // include decorators
-					data.size     = GetWindowSize(true);
-					non_fullscreen_data = data;
+					NonFullScreenWindowPlacement placement;
+					placement.position = GetWindowPosition(true); // include decorators
+					placement.size     = GetWindowSize(true);
+					non_fullscreen_placement = placement;
 				}
 				placement_info.monitor = monitor; // fullscreen placement
 				placement_info.fullscreen = true;
@@ -1257,6 +1261,20 @@ namespace chaos
 	bool Window::HasFocus() const
 	{
 		return (glfwGetWindowAttrib(glfw_window, GLFW_FOCUSED) == GL_TRUE);
+	}
+
+	bool Window::SetWindowData(WindowData const* in_window_data)
+	{
+		assert(window_data == nullptr);
+		if (!IsWindowDataValid(in_window_data))
+			return false;
+		window_data = in_window_data;
+		return true;
+	}
+
+	bool Window::IsWindowDataValid(WindowData const * in_window_data) const
+	{
+		return true;
 	}
 
 }; // namespace chaos

@@ -3,8 +3,9 @@ namespace chaos
 
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class NonFullScreenWindowData;
+	class NonFullScreenWindowPlacement;
 	class Window;
+	class WindowData;
 
 	enum class CursorMode;
 	enum class WindowCategory;
@@ -18,6 +19,16 @@ namespace chaos
 	using DoDispatchInputEventFunction = LightweightFunction<bool(InputReceiverInterface*)>;
 
 	/**
+	* WindowData: some information for the window
+	*/
+
+	class CHAOS_API WindowData : public Object
+	{
+		CHAOS_DECLARE_OBJECT_CLASS(WindowData, Object);
+	
+	};
+
+	/**
 	* CursorMode
 	*/
 
@@ -29,10 +40,10 @@ namespace chaos
 	};
 
 	/**
-	* NonFullScreenWindowData : a binding class between chaos and GLFW to handle window (beware the prefix "My")
+	* NonFullScreenWindowPlacement : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 	*/
 
-	class NonFullScreenWindowData
+	class NonFullScreenWindowPlacement
 	{
 	public:
 
@@ -248,7 +259,7 @@ namespace chaos
 		void UpdatePlacementInfoAccordingToConfig(WindowPlacementInfo & placement_info) const;
 
 		/** create the internal window */
-		bool CreateGLFWWindow(GPUDevice* in_gpu_device, WindowPlacementInfo placement_info, WindowCreateParams const &create_params, GLFWwindow* share_context, GLFWHints const & glfw_hints);
+		bool CreateGLFWWindow(GPUDevice* in_gpu_device, WindowPlacementInfo in_placement_info, WindowCreateParams const & in_create_params, WindowData const* in_window_data, GLFWwindow* in_share_context, GLFWHints const & in_glfw_hints);
 		/** destroying the window */
 		void DestroyGLFWWindow();
 
@@ -387,6 +398,11 @@ namespace chaos
 		/** returns whether the window has the focus */
 		bool HasFocus() const;
 
+		/** set the window data */
+		virtual bool SetWindowData(WindowData const* in_window_data);
+		/** check whether the data given to initialize the window is valid */
+		virtual bool IsWindowDataValid(WindowData const* in_window_data) const;
+
 	private:
 
 		/** binding function with GLFW library */
@@ -432,7 +448,7 @@ namespace chaos
 		/** previous mouse position */
 		std::optional<glm::vec2> mouse_position;
 		/** used to store data when toggling fullscreen */
-		std::optional<NonFullScreenWindowData> non_fullscreen_data;
+		std::optional<NonFullScreenWindowPlacement> non_fullscreen_placement;
 		/** if the window is fullscreen, this points to the concerned monitor */
 		GLFWmonitor* fullscreen_monitor = nullptr;
 		/** the current cursor mode */
@@ -443,6 +459,9 @@ namespace chaos
 		WindowCategory window_category = WindowCategory::MainWindow;
 		/** whether application is enabled to be plugged into the window */
 		bool standard_imgui_menu_plugged_in = true;
+
+		/** the window data used */
+		WindowData const * window_data = nullptr;
 
 		/** the window client */
 		shared_ptr<WindowClient> window_client;

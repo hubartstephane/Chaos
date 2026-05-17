@@ -31,6 +31,9 @@ namespace chaos
 
 		/** override */
 		virtual bool IsApplicationDataValid(ApplicationData const * in_application_data) const override;
+
+		/** get the casted application data */
+		ImGuiApplicationData const* GetImGuiApplicationData() const;
 	};
 
 #endif

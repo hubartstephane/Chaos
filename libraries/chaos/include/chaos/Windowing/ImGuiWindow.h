@@ -3,8 +3,23 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class ImGuiWindow;
+	class ImGuiWindowData;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	/**
+	 * ImGuiWindowData: initialization data for ImGuiWindow
+	 **/
+
+	class CHAOS_API ImGuiWindowData : public WindowData
+	{
+		CHAOS_DECLARE_OBJECT_CLASS(ImGuiWindowData, WindowData);
+
+	public:
+
+		/** the class for the content of this window */
+		SubClassOf<ImGuiObject> imgui_object_class;
+	};
 
 	/**
 	 * ImGuiWindow: a window that deserves to display imgui content
@@ -45,6 +60,13 @@ namespace chaos
 
 		/** override */
 		virtual bool EnumerateKnownImGuiObjects(EnumerateKnownImGuiObjectFunc func) override;
+		/** override */
+		virtual bool OnInitialize(JSONReadConfiguration config) override;
+		/** override */
+		virtual bool IsWindowDataValid(WindowData const* in_window_data) const;
+
+		/** get the window data */
+		ImGuiWindowData const* GetImGuiWindowData() const;
 
 	protected:
 

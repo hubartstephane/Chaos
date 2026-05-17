@@ -407,9 +407,12 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 // ====================================================================
 
 int main(int argc, char ** argv, char ** env)
-{
+{	
 	chaos::WindowApplicationData window_application_data;
-	window_application_data.main_window_class = MyWindow::GetStaticClass();
+	window_application_data.startup_windows =
+	{
+		{ "main_window", MyWindow::GetStaticClass(), {}, {}, nullptr}
+	};
 	return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }
 

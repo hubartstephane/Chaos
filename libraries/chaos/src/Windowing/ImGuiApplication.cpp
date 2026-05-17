@@ -5,19 +5,17 @@ namespace chaos
 {
 	Window * ImGuiApplication::CreateMainWindow()
 	{
-		ImGuiApplicationData const * imgui_application_data = auto_cast(application_data);
-		if (imgui_application_data == nullptr)
-			return nullptr;
-
+#if 0
 		if (Window* result = WindowApplication::CreateMainWindow())
 		{		
 			if (ImGuiWindow* imgui_window = auto_cast(result))
 			{
-				if (ImGuiObject* imgui_object = imgui_application_data->imgui_object_class.CreateInstance())
+				if (ImGuiObject* imgui_object = GetImGuiApplicationData()->imgui_object_class.CreateInstance())
 					imgui_window->SetContent(imgui_object);
 			}
 			return result;
 		}
+#endif
 		return nullptr;
 	}
 
@@ -26,10 +24,15 @@ namespace chaos
 		ImGuiApplicationData const* imgui_application_data = auto_cast(in_application_data);
 		if (imgui_application_data == nullptr)
 		{
-			ApplicationLog::Error("Application requires [ImGuiApplicationData] class");
+			ApplicationLog::Error("ImGuiApplication requires [ImGuiApplicationData] class");
 			return false;
 		}
 		return true;
+	}
+
+	ImGuiApplicationData const* ImGuiApplication::GetImGuiApplicationData() const
+	{
+		return auto_cast(application_data);
 	}
 
 }; // namespace chaos

@@ -3,16 +3,27 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class Application;
+	class ApplicationData;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	CHAOS_DEFINE_LOG(ApplicationLog, "Application")
 
 	/**
-	* Application : used to store generic application data
+	* ApplicationData: data required for an application to run properly
+	*/
+
+	class CHAOS_API ApplicationData : public Object
+	{
+		CHAOS_DECLARE_OBJECT_CLASS(ApplicationData, Object);
+	};
+
+	/**
+	* Application: used to store generic application data
 	*/
 	class CHAOS_API Application : public Object, public ConfigurationUserInterface
 	{
+		CHAOS_DECLARE_OBJECT_CLASS(Application, Object);
 
 	public:
 
@@ -22,7 +33,7 @@ namespace chaos
 		virtual ~Application();
 
 		/** the user main method */
-		int Run(int argc, char** argv, char** env);
+		int Run(int argc, char** argv, char** env, ApplicationData const * in_application_data);
 
 		/** getter of the singleton instance */
 		static AutoCastable<Application> GetInstance() { return singleton_instance; }
@@ -77,6 +88,8 @@ namespace chaos
 		virtual int Main();
 		/** store the application parameters */
 		virtual void StoreParameters(int argc, char** argv, char** env);
+		/** store and check the application data */
+		virtual bool StoreApplicationData(ApplicationData const* in_application_data);
 		/** Initialize the application with the main data */
 		virtual bool Initialize(JSONReadConfiguration config);
 		/** Initialization custom point */
@@ -110,6 +123,9 @@ namespace chaos
 		/** create the application temporary directory */
 		bool CreateApplicationTemporaryDirectory() const;
 
+		/** check whether the given application data is correct */
+		virtual bool IsApplicationDataValid(ApplicationData const * in_application_data) const;
+
 	protected:
 
 		/** the single application instance */
@@ -121,6 +137,8 @@ namespace chaos
 		std::vector<std::string> arguments;
 		/** the application environments */
 		std::vector<std::pair<std::string, std::string>> environments;
+		/** application data */
+		ApplicationData const * application_data = nullptr;
 		/** the filename of the application */
 		boost::filesystem::path application_filename;
 		/** the path of the application */
@@ -139,12 +157,12 @@ namespace chaos
 #endif
 	};
 
-	template<typename APPLICATION_TYPE, typename ...PARAMS>
-	int RunApplication(int argc, char** argv, char** env, PARAMS && ...params)
+	template<typename APPLICATION_TYPE>
+	int RunApplication(int argc, char** argv, char** env, ApplicationData const * in_application_data)
 	{
 		static_assert(std::is_base_of_v<Application, APPLICATION_TYPE>);
 
-		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE(std::forward<PARAMS>(params)...);
+		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE();
 		if (application != nullptr)
 		{
 
@@ -166,7 +184,7 @@ namespace chaos
 			application->SetFileRedirectionDirectories(build_path, direct_access_paths);
 
 #endif
-			return application->Run(argc, argv, env);
+			return application->Run(argc, argv, env, in_application_data);
 		}
 		return -1; // error
 	}

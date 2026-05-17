@@ -82,7 +82,7 @@ public:
 // Application
 // ==============================================================
 
-class WindowOpenGLTest : public chaos::Window
+class MyWindow : public chaos::Window
 {
 	int const LAYER_COUNT = 5;
 	int const MATERIAL_COUNT = 3;
@@ -90,14 +90,14 @@ class WindowOpenGLTest : public chaos::Window
 	float VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 	float WORLD_X = 1000.0f;
 
-	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(MyWindow, chaos::Window);
 
 protected:
 
 	virtual bool OnDraw(chaos::GPURenderContext * render_context, chaos::GPUProgramProviderInterface const * uniform_provider, chaos::WindowDrawParams const& draw_params) override
 	{
 		bool bbb1 = chaos::has_AllocationTrait_v< ParticleExampleLayerTrait>;
-		bool bbb2 = chaos::has_AllocationTrait_v< WindowOpenGLTest>;
+		bool bbb2 = chaos::has_AllocationTrait_v< MyWindow>;
 
 
 
@@ -261,5 +261,7 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.main_window_class = MyWindow::GetStaticClass();
+	return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }

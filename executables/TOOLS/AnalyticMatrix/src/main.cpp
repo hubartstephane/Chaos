@@ -737,6 +737,8 @@ class MyImGuiObject : public chaos::ImGuiObject
 {
 public:
 
+	CHAOS_DECLARE_OBJECT_CLASS(MyImGuiObject, chaos::ImGuiObject);
+
 	MyImGuiObject()
 	{
 		AnalyticMatrix S = MakeScaleMatrix("S");
@@ -1009,5 +1011,7 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunImGuiApplication<MyImGuiObject>(argc, argv, env);
+	chaos::ImGuiApplicationData imgui_application_data;
+	imgui_application_data.imgui_object_class = MyImGuiObject::GetStaticClass();
+	return chaos::RunApplication<chaos::ImGuiApplication>(argc, argv, env, &imgui_application_data);
 }

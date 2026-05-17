@@ -524,9 +524,9 @@ public:
 	using chaos::WindowApplication::WindowApplication;
 };
 
-class WindowOpenGLTest : public chaos::Window
+class MyWindow : public chaos::Window
 {
-	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(MyWindow, chaos::Window);
 
 protected:
 
@@ -655,6 +655,8 @@ int main(int argc, char ** argv, char ** env)
 	auto f = CHAOS_PP_UNICODE_TO_UTF8(1);
 
 
-	return chaos::RunApplication<MyApplicationTest>(argc, argv, env, WindowOpenGLTest::GetStaticClass());
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.main_window_class = MyApplicationTest::GetStaticClass();
+	return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }
 

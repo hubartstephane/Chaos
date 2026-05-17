@@ -3,12 +3,6 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class):
-			game_class(in_game_class)
-	{
-		assert(in_game_class.IsValid());
-	}
-
 	void GameApplication::FinalizeGPUResources()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
@@ -26,7 +20,11 @@ namespace chaos
 		assert(glfwGetCurrentContext() == shared_context);
 
 		// create the game
-		game = game_class.CreateInstance();
+		GameApplicationData const * game_application_data = auto_cast(application_data);
+		if (game_application_data == nullptr)
+			return false;
+
+		game = game_application_data->game_class.CreateInstance();
 		if (game == nullptr)
 			return false;
 		GiveChildConfiguration(game.get(), "game");
@@ -81,6 +79,17 @@ namespace chaos
 	{
 		if (game != nullptr)
 			return game->OnPhysicalGamepadInput(physical_gamepad);
+		return true;
+	}
+
+	bool GameApplication::IsApplicationDataValid(ApplicationData const* in_application_data) const
+	{
+		GameApplicationData const * game_application_data = auto_cast(in_application_data);
+		if (game_application_data == nullptr)
+		{
+			ApplicationLog::Error("Application requires [GameApplicationData] class");
+			return false;
+		}
 		return true;
 	}
 

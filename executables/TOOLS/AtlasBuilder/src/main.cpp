@@ -53,11 +53,11 @@ public:
 
 // ---------------------------------------------------------------------------------
 
-class AtlasBuilderApplication : public chaos::SimpleWindowApplication
+class AtlasBuilderApplication : public chaos::WindowApplication
 {
-	using chaos::SimpleWindowApplication::SimpleWindowApplication;
+	using chaos::WindowApplication::WindowApplication;
 
-	CHAOS_DECLARE_OBJECT_CLASS(AtlasBuilderApplication, chaos::SimpleWindowApplication);
+	CHAOS_DECLARE_OBJECT_CLASS(AtlasBuilderApplication, chaos::WindowApplication);
 
 public:
 
@@ -210,7 +210,7 @@ protected:
 
 	virtual int MainBody() override
 	{
-		return chaos::SimpleWindowApplication::MainBody();
+		return chaos::WindowApplication::MainBody();
 	}
 
 	void ClearDirectory(boost::filesystem::path const & path) const
@@ -691,5 +691,7 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunApplication<AtlasBuilderApplication>(argc, argv, env, AtlasBuilderWindow::GetStaticClass());
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.main_window_class = AtlasBuilderWindow::GetStaticClass();
+	return chaos::RunApplication<AtlasBuilderApplication>(argc, argv, env, &window_application_data);
 }

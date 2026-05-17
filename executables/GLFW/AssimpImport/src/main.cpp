@@ -74,9 +74,9 @@ public:
 };
 
 
-class WindowOpenGLTest : public Window
+class MyWindow : public Window
 {
-	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, Window);
+	CHAOS_DECLARE_OBJECT_CLASS(MyWindow, Window);
 
 protected:
 
@@ -679,5 +679,7 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-    return RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.main_window_class = MyWindow::GetStaticClass();
+    return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }

@@ -1,8 +1,8 @@
 #include "chaos/Chaos.h"
 
-class WindowOpenGLTest : public chaos::Window
+class MyWindow : public chaos::Window
 {
-	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(MyWindow, chaos::Window);
 
 protected:
 
@@ -15,7 +15,7 @@ protected:
 
 	static void CALLBACK OnMidiInEvent(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 	{
-		WindowOpenGLTest * self = (WindowOpenGLTest *)dwInstance;
+		MyWindow * self = (MyWindow *)dwInstance;
 		self->OnMidiInEventImpl(hMidiIn, wMsg, dwParam1, dwParam2);
 	}
 
@@ -142,5 +142,7 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.main_window_class = MyWindow::GetStaticClass();
+	return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }

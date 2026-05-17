@@ -46,6 +46,8 @@ public:
 
 class MyApplication : public chaos::Application
 {
+	CHAOS_DECLARE_OBJECT_CLASS(MyApplication, chaos::Application);
+
 protected:
 
 	virtual int Main() override
@@ -76,10 +78,6 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	//Cls c = Cls([]() {return new chaos::Object; });
-
-
-
-
-	return chaos::RunApplication<MyApplication>(argc, argv, env);
+	chaos::ApplicationData application_data;
+	return chaos::RunApplication<MyApplication>(argc, argv, env, &application_data);
 }

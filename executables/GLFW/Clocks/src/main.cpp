@@ -1,7 +1,7 @@
 #include "chaos/Chaos.h"
 
 
-class WindowOpenGLTest;
+class MyWindow;
 
 // ====================================================================
 
@@ -13,7 +13,7 @@ class MyEvent : public chaos::ClockEvent
 {
 public:
 
-	MyEvent(char const * in_message, int in_type, WindowOpenGLTest * in_application) :
+	MyEvent(char const * in_message, int in_type, MyWindow * in_application) :
 		message(in_message),
 		type(in_type),
 		application(in_application) {}
@@ -28,7 +28,7 @@ protected:
 
 	std::string message;
 	int type;
-	WindowOpenGLTest * application;
+	MyWindow * application;
 };
 
 // ====================================================================
@@ -58,11 +58,11 @@ public:
 
 // ====================================================================
 
-class WindowOpenGLTest : public chaos::Window
+class MyWindow : public chaos::Window
 {
 	friend class MyEvent;
 
-	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(MyWindow, chaos::Window);
 
 protected:
 
@@ -408,7 +408,9 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.main_window_class = MyWindow::GetStaticClass();
+	return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }
 
 

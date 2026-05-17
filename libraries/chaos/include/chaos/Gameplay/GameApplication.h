@@ -3,15 +3,25 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class GameApplication;
+	class GameApplicationData;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API GameApplication : public WindowApplication
+	class CHAOS_API GameApplicationData : public WindowApplicationData
 	{
+		CHAOS_DECLARE_OBJECT_CLASS(GameApplicationData, WindowApplicationData);
+
 	public:
 
-		/** constructor */
-		GameApplication(SubClassOf<Game> in_game_class);
+		SubClassOf<Game> game_class;
+	};
+
+
+	class CHAOS_API GameApplication : public WindowApplication
+	{
+		CHAOS_DECLARE_OBJECT_CLASS(GameApplication, WindowApplication);
+
+	public:
 
 		/** gets the game */
 		Game* GetGame() { return game.get(); }
@@ -37,22 +47,14 @@ namespace chaos
 		/** override */
 		virtual bool DoPollGamepad(PhysicalGamepad * physical_gamepad) override;
 
+		/** override */
+		virtual bool IsApplicationDataValid(ApplicationData const * in_application_data) const override;
+
 	protected:
 
-		/** the class for the game */
-		SubClassOf<Game> game_class;
 		/** pointer on the game */
 		shared_ptr<Game> game;
 	};
-
-	template<typename GAME_TYPE, typename GAME_APPLICATION_TYPE = GameApplication, typename ...PARAMS>
-	decltype(auto) RunGame(int argc, char** argv, char** env, PARAMS && ...params)
-	{
-		return RunApplication<GAME_APPLICATION_TYPE>(
-			argc, argv, env,
-			GAME_TYPE::GetStaticClass(),
-			std::forward<PARAMS>(params)...);
-	}
 
 #endif
 

@@ -3,25 +3,33 @@
 
 namespace chaos
 {
-	ImGuiApplication::ImGuiApplication(ImGuiObject* in_imgui_object, SubClassOf<ImGuiWindow> in_main_window_class, WindowPlacementInfo const& in_main_window_placement_info, WindowCreateParams const& in_main_window_create_params):
-		SimpleWindowApplication(in_main_window_class, in_main_window_placement_info, in_main_window_create_params),
-		imgui_object(in_imgui_object)
+	Window * ImGuiApplication::CreateMainWindow()
 	{
-		assert(in_imgui_object != nullptr);
-	}
+		ImGuiApplicationData const * imgui_application_data = auto_cast(application_data);
+		if (imgui_application_data == nullptr)
+			return nullptr;
 
-	Window* ImGuiApplication::DoCreateMainWindow(WindowCreateParams const& create_params)
-	{
-		if (Window* result = CreateTypedWindow(main_window_class, main_window_placement_info, create_params, "main_window"))
-		{
+		if (Window* result = WindowApplication::CreateMainWindow())
+		{		
 			if (ImGuiWindow* imgui_window = auto_cast(result))
 			{
-				imgui_window->SetContent(imgui_object.get());
-				imgui_window->SetWindowCategory(WindowCategory::MainWindow);
+				if (ImGuiObject* imgui_object = imgui_application_data->imgui_object_class.CreateInstance())
+					imgui_window->SetContent(imgui_object);
 			}
 			return result;
 		}
 		return nullptr;
+	}
+
+	bool ImGuiApplication::IsApplicationDataValid(ApplicationData const * in_application_data) const
+	{
+		ImGuiApplicationData const* imgui_application_data = auto_cast(in_application_data);
+		if (imgui_application_data == nullptr)
+		{
+			ApplicationLog::Error("Application requires [ImGuiApplicationData] class");
+			return false;
+		}
+		return true;
 	}
 
 }; // namespace chaos

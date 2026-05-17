@@ -54,6 +54,8 @@ CHAOS_GLOBAL_VARIABLE(AAA, aaa);
 
 class MyApplicationTest : public chaos::WindowApplication
 {
+	CHAOS_DECLARE_OBJECT_CLASS(MyApplicationTest, chaos::WindowApplication);
+
 public:
 
 	using chaos::WindowApplication::WindowApplication;
@@ -73,6 +75,7 @@ public:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunApplication<MyApplicationTest>(argc, argv, env);
+	chaos::WindowApplicationData window_application_data;
+	return chaos::RunApplication<MyApplicationTest>(argc, argv, env, &window_application_data);
 }
 

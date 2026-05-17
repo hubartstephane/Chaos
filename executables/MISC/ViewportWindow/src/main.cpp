@@ -5,9 +5,9 @@ uint64_t render_stamp = 0;
 
 chaos::shared_ptr<chaos::GPUFence> render_fence;
 
-class WindowOpenGLTest : public chaos::ViewportWindow
+class MyWindow : public chaos::ViewportWindow
 {
-	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::ViewportWindow);
+	CHAOS_DECLARE_OBJECT_CLASS(MyWindow, chaos::ViewportWindow);
 
 protected:
 
@@ -116,5 +116,7 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.main_window_class = MyWindow::GetStaticClass();
+	return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }

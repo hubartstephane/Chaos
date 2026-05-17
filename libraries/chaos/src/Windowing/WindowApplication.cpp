@@ -259,8 +259,34 @@ namespace chaos
 		return result;
 	}
 
+	Window* WindowApplication::CreateMainWindow()
+	{
+		WindowApplicationData const* simple_window_application = auto_cast(application_data);
+		if (simple_window_application == nullptr)
+			return nullptr;
+
+		WindowCreateParams create_params = simple_window_application->main_window_create_params;
+
+		// gives a title to the window (if necessary)
+		if (StringTools::IsEmpty(create_params.title))
+			if (GetArguments().size() > 0)
+				create_params.title = PathTools::PathToName(GetArguments()[0]);
+		// create the window
+		Window* result = CreateTypedWindow(simple_window_application->main_window_class, simple_window_application->main_window_placement_info, create_params, "main_window");
+		if (result == nullptr)
+			return nullptr;
+
+		result->SetWindowCategory(WindowCategory::MainWindow);
+		return result;
+	}
+
 	int WindowApplication::MainBody()
 	{
+		// create the main window
+		Window* main_window = CreateMainWindow();
+		if (main_window == nullptr)
+			return -1;
+
 		// run the main loop as long as there are main windows
 		RunMessageLoop([this]()
 		{
@@ -1096,6 +1122,17 @@ namespace chaos
 				return window;
 			return nullptr;
 		});
+	}
+
+	bool WindowApplication::IsApplicationDataValid(ApplicationData const * in_application_data) const
+	{
+		WindowApplicationData const* window_application_data = auto_cast(in_application_data);
+		if (window_application_data == nullptr)
+		{
+			ApplicationLog::Error("Application requires [WindowApplicationData] class");
+			return false;
+		}
+		return true;
 	}
 
 }; // namespace chaos

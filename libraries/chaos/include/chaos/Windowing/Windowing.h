@@ -20,7 +20,6 @@
 #include "chaos/Windowing/WrapBoxWidget.h"
 #include "chaos/Windowing/WindowRootWidget.h"
 #include "chaos/Windowing/WindowApplication.h"
-#include "chaos/Windowing/SimpleWindowApplication.h"
 #include "chaos/Windowing/MonitorTools.h"
 #include "chaos/Windowing/ImGuiWindow.h"
 #include "chaos/Windowing/ImGuiApplication.h"

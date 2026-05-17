@@ -6,22 +6,22 @@ class MIDIPlaySoundEvent : public chaos::ClockEvent
 {
 public:
 
-	MIDIPlaySoundEvent(class WindowOpenGLTest * in_application) : application(in_application) {}
+	MIDIPlaySoundEvent(class MyWindow * in_application) : application(in_application) {}
 
 	virtual chaos::ClockEventTickResult Tick(chaos::ClockEventTickData const & tick_data) override;
 
 protected:
 
-	class WindowOpenGLTest * application;
+	class MyWindow * application;
 };
 
 // ================================================================
 
-class WindowOpenGLTest : public chaos::Window
+class MyWindow : public chaos::Window
 {
 	friend class MIDIPlaySoundEvent;
 
-	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(MyWindow, chaos::Window);
 
 protected:
 
@@ -130,5 +130,7 @@ chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData c
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.main_window_class = MyWindow::GetStaticClass();
+	return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }

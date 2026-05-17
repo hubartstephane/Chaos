@@ -6,7 +6,7 @@ class MIDITimeoutEvent : public chaos::ClockEvent
 {
 public:
 
-	MIDITimeoutEvent(class WindowOpenGLTest * in_application, int in_value) : application(in_application), value(in_value){}
+	MIDITimeoutEvent(class MyWindow * in_application, int in_value) : application(in_application), value(in_value){}
 
 	virtual ~MIDITimeoutEvent();
 
@@ -16,7 +16,7 @@ public:
 
 protected:
 
-	class WindowOpenGLTest * application;
+	class MyWindow * application;
 
 	int value;
 };
@@ -27,7 +27,7 @@ class MIDICommandEvent : public chaos::ClockEvent
 {
 public:
 
-	MIDICommandEvent(class WindowOpenGLTest * in_application, chaos::MIDICommand const & in_command) : application(in_application) , command(in_command){}
+	MIDICommandEvent(class MyWindow * in_application, chaos::MIDICommand const & in_command) : application(in_application) , command(in_command){}
 
 	virtual ~MIDICommandEvent();
 
@@ -37,7 +37,7 @@ public:
 
 protected:
 
-	class WindowOpenGLTest * application;
+	class MyWindow * application;
 
 	chaos::MIDICommand command;
 };
@@ -46,7 +46,7 @@ protected:
 // ================================================================
 
 
-class WindowOpenGLTest : public chaos::Window
+class MyWindow : public chaos::Window
 {
 	friend class MIDICommandEvent;
 	friend class MIDITimeoutEvent;
@@ -60,7 +60,7 @@ class WindowOpenGLTest : public chaos::Window
 
 	double const SILENCE_DURATION = 1.0;
 
-	CHAOS_DECLARE_OBJECT_CLASS(WindowOpenGLTest, chaos::Window);
+	CHAOS_DECLARE_OBJECT_CLASS(MyWindow, chaos::Window);
 
 protected:
 
@@ -73,7 +73,7 @@ protected:
 
 	static void CALLBACK OnMidiInEvent(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 	{
-		WindowOpenGLTest * self = (WindowOpenGLTest *)dwInstance;
+		MyWindow * self = (MyWindow *)dwInstance;
 		self->OnMidiInEventImpl(hMidiIn, wMsg, dwParam1, dwParam2);
 	}
 
@@ -326,5 +326,7 @@ chaos::ClockEventTickResult MIDICommandEvent::Tick(chaos::ClockEventTickData con
 
 int main(int argc, char ** argv, char ** env)
 {
-	return chaos::RunSimpleWindowApplication<WindowOpenGLTest>(argc, argv, env);
+	chaos::WindowApplicationData window_application_data;
+	window_application_data.main_window_class = MyWindow::GetStaticClass();
+	return chaos::RunApplication<chaos::WindowApplication>(argc, argv, env, &window_application_data);
 }

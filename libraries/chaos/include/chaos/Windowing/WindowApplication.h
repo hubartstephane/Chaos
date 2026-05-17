@@ -3,11 +3,30 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	class WindowApplication;
+	class WindowApplicationData;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* WindowApplication
+	* WindowApplicationData: information for WindowApplication
+	*/
+
+	class CHAOS_API WindowApplicationData : public ApplicationData
+	{
+		CHAOS_DECLARE_OBJECT_CLASS(WindowApplicationData, ApplicationData);
+
+	public:
+
+		/** class of the main window */
+		SubClassOf<Window> main_window_class;
+		/** placement of the main window */
+		WindowPlacementInfo main_window_placement_info;
+		/** main window other creation params */
+		WindowCreateParams main_window_create_params;
+	};
+
+	/**
+	* WindowApplication: an application that can handle windows
 	*/
 
 	class CHAOS_API WindowApplication : public Application, public TickableInterface, public GPUProgramProviderInterface, public InputReceiverInterface, public GamepadPollInterface
@@ -32,6 +51,11 @@ namespace chaos
 		AutoCastable<Window> FindWindow(ObjectRequest request);
 		/** get the window per name */
 		AutoConstCastable<Window> FindWindow(ObjectRequest request) const;
+
+		/** gets the main window of the application */
+		AutoCastable<Window> GetMainWindow() { return FindWindow("main_window"); }
+		/** gets the main window of the application */
+		AutoConstCastable<Window> GetMainWindow() const { return FindWindow("main_window"); }
 
 		/** require application end */
 		virtual void Quit();
@@ -240,6 +264,8 @@ namespace chaos
 		virtual int Main() override;
 		/** The main body method */
 		virtual int MainBody();
+		/** create the main window */
+		virtual Window* CreateMainWindow();
 
 		/** update the delta_time according to context */
 		float ComputeEffectiveDeltaTime(float real_delta_time) const;
@@ -338,6 +364,9 @@ namespace chaos
 		/** called whenever the application language is being changed */
 		virtual void OnInputLanguageChanged();
 #endif
+
+		/** override */
+		virtual bool IsApplicationDataValid(ApplicationData const * in_application_data) const override;
 
 	protected:
 

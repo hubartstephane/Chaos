@@ -146,8 +146,13 @@ namespace chaos
 
 		return true;
 	}
+	
+	bool Application::IsApplicationDataValid(ApplicationData const* in_application_data) const
+	{
+		return true; // at this point, no requirement
+	}
 
-	int Application::Run(int argc, char ** argv, char ** env)
+	int Application::Run(int argc, char ** argv, char ** env, ApplicationData const * in_application_data)
 	{
 		int result = -1;
 		if (InitializeStandardLibraries())
@@ -161,6 +166,8 @@ namespace chaos
 			InitializeLogging();
 			// initialize global variables using parameters (requires logger)
 			InitializeGlobalVariables(argc, argv);
+			// store the application data
+			StoreApplicationData(in_application_data);
 
 			// initialize, run, and finalize the application
 			if (InitializeConfigurationSystem())
@@ -201,10 +208,12 @@ namespace chaos
 	{
 		assert(argc > 0); // should at least contains the fullpath of the application
 
+		// store arguments
 		if (argv != nullptr)
 			for (int i = 0; i < argc; ++i)
 				arguments.push_back(argv[i]);
 
+		// store environment
 		if (env != nullptr)
 		{
 			for (int i = 0; env[i] != nullptr; ++i)
@@ -219,6 +228,7 @@ namespace chaos
 			}
 		}
 
+		// compute extra names and paths
 		boost::filesystem::path p = argv[0];
 		p = p.lexically_normal();
 		p.make_preferred();
@@ -230,6 +240,14 @@ namespace chaos
 		resources_path = application_path / "resources";
 		application_userlocal_path = WinTools::GetUserLocalPath() / "chaos" / application_name;
 		application_temporary_path = WinTools::GetTemporaryPath() / "chaos" / application_name;
+	}
+
+	bool Application::StoreApplicationData(ApplicationData const* in_application_data)
+	{
+		if (!IsApplicationDataValid(in_application_data))
+			return false;
+		application_data = in_application_data;
+		return true;
 	}
 
 	char const* Application::GetApplicationName()

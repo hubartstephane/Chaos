@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * ClassRegistration : the kind if inheritance that can exist between 2 classes
+	 * ClassRegistration: an intermediate result class (that bring possibility to add extra information to the class)
 	 */
 
 	class CHAOS_API ClassRegistration

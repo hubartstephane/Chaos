@@ -50,16 +50,6 @@ namespace chaos
 		/** destructor */
 		virtual ~Class() = default;
 
-		/** method to create an instance of the object */
-		Object* CreateInstance() const;
-
-		/** creation operator */
-		Object* operator ()() const;
-
-		/** create a temporary instance on the stack an call the functor on it */
-		template<typename FUNC>
-		bool CreateInstanceOnStack(FUNC const& func) const;
-
 		/** gets the class size */
 		size_t GetClassSize() const { return class_size; }
 		/** gets the parent class */
@@ -68,10 +58,14 @@ namespace chaos
 		std::string const& GetClassName() const { return name; }
 		/** gets the short name */
 		std::string const& GetShortName() const { return short_name; }
+
+		/** returns whether the class has been registered */
+		bool IsDeclared() const;
 		/** returns whether we can create instances */
 		bool CanCreateInstance() const;
 		/** returns whether we can create instances */
 		bool CanCreateInstanceOnStack() const;
+
 		/** gets the class manager */
 		ClassManager* GetClassManager() const { return manager; } // no need to have a manager const
 
@@ -80,12 +74,13 @@ namespace chaos
 		/** returns whether the class inherits from parent */
 		InheritanceType InheritsFrom(Class const* parent_class, bool accept_equal = false) const;
 
-		/** set the parent class */
-		void SetParentClass(Class const * in_parent);
-		/** set the short name */
-		void SetShortName(std::string in_short_name);
-		/** returns whether the class has been registered */
-		bool IsDeclared() const;
+		/** create a temporary instance on the stack an call the functor on it */
+		template<typename FUNC>
+		bool CreateInstanceOnStack(FUNC const& func) const;
+		/** method to create an instance of the object */
+		Object* CreateInstance() const;
+		/** creation operator */
+		Object* operator ()() const;
 
 	protected:
 
@@ -103,6 +98,11 @@ namespace chaos
 		create_instance_function_type const* GetCreateInstanceFunc() const;
 		/** get the create instance on stack function */
 		create_instance_on_stack_function_type const* GetCreateInstanceOnStackFunc() const;
+
+		/** set the parent class */
+		void SetParentClass(Class const* in_parent);
+		/** set the short name */
+		void SetShortName(std::string in_short_name);
 
 	protected:
 
@@ -136,10 +136,10 @@ bool Class::CreateInstanceOnStack(FUNC const& func) const
 	if (create_instance_on_stack_function_type const* create_func = GetCreateInstanceOnStackFunc())
 	{
 		(*create_func)([this, &func](Object* object)
-			{
-				InitializeObjectInstance(this, object);
-				func(auto_cast_checked(object));
-			});
+		{
+			InitializeObjectInstance(this, object);
+			func(auto_cast_checked(object));
+		});
 		return true;
 	}
 	else

@@ -53,10 +53,14 @@ namespace chaos
 				return result;
 			}
 			else
+			{
 				ClassLog::Error("Class::CreateInstance : failed to instanciate class [%s]", name.c_str());
+			}
 		}
 		else
+		{
 			ClassLog::Error("Class::CreateInstance : the class [%s] cannot be instanciated", name.c_str());
+		}
 
 		return nullptr;
 	}
@@ -150,8 +154,9 @@ namespace chaos
 						return true;
 				}
 				else
+				{
 					found_different_manager = true;
-
+				}
 				parent_manager = parent_manager->GetParentManager();
 			}
 		}

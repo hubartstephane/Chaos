@@ -36,8 +36,9 @@ https://obsproject.com/fr
 // a library to use web cam
 Escapi
 
-// get your IP
-https ://www.monip.org
+// Working with markdown
+
+MarkText
 
 //-------------------------------------------------------------------------------
 // Sites
@@ -80,10 +81,13 @@ https://cppinsights.io/
 https://learngitbranching.js.org/?locale=fr_FR
 
 // reflexion/introspection library
-www.rttr.org
+https://www.rttr.org
 
 // list of interresing projects
 https://github.com/Caerind/AwesomeCppGameDev
+
+// get your IP
+https://www.monip.org
 
 //-------------------------------------------------------------------------------
 // Youtubers

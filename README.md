@@ -1,4 +1,4 @@
-![Logo Chaos](./LogoChaos.png)
+<img title="" src="./LogoChaos.png" alt="Logo Chaos" width="262" data-align="center">
 
 # Chaos
 
@@ -6,10 +6,12 @@ Chaos is a project dedicated for game development.
 It is composed by a C++ library named **chaos** and several games or test executables
 
 Internally, **premake5** is used to generate solutions:
+
 * **Visual Studio 2022** on windows
 * **Codelite** on linux
 
 Chaos uses the following external libraries:
+
 * OpenGL 4.5
 * Glfw
 * Glew
@@ -37,7 +39,7 @@ Here the link for installation
 https://cmake.org/download/
 
 # Vulkan installation
- 
+
 Vulkan has to be installed manually
 
 Here is the link for **windows**:
@@ -49,11 +51,11 @@ Here is the link for **linux**:
 https://vulkan.lunarg.com/sdk/home#linux
 
 # FBX Installation
- 
+
 not necessary yet
 
 https://aps.autodesk.com/developer/overview/fbx-sdk
- 
+
 # Installation on windows
 
 * First, you need to install git and its tools:
@@ -61,22 +63,30 @@ https://aps.autodesk.com/developer/overview/fbx-sdk
 [https://git-scm.com/download/win](https://git-scm.com/download/win)
 
 * Start git shell and get the depot from git (from the directory you want to install chaos):
-```
-git clone --recursive https://github.com/hubartstephane/Chaos.git
-```
+  
+  ```
+  git clone --recursive https://github.com/hubartstephane/Chaos.git
+  ```
+
 * Go within installation directory and install all dependencies (this will make all required libraries available):
-```
-install-extra-windows.bsh
-```
+  
+  ```
+  install-extra-windows.bsh
+  ```
+
 * Generate the **Visual Studio 2022** solution with premake5:
-```
-generate-windows.bsh
-```
+  
+  ```
+  generate-solution-windows.bsh
+  ```
+
 * Start **Visual Studio 2022** and open the following solution:
-```
-solutions/vs2022/Death.sln
-```
-# Installation on linux
+  
+  ```
+  solutions/vs2022/Death.sln
+  ```
+  
+  # Installation on linux
 
 * First, you need to install git and its tools:
 
@@ -89,19 +99,30 @@ sudo apt install git
 ```
 git clone --recursive https://github.com/hubartstephane/Chaos.git
 ```
+
 * Go within installation directory and install all dependencies (this will make all required libraries available):
 
 ```
-install-extra-linux.bsh -lib
-install-extra-linux.bsh -exe
-install-extra-linux.bsh -tools                    (this is not mandatory)
+install-extra-deblian.bsh -lib
+install-extra-deblian.bsh -exe
+install-extra-deblian.bsh -tools                    (this is not mandatory)
+```
+
+or
+
+```
+install-extra-arch.bsh -lib
+install-extra-arch.bsh -exe
+install-extra-arch.bsh -tools                    (this is not mandatory)
 ```
 
 * Generate the **Codelite** solution with premake5:
-```
-generate-linux.bsh
-```
+  
+  ```
+  generate-solution-linux.bsh
+  ```
 * Start **Codelite** and open the following solution:
-```
-solutions/codelite/Death.workspace
-```
+  
+  ```
+  solutions/codelite/Death.workspace
+  ```

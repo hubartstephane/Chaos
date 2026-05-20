@@ -25,9 +25,6 @@ namespace chaos
 	template<typename T>
 	class DisableReferenceCount;
 
-	template<typename T>
-	class DataWrapperObject;
-
 }; // namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -132,29 +129,6 @@ namespace chaos
 		virtual void AddReference() override { }
 		virtual void SubReference() override { }
 		virtual void OnLastReferenceLost() override { }
-	};
-
-	/**
-	* DataWrapperObject : a data wrapped into a referenced object => while referenced object may be dynamic_casted we can test for the data inside
-	*/
-
-	template<typename T>
-	class DataWrapperObject : public Object
-	{
-		using type = T;
-
-	public:
-
-		/** constructor */
-		template<typename ...PARAMS>
-		DataWrapperObject(PARAMS && ...params) : data(std::forward<PARAMS>(params)...)
-		{
-		}
-
-	public:
-
-		/** the wrapped data */
-		T data;
 	};
 
 }; // namespace chaos

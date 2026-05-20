@@ -32,6 +32,7 @@
 #include "chaos/Core/ClassRegistration.h"
 #include "chaos/Core/ClassFindResult.h"
 #include "chaos/Core/SubClassOf.h"
+#include "chaos/Core/ReferenceCountedInterface.h"
 #include "chaos/Core/Object.h"
 #include "chaos/Core/DataWrapperObject.h"
 #include "chaos/Core/ObjectRequest.h"

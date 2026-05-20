@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	Object::Object() :
+	ReferenceCountedInterface::ReferenceCountedInterface() :
 		shared_count(0)
 	{
 	}
 
-	Object::~Object()
+	ReferenceCountedInterface::~ReferenceCountedInterface()
 	{
 		// reset or destroy weak structure
 		if (weak_ptr_data != nullptr)
@@ -20,31 +20,33 @@ namespace chaos
 		}
 	}
 
-	void Object::AddReference()
+	void ReferenceCountedInterface::AddReference()
 	{
 		++shared_count;
 	}
 
-	void Object::SubReference()
+	void ReferenceCountedInterface::SubReference()
 	{
 		assert(shared_count > 0);
 		if (--shared_count <= 0)
 			OnLastReferenceLost();
 	}
 
-	void Object::OnLastReferenceLost()
+	void ReferenceCountedInterface::OnLastReferenceLost()
 	{
 		delete(this);
 	}
 
 }; // namespace chaos
 
-void intrusive_ptr_add_ref(chaos::Object* obj)
+// outside of chaos scope
+void intrusive_ptr_add_ref(chaos::ReferenceCountedInterface* obj)
 {
 	obj->AddReference();
 }
 
-void intrusive_ptr_release(chaos::Object* obj)
+// outside of chaos scope
+void intrusive_ptr_release(chaos::ReferenceCountedInterface* obj)
 {
 	obj->SubReference();
 }

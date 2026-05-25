@@ -1,5 +1,6 @@
 #include "chaos/Meta/IsSame.h"
 #include "chaos/Meta/IsBaseOf.h"
+#include "chaos/Meta/IsBaseStrictOf.h"
 #include "chaos/Meta/ClassMappingGeneration.h"
 #include "chaos/Meta/ValueMappingGeneration.h"
 #include "chaos/Meta/MetaProgramming.h"

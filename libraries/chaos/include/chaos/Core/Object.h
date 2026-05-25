@@ -22,9 +22,6 @@ namespace chaos
 {
 	class Object;
 
-	template<typename T>
-	class DisableReferenceCount;
-
 }; // namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION

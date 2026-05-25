@@ -25,7 +25,7 @@ namespace chaos
 
 		class CHAOS_API EightBitsModeTileFlagProcessor : public TileFlagProcessor
 		{
-			CHAOS_DECLARE_OBJECT_CLASS(EightBitsModeTileFlagProcessor, TileFlagProcessor)("EightBitsMode");
+			CHAOS_DECLARE_OBJECT_CLASS(EightBitsModeTileFlagProcessor, TileFlagProcessor).ShortName("EightBitsMode");
 
 		public:
 
@@ -39,7 +39,7 @@ namespace chaos
 
 		class CHAOS_API ComputeNeighbourFlagProcessor : public TileFlagProcessor
 		{
-			CHAOS_DECLARE_OBJECT_CLASS(ComputeNeighbourFlagProcessor, TileFlagProcessor)("ComputeNeighbour");
+			CHAOS_DECLARE_OBJECT_CLASS(ComputeNeighbourFlagProcessor, TileFlagProcessor).ShortName("ComputeNeighbour");
 
 		public:
 

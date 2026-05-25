@@ -4,7 +4,7 @@ class BaseClass : public chaos::Object, public chaos::JSONSerializableInterface
 {
 public:
 
-	CHAOS_DECLARE_OBJECT_CLASS(BaseClass, chaos::Object)("BC"); // with a short name
+	CHAOS_DECLARE_OBJECT_CLASS(BaseClass, chaos::Object).ShortName("BC"); // with a short name
 
 	BaseClass()
 	{

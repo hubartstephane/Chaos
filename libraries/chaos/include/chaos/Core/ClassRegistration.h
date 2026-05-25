@@ -26,7 +26,7 @@ namespace chaos
 	public:
 
 		/** set the short name for the class */
-		ClassRegistration & operator()(std::string in_short_name);
+		ClassRegistration & ShortName(std::string in_short_name);
 
 		/** convert the registration to the class */
 		operator Class const * () const

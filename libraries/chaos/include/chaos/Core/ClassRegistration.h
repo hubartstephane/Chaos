@@ -2,6 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	template<typename CLASS_TYPE>
 	class ClassRegistration;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -10,7 +11,8 @@ namespace chaos
 	 * ClassRegistration: an intermediate result class (that bring possibility to add extra information to the class)
 	 */
 
-	class CHAOS_API ClassRegistration
+	template<typename CLASS_TYPE>
+	class ClassRegistration
 	{
 		friend class ClassManager;
 
@@ -26,7 +28,11 @@ namespace chaos
 	public:
 
 		/** set the short name for the class */
-		ClassRegistration & ShortName(std::string in_short_name);
+		ClassRegistration & ShortName(std::string in_short_name)
+		{
+			class_ptr->SetShortName(std::move(in_short_name));
+			return *this;
+		}
 
 		/** convert the registration to the class */
 		operator Class const * () const

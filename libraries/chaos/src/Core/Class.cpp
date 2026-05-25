@@ -4,6 +4,78 @@
 namespace chaos
 {
 	// ==========================================================
+	// ClassBase functions
+	// ==========================================================
+
+	ClassBase::ClassBase(std::string in_name) :
+		name(std::move(in_name))
+	{
+	}
+
+	bool ClassBase::CanCreateInstance() const
+	{
+		return false;
+	}
+	
+	bool ClassBase::CanCreateInstanceOnStack() const
+	{
+		return false;
+	}
+
+
+	void ClassBase::SetShortName(std::string in_short_name)
+	{
+		assert(StringTools::IsEmpty(short_name));
+		assert(!StringTools::IsEmpty(in_short_name));
+		short_name = std::move(in_short_name);
+	}
+
+	void ClassBase::SetParentClass(ClassBase const* in_parent)
+	{
+		assert(in_parent != nullptr);
+		assert(parent == nullptr);
+
+		parent = in_parent;
+
+#if _DEBUG
+		assert(!HasCyclicParent());
+#endif // #if _DEBUG
+	}
+
+#if _DEBUG
+	bool ClassBase::HasCyclicParent() const
+	{
+		if (parent != nullptr && manager != nullptr)
+		{
+			bool found_different_manager = false;
+
+			ClassManager* parent_manager = parent->GetClassManager();
+			while (parent_manager != nullptr)
+			{
+				if (parent_manager == manager) // cycle found: parent class in child manager
+				{
+					if (found_different_manager)
+						return true;
+				}
+				else
+				{
+					found_different_manager = true;
+				}
+				parent_manager = parent_manager->GetParentManager();
+			}
+		}
+		return false;
+	}
+#endif // _DEBUG
+
+
+
+
+
+
+
+
+	// ==========================================================
 	// Class functions
 	// ==========================================================
 
@@ -119,49 +191,5 @@ namespace chaos
 		return InheritanceType::No;
 	}
 
-	void Class::SetShortName(std::string in_short_name)
-	{
-		assert(StringTools::IsEmpty(short_name));
-		assert(!StringTools::IsEmpty(in_short_name));
-		short_name = std::move(in_short_name);
-	}
-
-	void Class::SetParentClass(Class const* in_parent)
-	{
-		assert(in_parent != nullptr);
-		assert(parent == nullptr);
-
-		parent = in_parent;
-
-#if _DEBUG
-		assert(!HasCyclicParent());
-#endif // #if _DEBUG
-	}
-
-#if _DEBUG
-	bool Class::HasCyclicParent() const
-	{
-		if (parent != nullptr && manager != nullptr)
-		{
-			bool found_different_manager = false;
-
-			ClassManager* parent_manager = parent->GetClassManager();
-			while (parent_manager != nullptr)
-			{
-				if (parent_manager == manager) // cycle found: parent class in child manager
-				{
-					if (found_different_manager)
-						return true;
-				}
-				else
-				{
-					found_different_manager = true;
-				}
-				parent_manager = parent_manager->GetParentManager();
-			}
-		}
-		return false;
-	}
-#endif // _DEBUG
 
 }; // namespace chaos

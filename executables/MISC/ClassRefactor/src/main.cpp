@@ -104,8 +104,59 @@ public:
     }
 };
 
+//-----------------------------------------------
+
+class XXX
+{
+};
+
+class Res
+{
+public:
+
+    Res()
+    {
+        myxxx = &xxx;
+    }
+
+    template<typename T>
+    operator T * () const
+    {
+        return (T*)myxxx;
+    }
+
+protected:
+
+    void * myxxx = nullptr;
+
+    int xxx = 666;
+};
+
+class Manager
+{
+public:
+
+    Res GetRes() const
+    {
+        return {};
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
 int main(int argc, char ** argv, char ** env)
 {
+    XXX * xxx = Manager().GetRes();
+
+
     TClass<A> const * CA = new TClass<B>();
     A * a = CA->Create();
 

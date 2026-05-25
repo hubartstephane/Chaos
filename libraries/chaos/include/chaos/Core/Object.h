@@ -14,9 +14,9 @@
 #define CHAOS_DECLARE_OBJECT_CLASS(CLASS, PARENT_CLASS)\
 public:\
 using Super = PARENT_CLASS;\
-static chaos::SubClassOf<CLASS> GetStaticClass(){ return CLASS##_class;}\
-virtual chaos::Class const * GetClass() const { return CLASS##_class; }\
-static inline chaos::Class const * CLASS##_class = DeclareObjectClass<CLASS, PARENT_CLASS>(#CLASS)
+static chaos::Class<CLASS> GetStaticClass(){ return CLASS##_class;}\
+virtual chaos::Class<CLASS> const * GetClass() const { return CLASS##_class; }\
+static inline chaos::Class<CLASS> const * CLASS##_class = DeclareObjectClass<CLASS, PARENT_CLASS>(#CLASS)
 
 namespace chaos
 {
@@ -41,13 +41,13 @@ namespace chaos
 
 		/** declare the class in the default C++ ClassManager (must be declared before the CHAOS_DECLARE_OBJECT_CLASS usage) */
 		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = EmptyClass>
-		static ClassRegistration DeclareObjectClass(std::string name);
+		static ClassRegistration<CLASS_TYPE> DeclareObjectClass(std::string name);
 
 	public:
 
-		static chaos::SubClassOf<Object> GetStaticClass() { return Object_class; }
-		virtual chaos::Class const* GetClass() const { return Object_class; }
-		static inline Class const* Object_class = DeclareObjectClass<Object>("Object");
+		static chaos::Class<Object> GetStaticClass() { return Object_class; }
+		virtual chaos::Class<Object> const* GetClass() const { return Object_class; }
+		static inline Class<Object> const* Object_class = DeclareObjectClass<Object>("Object");
 	};
 
 }; // namespace chaos
@@ -57,7 +57,7 @@ namespace chaos
 namespace chaos
 {
 	template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE>
-	ClassRegistration Object::DeclareObjectClass(std::string name)
+	ClassRegistration<CLASS_TYPE> Object::DeclareObjectClass(std::string name)
 	{
 		return chaos::ClassManager::GetDefaultInstance()->DeclareCPPClass<CLASS_TYPE, PARENT_CLASS_TYPE>(std::move(name));
 	}

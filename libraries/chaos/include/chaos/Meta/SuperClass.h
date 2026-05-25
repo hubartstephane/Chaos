@@ -17,6 +17,10 @@ namespace chaos
 	// 
 	//		CHAOS_DECLARE_EXTERNAL_SUPER(B, A)		---> this declares some fake functions
 	//
+	// Access to the super class
+	//
+	//		SuperClass_t<A>
+	//
 
 	// check whether a class has a 'Super' typename declared inside (and check whether this 'Super' is a parent class of T)
 	template<typename T>

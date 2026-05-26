@@ -8,6 +8,8 @@ namespace chaos
 	// 
 	//		class B : public A
 	//		{
+	//		public: // <----- IMPORTANT
+	// 
 	//			using Super = A;
 	//		};
 	//

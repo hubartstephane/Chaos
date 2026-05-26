@@ -99,7 +99,7 @@ namespace chaos
 		}
 
 		/** insert a new class in the manager */
-		void InsertClass(Class* cls);
+		void InsertClass(ClassBase* cls);
 
 	protected:
 
@@ -135,7 +135,7 @@ namespace chaos
 		/* the parent class manager */
 		shared_ptr<ClassManager> parent_manager;
 		/** the classes owned by this manager */
-		std::vector<Class*> classes;
+		std::vector<ClassBase*> classes;
 	};
 
 #endif

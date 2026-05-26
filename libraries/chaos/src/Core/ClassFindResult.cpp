@@ -14,12 +14,12 @@ namespace chaos
 	{
 	}
 
-	ClassFindResult::operator Class* () const
+	ClassFindResult::operator ClassBase* () const
 	{
 		return Resolve(nullptr);
 	}
 
-	Class* ClassFindResult::Resolve(Class const * check_class) const
+	ClassBase* ClassFindResult::Resolve(ClassBase const * check_class) const
 	{
 		// check for cached result or stop if no class_manager
 		if (result != nullptr || class_manager == nullptr)

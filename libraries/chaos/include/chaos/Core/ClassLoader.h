@@ -2,28 +2,42 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
+	template<typename CLASS_TYPE>
 	class ClassWithJSONInitialization;
 	class ClassLoader;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	class CHAOS_API ClassWithJSONInitialization : public Class
+	template<typename CLASS_TYPE>
+	class ClassWithJSONInitialization : public Class<CLASS_TYPE>
 	{
 		friend class ClassLoader;
 
 	protected:
 
 		/** constructor */
-		ClassWithJSONInitialization(std::string in_name, nlohmann::json in_json);
+		ClassWithJSONInitialization(std::string in_name, nlohmann::json in_json):
+			Class<CLASS_TYPE>(std::move(in_name)),
+			json(std::move(in_json))
+		{
+		}
 
 		/** override */
-		virtual void OnObjectInstanceInitialized(Object* object) const override;
+		virtual void OnInstanceInitialization(CLASS_TYPE* instance) const override
+		{
+			if (JSONSerializableInterface* serializable = auto_cast(instance))
+				serializable->SerializeFromJSON(&json);
+		}
 
 	protected:
 
 		/** the data to apply at object instance creation */
 		nlohmann::json json;
 	};
+
+
+
+
 
 	class CHAOS_API ClassLoader
 	{

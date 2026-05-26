@@ -11,6 +11,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_DEFINE_LOG(ClassLog, "Class")
+
 	/**
 	 * CHAOS_REGISTER_CLASS : a macro that helps register classes automatically
 	 */
@@ -27,7 +29,6 @@ namespace chaos
 		No = 0,
 		Yes = 1
 	};
-
 
 	/**
 	 * ClassBase : a registered class
@@ -53,19 +54,21 @@ namespace chaos
 		std::string const& GetClassName() const { return name; }
 		/** gets the short name */
 		std::string const& GetShortName() const { return short_name; }
+		/** gets whether the class is already properly declared */
+		bool IsDeclared() const { return declared; }
 
 		/** gets the class manager */
 		ClassManager* GetClassManager() const { return manager; } // no need to have a manager const
-
-		/** returns whether we can create instances */
-		virtual bool CanCreateInstance() const;
-		/** returns whether we can create instances */
-		virtual bool CanCreateInstanceOnStack() const;
 
 		/** set the parent class */
 		void SetParentClass(ClassBase const* in_parent);
 		/** set the short name */
 		void SetShortName(std::string in_short_name);
+
+		/** static inheritance method */
+		static InheritanceType InheritsFrom(ClassBase const* child_class, ClassBase const* parent_class, bool accept_equal = false);
+		/** returns whether the class inherits from parent */
+		InheritanceType InheritsFrom(ClassBase const* parent_class, bool accept_equal = false) const;
 
 	protected:
 
@@ -92,119 +95,72 @@ namespace chaos
 		ClassManager* manager = nullptr;
 	};
 
-
-
-
-
-
-
-
-
-
-
-
-
 	/**
-	 * Class : a registered class
+	 * ClassParentClass: get the parent class of a class
 	 */
 
 	template<typename CLASS_TYPE>
-	class Class
+	requires
+	(
+		HasInternalSuperClass<CLASS_TYPE> || HasExternalSuperType<CLASS_TYPE>
+	)
+	using ClassParentClass = SuperClass_t<CLASS_TYPE>;
+
+	template<typename CLASS_TYPE>
+	requires 
+	(
+		!HasInternalSuperClass<CLASS_TYPE> && !HasExternalSuperType<CLASS_TYPE>
+	)
+	using ClassParentClass = ClassBase;
+
+	/**
+	 * Class: a registered class
+	 */
+
+	template<typename CLASS_TYPE>
+	class Class : public ClassParentClass<CLASS_TYPE>
 	{
 		friend class ClassLoader;
-		friend class ClassRegistration;
+		friend class ClassRegistration<CLASS_TYPE>;
 		friend class ClassFindResult;
 		friend class ClassManager;
 
 	protected:
 
-		using ClassBase::ClassBase;
+		//using Super::Super;
 
 	public:
 
-		/** the type of the function to allocate an object */
-		using create_instance_function_type = std::function<Object* ()>;
-		/** the type of the function to create an object on the stack an call a function on it */
-		using create_instance_on_stack_function_type = std::function<void(LightweightFunction<void(Object*)>)>;
-
-
-		/** returns whether we can create instances */
-		bool CanCreateInstance() const;
-		/** returns whether we can create instances */
-		bool CanCreateInstanceOnStack() const;
-
-
-		/** static inheritance method */
-		static InheritanceType InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal = false);
-		/** returns whether the class inherits from parent */
-		InheritanceType InheritsFrom(Class const* parent_class, bool accept_equal = false) const;
-
-		/** create a temporary instance on the stack an call the functor on it */
-		template<typename FUNC>
-		bool CreateInstanceOnStack(FUNC const& func) const;
 		/** method to create an instance of the object */
-		Object* CreateInstance() const;
-		/** creation operator */
-		Object* operator ()() const;
-
-	protected:
-
-
-
-		/** object initialization function */
-		virtual void OnObjectInstanceInitialized(Object* object) const;
-
-		/** initialize the object instance */
-		void InitializeObjectInstance(Object* object) const;
-		/** get the create instance function */
-		create_instance_function_type const* GetCreateInstanceFunc() const;
-		/** get the create instance on stack function */
-		create_instance_on_stack_function_type const* GetCreateInstanceOnStackFunc() const;
-
-	protected:
-
-		/** the parent of the class */
-		Class const* parent = nullptr;
-		/** get class size */
-		size_t class_size = 0;
-		/** the optional name of the class */
-		std::string name;
-		/** the optional short name of the class */
-		std::string short_name;
-		/** whether the class has been fully declared */
-		bool declared = false;
-		/** create an instance of the object delegate */
-		create_instance_function_type create_instance;
-		/** delegate to create a temporary instance of the object on the stack and call a functor on it */
-		create_instance_on_stack_function_type create_instance_on_stack;
-		/** the type_info for the class */
-		std::type_info const* info = nullptr;
-		/** the manager for this class */
-		ClassManager* manager = nullptr;
-	};
-
-#else
-
-CHAOS_DEFINE_LOG(ClassLog, "Class")
-
-template<typename FUNC>
-bool Class::CreateInstanceOnStack(FUNC const& func) const
-{
-	if (create_instance_on_stack_function_type const* create_func = GetCreateInstanceOnStackFunc())
-	{
-		(*create_func)([this, &func](Object* object)
+		virtual CLASS_TYPE * CreateInstance() const
 		{
-			InitializeObjectInstance(this, object);
-			func(auto_cast_checked(object));
-		});
-		return true;
-	}
-	else
-	{
-		ClassLog::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", name.c_str());
-		return false;
-	}
-}
+			CLASS_TYPE * result = new CLASS_TYPE;
+			if (result != nullptr)
+				InitializeClassInstance(result);
+			return result;
+		}
+
+		/** creation operator */
+		CLASS_TYPE * operator ()() const
+		{
+			return CreateInstance();
+		}
+
+	protected:
+
+		/** initialization entry point */
+		void InitializeClassInstance(CLASS_TYPE * instance) const
+		{
+			// recursive: parents first
+			if (parent != nullptr)
+				parent->InitializeObjectInstance(instance);
+			// apply initialization functors
+			OnInstanceInitialization(instance);
+		}
+
+		/** initialization specialization */
+		virtual void OnInstanceInitialization(CLASS_TYPE* instance) const {}
+	};
 
 #endif
 

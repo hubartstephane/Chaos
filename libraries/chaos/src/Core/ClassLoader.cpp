@@ -152,16 +152,4 @@ namespace chaos
 		delete(cls);
 	}
 
-	ClassWithJSONInitialization::ClassWithJSONInitialization(std::string in_name, nlohmann::json in_json) :
-		Class(std::move(in_name)),
-		json(std::move(in_json))
-	{
-	}
-
-	void ClassWithJSONInitialization::OnObjectInstanceInitialized(Object* object) const
-	{
-		if (JSONSerializableInterface* serializable = auto_cast(object))
-			serializable->SerializeFromJSON(&json);
-	}
-
 }; // namespace chaos

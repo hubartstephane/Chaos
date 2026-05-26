@@ -19,7 +19,7 @@ namespace chaos
 	protected:
 
 		/** constructor (may only be called from Class) */
-		ClassRegistration(Class* in_class_ptr) :
+		ClassRegistration(Class< CLASS_TYPE> * in_class_ptr) :
 			class_ptr(in_class_ptr)
 		{
 			assert(in_class_ptr != nullptr);
@@ -35,7 +35,7 @@ namespace chaos
 		}
 
 		/** convert the registration to the class */
-		operator Class const * () const
+		operator Class<CLASS_TYPE> const * () const
 		{
 			return class_ptr;
 		}
@@ -43,7 +43,7 @@ namespace chaos
 	protected:
 
 		/** the class */
-		Class * class_ptr = nullptr;
+		Class<CLASS_TYPE> * class_ptr = nullptr;
 	};
 
 #endif

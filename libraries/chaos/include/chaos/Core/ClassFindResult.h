@@ -42,14 +42,14 @@ namespace chaos
 	{
 		friend class ClassManager;
 
-		using iterator_type = std::vector<Class*>::iterator;
+		using iterator_type = std::vector<ClassBase*>::iterator;
 
 	public:
 
 		/** gets the result of the class */
-		operator Class* () const;
+		operator ClassBase* () const;
 		/** finalize the search */
-		Class* Resolve(Class const* check_class) const;
+		ClassBase* Resolve(ClassBase const* check_class) const;
 
 	protected:
 
@@ -57,7 +57,7 @@ namespace chaos
 		ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, ClassMatchType in_match_type);
 
 		/** cache the resolved result */
-		mutable Class* result = nullptr;
+		mutable ClassBase* result = nullptr;
 		/** the class manager where to search */
 		mutable ClassManager* class_manager = nullptr;
 		/** the very first name matching the request. we can use it for further research instead to store the name somehow (that would be costly) */

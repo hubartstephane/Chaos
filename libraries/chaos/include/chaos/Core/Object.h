@@ -45,8 +45,8 @@ namespace chaos
 
 	public:
 
-		static chaos::Class<Object> GetStaticClass() { return Object_class; }
-		virtual chaos::Class<Object> const* GetClass() const { return Object_class; }
+		static Class<Object> GetStaticClass() { return Object_class; }
+		virtual Class<Object> const* GetClass() const { return Object_class; }
 		static inline Class<Object> const* Object_class = DeclareObjectClass<Object>("Object");
 	};
 

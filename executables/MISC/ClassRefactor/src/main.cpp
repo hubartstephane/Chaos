@@ -180,8 +180,6 @@ public:
 
 	B() { std::cout << "B::B()" << std::endl; }
 
-
-
 	static MyClass<B> const* GetStaticClass()
 	{
 		static MyClass<B> result("B");
@@ -192,7 +190,11 @@ public:
 	{
 		return B::GetStaticClass();
 	}
+
+	static bool const b1 = HasInternalSuperType<B>;
+	static bool const b2 = HasExternalSuperType<B>;
 };
+
 
 
 
@@ -217,14 +219,19 @@ int main(int argc, char ** argv, char ** env)
 	std::cout << "---------------------------" << std::endl;
 
 
-	MyClass<B> cb("B");
+//	B::GetStaticClass()->CreateInstance();
 
-	cb.CreateInstance();
+
+	//MyClass<B> cb("B");
+
+	//cb.CreateInstance();
 
 	//SuperClass_t<B> b;
 
-	MyClass<A> const * cca = nullptr;
-	MyClass<B> const* ccb = nullptr;
+	//B bbb;
+
+	//MyClass<A> const * cca = nullptr;
+	//MyClass<B> const* ccb = nullptr;
 
 
 	return 0;

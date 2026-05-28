@@ -132,9 +132,16 @@ namespace chaos
 		using type = decltype(ChaosGetSuperClass(std::type_identity_t<T>()));
 	};
 
-	// class the meta function
+	// the meta function
 	template<typename T>
 	using SuperClass_t = typename SuperClass<T>::type;
+
+	// check whether SuperClass_t can be used
+	template<typename T>
+	concept HasSuperType = requires
+	{
+		typename SuperClass_t<T>;
+	};
 
 
 	// defines an external inheritance

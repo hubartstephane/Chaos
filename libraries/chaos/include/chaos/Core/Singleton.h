@@ -12,12 +12,31 @@ class Singleton
 {
 public:
 
+	/** constructor */
+	Singleton()
+	{
+		assert(instance_count == 0);
+		++instance_count;
+	}
+
+	/** destructor */
+	~Singleton()
+	{
+		--instance_count;
+		assert(instance_count == 0);
+	}
+
 	/** get the instances */
 	static T* GetInstance()
 	{
 		static T single_instance;
 		return &single_instance;
 	}
+
+protected:
+
+	/** get the number of existing instance */
+	static inline int instance_count = 0;
 };
 
 #endif

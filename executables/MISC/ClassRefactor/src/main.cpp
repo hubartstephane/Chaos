@@ -38,10 +38,6 @@ class MyClassBase
 {
 public:
 
-	MyClassBase(std::string in_name, std::type_info const& in_info):
-		name(std::move(in_name)),
-		info(in_info){}
-
 	/** destructor */
 	virtual ~MyClassBase() = default;
 
@@ -52,9 +48,9 @@ public:
 	/** gets the class size */
 	size_t GetClassSize() const { return class_size; }
 	/** returns whether the class has been registered */
-	bool IsDeclared() const { return declared; }
+	bool IsFullyInitialized() const { return info != nullptr; }
 	/** gets the parent class */
-	MyClassBase const* GetParentClass() const { return parent; }
+	MyClassBase const* GetParentClass() const { return parent_class; }
 	/** gets the class manager */
 	MyClassManager* GetClassManager() const { return manager; } // no need to have a manager const
 
@@ -67,21 +63,15 @@ public:
 	std::string short_name;
 	/** get class size */
 	size_t class_size = 0;
-	/** whether the class has been fully declared */
-	bool declared = false;
 	/** the type_info for the class */
-	std::type_info const & info;
+	std::type_info const * info = nullptr;
 	/** the parent of the class */
-	MyClassBase const* parent = nullptr;
+	MyClassBase const* parent_class = nullptr;
 	/** the manager for this class */
 	MyClassManager* manager = nullptr;
 };
 
 //-----------------------------------------------------------
-
-#if 1
-
-
 
 template<typename CLASS_TYPE>
 struct MyClassParentClass
@@ -92,7 +82,7 @@ struct MyClassParentClass
 template<typename CLASS_TYPE>
 requires
 (
-	HasInternalSuperType<CLASS_TYPE> || HasExternalSuperType<CLASS_TYPE>
+	HasSuperType<CLASS_TYPE>
 )
 struct MyClassParentClass<CLASS_TYPE>
 {
@@ -108,68 +98,26 @@ using MyClassParentClass_t = typename MyClassParentClass<CLASS_TYPE>::type;
 template<typename CLASS_TYPE>
 class MyClass : public MyClassParentClass_t<CLASS_TYPE>
 {
+	friend class MyClassManager;
+
+
 public:
 
 	using Super = MyClassParentClass_t<CLASS_TYPE>;
 
-	MyClass(std::string in_name, std::type_info const& in_info = typeid(CLASS_TYPE)) :
-		Super(std::move(in_name), in_info) {}
-
 	virtual CLASS_TYPE* CreateInstance() const
 	{
 		return new CLASS_TYPE;
 	}
 
-
-
+	static MyClass * GetCPPStaticInstance()
+	{
+		static MyClass result;
+		return &result;
+	}
 };
 
 //-----------------------------------------------------------
-
-#else
-
-
-
-template<typename CLASS_TYPE>
-class MyClass : public MyClassBase
-{
-public:
-
-	using Super = MyClassBase;
-
-	MyClass(std::string in_name, std::type_info const& in_info = typeid(CLASS_TYPE)) :
-		Super(std::move(in_name), in_info) {}
-
-	virtual CLASS_TYPE* CreateInstance() const
-	{
-		return new CLASS_TYPE;
-	}
-};
-
-template<typename CLASS_TYPE>
-requires
-(
-	HasInternalSuperType<CLASS_TYPE> || HasExternalSuperType<CLASS_TYPE>
-)
-class MyClass<CLASS_TYPE> : public MyClass<SuperClass_t<CLASS_TYPE>>
-{
-public:
-
-	using Super = MyClass<SuperClass_t<CLASS_TYPE>>;
-
-	MyClass(std::string in_name, std::type_info const& in_info = typeid(CLASS_TYPE)) :
-		Super(std::move(in_name), in_info){}
-
-	virtual CLASS_TYPE* CreateInstance() const override
-	{
-		return new CLASS_TYPE;
-	}
-};
-
-
-
-
-#endif
 
 //-----------------------------------------------------------
 
@@ -194,33 +142,17 @@ class MyClassManager
 {
 public:
 
-	static MyClassManager & GetCPPManagerInstance()
+	static MyClassManager & GetRootInstance()
 	{
 		static MyClassManager result;
-		return result;
-	}
-
-	template<typename CLASS_TYPE>
-	MyClass<CLASS_TYPE> const * RegisterCPPClass(std::string name)
-	{
-		std::type_info const & info = typeid(CLASS_TYPE);
-
-		for (MyClassBase const* cls : classes)
-			if (cls->info == info)
-				return auto_cast_checked(cls);
-	
-		MyClass<CLASS_TYPE> * result = new MyClass<CLASS_TYPE>(std::move(name));
-		if (result == nullptr)
-			return nullptr;
-		classes.push_back(result);
 		return result;
 	}
 
 	MyClassFindResult FindClass(char const* name, FindClassFlags flags)
 	{
 		MyClassFindResult result;
-	
-	
+
+
 		return result;
 	}
 
@@ -229,6 +161,30 @@ protected:
 	std::vector<MyClassBase const *> classes;
 };
 
+//-----------------------------------------------------------
+
+class MyRootClassManager : public MyClassManager, public Singleton<MyRootClassManager>
+{
+public:
+
+	template<typename CLASS_TYPE>
+	MyClass<CLASS_TYPE> const* RegisterCPPClass(std::string name)
+	{
+		MyClass<CLASS_TYPE>* result = MyClass<CLASS_TYPE>::GetCPPStaticInstance();
+		if (result->IsFullyInitialized())
+			return result;
+
+		result->name = std::move(name);
+		result->class_size = sizeof(CLASS_TYPE);
+		result->info = &typeid(CLASS_TYPE);
+		result->manager = this;
+		if constexpr (HasSuperType<CLASS_TYPE>)
+			result->parent_class = MyClass<SuperClass_t<CLASS_TYPE>>::GetCPPStaticInstance();
+
+		classes.push_back(result);
+		return result;
+	}
+};
 
 
 
@@ -263,7 +219,7 @@ public:
 template<typename CLASS_TYPE>
 MyClass<CLASS_TYPE> const* A::MyDeclareObjectClass(std::string name)
 {
-	return MyClassManager::GetCPPManagerInstance().RegisterCPPClass<CLASS_TYPE>(std::move(name));
+	return MyRootClassManager::GetInstance()->RegisterCPPClass<CLASS_TYPE>(std::move(name));
 }
 
 //-----------------------------------------------------------
@@ -370,3 +326,53 @@ int main(int argc, char ** argv, char ** env)
 
 	return 0;
 }
+
+
+
+
+#if 0
+
+
+
+template<typename CLASS_TYPE>
+class MyClass : public MyClassBase
+{
+public:
+
+	using Super = MyClassBase;
+
+	MyClass(std::string in_name, std::type_info const& in_info = typeid(CLASS_TYPE)) :
+		Super(std::move(in_name), in_info) {
+	}
+
+	virtual CLASS_TYPE* CreateInstance() const
+	{
+		return new CLASS_TYPE;
+	}
+};
+
+template<typename CLASS_TYPE>
+	requires
+(
+	HasInternalSuperType<CLASS_TYPE> || HasExternalSuperType<CLASS_TYPE>
+	)
+	class MyClass<CLASS_TYPE> : public MyClass<SuperClass_t<CLASS_TYPE>>
+{
+public:
+
+	using Super = MyClass<SuperClass_t<CLASS_TYPE>>;
+
+	MyClass(std::string in_name, std::type_info const& in_info = typeid(CLASS_TYPE)) :
+		Super(std::move(in_name), in_info) {
+	}
+
+	virtual CLASS_TYPE* CreateInstance() const override
+	{
+		return new CLASS_TYPE;
+	}
+};
+
+
+
+
+#endif

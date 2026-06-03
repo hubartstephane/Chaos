@@ -23,7 +23,7 @@ protected:
 
 //-----------------------------------------------------------
 
-template<typename CLASS_TYPE>
+template<typename CPP_TYPE>
 class MyClass;
 
 class MyClassManager;
@@ -36,7 +36,7 @@ class MyClassManager;
 
 class MyClassBase
 {
-	friend class MyRootClassManager;
+	friend class MyCPPClassManager;
 
 public:
 
@@ -56,35 +56,11 @@ public:
 	/** gets the class manager */
 	MyClassManager* GetClassManager() const { return manager; } // no need to have a manager const
 
-	template<typename CLASS_TYPE>
-	InheritanceType InheritsFrom(bool accept_equal = true) const
-	{
-
-#if 0
-
-		// class not registered, cannot known result
-		if (!IsFullyInitialized())
-			return InheritanceType::Unknown;
-		// other class not fully initialized
-		if (!MyClass<CLASS_TYPE>::GetCPPClassInstance()->IsFullyInitialized())
-			return InheritanceType::Unknown;
-
-#endif
-
-
-		// returns no if classes are same and we don't accept that as a valid result
-		if (this == MyClass<CLASS_TYPE>::GetCPPClassInstance())
-		{
-			if (!accept_equal)
-				return InheritanceType::No;
-			else
-				return InheritanceType::Yes;
-		}
-		// check with casting
-		if (dynamic_cast<MyClass<CLASS_TYPE> const *>(this) != nullptr)
-			return InheritanceType::Yes;
-		return InheritanceType::No;
-	}
+	/** check whether we inherit from another class */
+	bool InheritsFrom(MyClassBase const * base, bool accept_equal = true) const;
+	/** check whether we inherit from another class */
+	template<typename CPP_TYPE>
+	bool InheritsFrom(bool accept_equal = true) const;
 
 protected:
 
@@ -104,41 +80,64 @@ protected:
 
 //-----------------------------------------------------------
 
-template<typename CLASS_TYPE>
-struct MyClassParentClass
+bool MyClassBase::InheritsFrom(MyClassBase const* base, bool accept_equal) const
+{
+	if (base == this)
+		return accept_equal;
+
+	MyClassBase const* cls = parent_class;
+	while (cls != nullptr)
+	{
+		if (cls == base)
+			return true;
+		cls = cls->parent_class;
+	}
+	return false;
+}
+
+template<typename CPP_TYPE>
+bool MyClassBase::InheritsFrom(bool accept_equal) const
+{
+	return InheritsFrom(MyClass<CPP_TYPE>::GetCPPClassInstance(), accept_equal);
+}
+
+//-----------------------------------------------------------
+
+template<typename CPP_TYPE>
+struct MyClassSuper
 {
 	using type = MyClassBase;
 };
 
-template<typename CLASS_TYPE>
+template<typename CPP_TYPE>
 requires
 (
-	HasSuperType<CLASS_TYPE>
+	HasSuperType<CPP_TYPE>
 )
-struct MyClassParentClass<CLASS_TYPE>
+struct MyClassSuper<CPP_TYPE>
 {
-	using type = MyClass<SuperClass_t<CLASS_TYPE>>;
+	using type = MyClass<SuperClass_t<CPP_TYPE>>;
 };
 
-template<typename CLASS_TYPE>
-using MyClassParentClass_t = typename MyClassParentClass<CLASS_TYPE>::type;
+template<typename CPP_TYPE>
+using MyClassSuper_t = typename MyClassSuper<CPP_TYPE>::type;
 
 //-----------------------------------------------------------
 
 
-template<typename CLASS_TYPE>
-class MyClass : public MyClassParentClass_t<CLASS_TYPE>
+template<typename CPP_TYPE>
+class MyClass : public MyClassSuper_t<CPP_TYPE>
 {
 	friend class MyClassManager;
 
 public:
 
-	using Super = MyClassParentClass_t<CLASS_TYPE>;
+	using Super = MyClassSuper_t<CPP_TYPE>;
 
-	CLASS_TYPE* CreateInstance() const
+	CPP_TYPE* CreateInstance() const
 	{
-		assert(IsFullyInitialized());
-		CLASS_TYPE * result = AllocateInstance();
+		assert(this->IsFullyInitialized());
+		CPP_TYPE* result = AllocateInstance();
 		if (result != nullptr)
 			InitializeInstance(result);
 		return result;
@@ -146,25 +145,25 @@ public:
 
 	static MyClass * GetCPPClassInstance()
 	{
-		static MyClass<CLASS_TYPE> result;
+		static MyClass<CPP_TYPE> result;
 		return &result;
 	}
 
 protected:
 
-	virtual CLASS_TYPE* AllocateInstance() const
+	virtual CPP_TYPE* AllocateInstance() const
 	{
-		return new CLASS_TYPE;
+		return new CPP_TYPE;
 	}
 
-	void InitializeInstance(CLASS_TYPE * instance) const
+	void InitializeInstance(CPP_TYPE* instance) const
 	{
 		if (this->parent_class != nullptr)
 			this->parent_class->InitializeInstance(instance);
 		DoInitializeInstance(instance);
 	}
 
-	virtual void DoInitializeInstance(CLASS_TYPE* instance) const
+	virtual void DoInitializeInstance(CPP_TYPE* instance) const
 	{
 	}
 };
@@ -181,63 +180,8 @@ class MyClassFindResult
 
 public:
 
-	template<typename CLASS_TYPE>
-	operator CLASS_TYPE * () const
-	{
-		// check for cached result or stop if no class_manager
-		if (result != nullptr || class_manager == nullptr)
-			return result;
-
-		// check for the very first entry (string comparaison not necessary)
-		if ((*iterator)->InheritsFrom<CLASS_TYPE>(true) == InheritanceType::Yes)
-		{
-			result = *iterator;
-			return result;
-		}
-
-		// we know that the iterator points on a valid entry. get the string that made this entry a good one
-		std::string const& searched_name = (match_type == ClassMatchType::Name) ?
-			(*iterator)->GetClassName() :
-			(*iterator)->GetShortName();
-
-		// search in manager chain
-		while (class_manager != nullptr)
-		{
-			while (iterator != class_manager->classes.end())
-			{
-				if (HasAnyFlags(flags, FindClassFlags::Name))
-				{
-					if (StringTools::Stricmp(iterator->GetClassName(), searched_name) == 0)
-					{
-						result = dynamic_cast<CLASS_TYPE>(*iterator);
-						if (result != nullptr)
-						{
-							return result;
-						}
-					}
-				}
-				if (HasAnyFlags(flags, FindClassFlags::Shortname))
-				{
-					if (StringTools::Stricmp(iterator->GetShortName(), searched_name) == 0)
-					{
-						result = dynamic_cast<CLASS_TYPE>(*iterator);
-						if (result != nullptr)
-							return result;
-					}
-				}
-				++iterator;
-			}
-			if (!HasAnyFlags(find_flags, FindClassFlags::ParentManager))
-				return nullptr;
-
-			class_manager = class_manager->GetParentManager();
-			if (class_manager == nullptr)
-				return nullptr;
-				
-			iterator = class_manager->begin();
-		}
-		return nullptr;
-	};
+	template<typename OBJECT_TYPE>
+	operator MyClass<OBJECT_TYPE> * () const;
 
 protected:
 
@@ -271,6 +215,8 @@ MyClassFindResult::MyClassFindResult(MyClassManager* in_class_manager, iterator_
 
 class MyClassManager : public Object
 {
+	friend class MyClassFindResult;
+
 public:
 
 	/** constructor */
@@ -350,27 +296,91 @@ MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags fla
 
 
 
+//-----------------------------------------------------------
+
+
+template<typename OBJECT_TYPE>
+MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
+{
+	// check for cached result or stop if no class_manager
+	if (result != nullptr || class_manager == nullptr)
+		return (MyClass<OBJECT_TYPE>*)result;
+
+	// check for the very first entry (string comparaison not necessary)
+	if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
+	{
+		result = *iterator;
+		return (MyClass<OBJECT_TYPE>*)result;
+	}
+	++iterator; // no need to test again for this iterator
+
+	// we know that the iterator points on a valid entry. get the string that made this entry a good one
+	std::string const& searched_name = (match_type == ClassMatchType::Name) ?
+		(*iterator)->GetClassName() :
+		(*iterator)->GetShortName();
+
+	// search in manager chain
+	while (class_manager != nullptr)
+	{
+		while (iterator != class_manager->classes.end())
+		{
+			if (HasAnyFlags(find_flags, FindClassFlags::Name))
+			{
+				if (StringTools::Stricmp((*iterator)->GetClassName(), searched_name) == 0)
+				{
+					if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
+						return (MyClass<OBJECT_TYPE>*)(*iterator);
+					++iterator;
+					continue; // no need to check further
+				}
+			}
+			if (HasAnyFlags(find_flags, FindClassFlags::Shortname))
+			{
+				if (StringTools::Stricmp((*iterator)->GetShortName(), searched_name) == 0)
+				{
+					if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
+						return (MyClass<OBJECT_TYPE>*)(*iterator);
+				}
+			}
+			++iterator;
+		}
+		if (!HasAnyFlags(find_flags, FindClassFlags::ParentManager))
+			return nullptr;
+
+		class_manager = class_manager->GetParentManager();
+		if (class_manager == nullptr)
+			return nullptr;
+
+		iterator = class_manager->classes.begin();
+	}
+	return nullptr;
+};
+
+
 
 
 //-----------------------------------------------------------
 
-class MyRootClassManager : public MyClassManager, public Singleton<MyRootClassManager>
+class MyCPPClassManager : public MyClassManager, public Singleton<MyCPPClassManager>
 {
 public:
 
-	template<typename CLASS_TYPE>
-	MyClass<CLASS_TYPE> const* RegisterCPPClass(std::string name)
+	template<typename CPP_TYPE>
+	MyClass<CPP_TYPE> const* RegisterCPPClass(char const * name)
 	{
-		MyClass<CLASS_TYPE>* result = MyClass<CLASS_TYPE>::GetCPPClassInstance();
-		if (result->IsFullyInitialized())
+		MyClass<CPP_TYPE>* result = MyClass<CPP_TYPE>::GetCPPClassInstance();
+		if (result->IsFullyInitialized()) // class has already be registered ?
+		{
+			assert(StringTools::Stricmp(result->name, name) == 0); // ensure class is registered with same name
 			return result;
+		}
 
 		result->name = std::move(name);
-		result->class_size = sizeof(CLASS_TYPE);
-		result->info = &typeid(CLASS_TYPE);
+		result->class_size = sizeof(CPP_TYPE);
+		result->info = &typeid(CPP_TYPE);
 		result->manager = this;
-		if constexpr (HasSuperType<CLASS_TYPE>)
-			result->parent_class = MyClass<SuperClass_t<CLASS_TYPE>>::GetCPPClassInstance();
+		if constexpr (HasSuperType<CPP_TYPE>)
+			result->parent_class = MyClass<SuperClass_t<CPP_TYPE>>::GetCPPClassInstance();
 
 		classes.push_back(result);
 		return result;
@@ -386,15 +396,15 @@ public:\
 using Super = PARENT_CLASS;\
 static MyClass<CLASS> const * GetStaticClass(){ return CLASS##_class;}\
 virtual MyClass<CLASS> const * GetClass() const { return CLASS##_class; }\
-static inline MyClass<CLASS> const * CLASS##_class = MyDeclareObjectClass<CLASS>(#CLASS)
+static inline MyClass<CLASS> const * CLASS##_class = MyDeclareCPPClass<CLASS>(#CLASS)
 
 class A
 {
 protected:
 
 	/** declare the class in the default C++ ClassManager (must be declared before the CHAOS_DECLARE_OBJECT_CLASS usage) */
-	template<typename CLASS_TYPE>
-	static MyClass<CLASS_TYPE> const* MyDeclareObjectClass(std::string name);
+	template<typename CPP_TYPE>
+	static MyClass<CPP_TYPE> const* MyDeclareCPPClass(char const * name);
 
 public:
 
@@ -404,13 +414,13 @@ public:
 
 	static MyClass<A> const * GetStaticClass() { return A_class; }
 	virtual MyClass<A> const* GetClass() const { return A_class; }
-	static inline MyClass<A> const* A_class = MyDeclareObjectClass<A>("A");
+	static inline MyClass<A> const* A_class = MyDeclareCPPClass<A>("A");
 };
 
-template<typename CLASS_TYPE>
-MyClass<CLASS_TYPE> const* A::MyDeclareObjectClass(std::string name)
+template<typename CPP_TYPE>
+MyClass<CPP_TYPE> const* A::MyDeclareCPPClass(char const * name)
 {
-	return MyRootClassManager::GetInstance()->RegisterCPPClass<CLASS_TYPE>(std::move(name));
+	return MyCPPClassManager::GetInstance()->RegisterCPPClass<CPP_TYPE>(name);
 }
 
 //-----------------------------------------------------------
@@ -447,8 +457,13 @@ int main(int argc, char ** argv, char ** env)
 	std::cout.rdbuf(&debugBuf);
 
 
-	MyClass<A> const * ca = MyClass<A>::GetCPPClassInstance();
-	MyClass<B> const * cb = MyClass<B>::GetCPPClassInstance();
+	//MyClass<A> const * ca = MyClass<A>::GetCPPClassInstance();
+	//MyClass<B> const * cb = MyClass<B>::GetCPPClassInstance();
+
+
+	MyClass<A> const * ca = MyCPPClassManager::GetInstance()->FindClass("A");
+	MyClass<B> const * cb = MyCPPClassManager::GetInstance()->FindClass("B");
+
 	BidonC cc;  
 	auto inherit1 = ca->InheritsFrom<A>();
 	auto inherit2 = ca->InheritsFrom<B>();

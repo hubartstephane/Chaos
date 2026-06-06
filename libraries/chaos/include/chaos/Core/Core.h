@@ -7,6 +7,8 @@
 #include "chaos/Core/EmptyClass.h"
 #include "chaos/Core/LightweightFunction.h"
 #include "chaos/Core/ConstantFunction.h"
+#include "chaos/Core/NonCopyable.h"
+#include "chaos/Core/NonCopyableAndMovable.h"
 #include "chaos/Core/Singleton.h"
 #include "chaos/Core/HelpText.h"
 #include "chaos/Core/Premain.h"

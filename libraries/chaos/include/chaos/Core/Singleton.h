@@ -12,6 +12,15 @@ class Singleton
 {
 public:
 
+	/** get the instances */
+	static T* GetInstance()
+	{
+		static T single_instance;
+		return &single_instance;
+	}
+
+protected:
+
 	/** constructor */
 	Singleton()
 	{
@@ -24,13 +33,6 @@ public:
 	{
 		--instance_count;
 		assert(instance_count == 0);
-	}
-
-	/** get the instances */
-	static T* GetInstance()
-	{
-		static T single_instance;
-		return &single_instance;
 	}
 
 protected:

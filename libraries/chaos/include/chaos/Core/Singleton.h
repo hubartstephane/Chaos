@@ -8,7 +8,7 @@ class Singleton;
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 template<typename T>
-class Singleton
+class Singleton : private NonCopyableAndMovable
 {
 public:
 

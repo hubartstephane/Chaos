@@ -38,6 +38,9 @@ class MyClassBase
 {
 	friend class MyCPPClassManager;
 
+	template<typename CPP_TYPE>
+	friend class MyCppClassRegisterResult;
+
 public:
 
 	/** destructor */
@@ -64,6 +67,10 @@ public:
 
 protected:
 
+	void SetShortName(std::string in_shorname);
+
+protected:
+
 	/** the optional name of the class */
 	std::string name;
 	/** the optional short name of the class */
@@ -77,6 +84,13 @@ protected:
 	/** the manager for this class */
 	MyClassManager* manager = nullptr;
 };
+
+void MyClassBase::SetShortName(std::string in_shorname)
+{ 
+	assert(short_name.empty());
+	short_name = std::move(in_shorname); 
+}
+
 
 //-----------------------------------------------------------
 
@@ -150,6 +164,8 @@ public:
 	}
 
 protected:
+
+	MyClass() = default;
 
 	virtual CPP_TYPE* AllocateInstance() const
 	{
@@ -253,7 +269,7 @@ MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags fla
 
 	// early exit
 	if (StringTools::IsEmpty(name))
-		return { this, classes.end(), ClassMatchType::Name, flags }; // empty ClassFindResult result
+		return { nullptr, classes.end(), ClassMatchType::Name, flags }; // empty ClassFindResult result
 
 	// search in manager chain
 	MyClassManager* manager = this;
@@ -281,7 +297,7 @@ MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags fla
 			return false;
 		});
 		if (it != manager->classes.end())
-			return { this, it, match_type, flags };
+			return { manager, it, match_type, flags };
 		if (!HasAnyFlags(flags, FindClassFlags::ParentManager))
 			break;
 		manager = manager->parent_manager.get();
@@ -313,6 +329,11 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 		return (MyClass<OBJECT_TYPE>*)result;
 	}
 	++iterator; // no need to test again for this iterator
+	if (iterator != class_manager->classes.end())
+	{
+		class_manager = nullptr; // so we have early result next time this function is called
+		return nullptr;
+	}
 
 	// we know that the iterator points on a valid entry. get the string that made this entry a good one
 	std::string const& searched_name = (match_type == ClassMatchType::Name) ?
@@ -329,9 +350,12 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 				if (StringTools::Stricmp((*iterator)->GetClassName(), searched_name) == 0)
 				{
 					if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
-						return (MyClass<OBJECT_TYPE>*)(*iterator);
+					{
+						result = *iterator; // cache the result for next call
+						return (MyClass<OBJECT_TYPE>*)result;
+					}
 					++iterator;
-					continue; // no need to check further
+					continue; // the class does not match no matter what. no need to check for the short name
 				}
 			}
 			if (HasAnyFlags(find_flags, FindClassFlags::Shortname))
@@ -339,24 +363,47 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 				if (StringTools::Stricmp((*iterator)->GetShortName(), searched_name) == 0)
 				{
 					if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
-						return (MyClass<OBJECT_TYPE>*)(*iterator);
+					{
+						result = *iterator; // cache the result for next call
+						return (MyClass<OBJECT_TYPE>*)result;
+					}
 				}
 			}
 			++iterator;
 		}
 		if (!HasAnyFlags(find_flags, FindClassFlags::ParentManager))
-			return nullptr;
+			break;
 
 		class_manager = class_manager->GetParentManager();
 		if (class_manager == nullptr)
-			return nullptr;
+			break;
 
 		iterator = class_manager->classes.begin();
 	}
+	class_manager = nullptr; // so we have early result next time this function is called
 	return nullptr;
 };
 
+//-----------------------------------------------------------
 
+template<typename CPP_TYPE>
+class MyCppClassRegisterResult
+{
+public:
+
+	/** set the short name for the class */
+	MyCppClassRegisterResult& ShortName(std::string in_short_name)
+	{
+		MyClass<CPP_TYPE>::GetCPPClassInstance()->SetShortName(std::move(in_short_name));
+		return *this;
+	}
+
+	/** convert the registration to the class */
+	operator MyClass<CPP_TYPE> * () const
+	{
+		return MyClass<CPP_TYPE>::GetCPPClassInstance();
+	}
+};
 
 
 //-----------------------------------------------------------
@@ -366,16 +413,16 @@ class MyCPPClassManager : public MyClassManager, public Singleton<MyCPPClassMana
 public:
 
 	template<typename CPP_TYPE>
-	MyClass<CPP_TYPE> const* RegisterCPPClass(char const * name)
+	MyCppClassRegisterResult<CPP_TYPE> RegisterCPPClass(char const * name)
 	{
 		MyClass<CPP_TYPE>* result = MyClass<CPP_TYPE>::GetCPPClassInstance();
 		if (result->IsFullyInitialized()) // class has already be registered ?
 		{
 			assert(StringTools::Stricmp(result->name, name) == 0); // ensure class is registered with same name
-			return result;
+			return {};
 		}
 
-		result->name = std::move(name);
+		result->name = name;
 		result->class_size = sizeof(CPP_TYPE);
 		result->info = &typeid(CPP_TYPE);
 		result->manager = this;
@@ -383,7 +430,7 @@ public:
 			result->parent_class = MyClass<SuperClass_t<CPP_TYPE>>::GetCPPClassInstance();
 
 		classes.push_back(result);
-		return result;
+		return {};
 	}
 };
 
@@ -404,7 +451,7 @@ protected:
 
 	/** declare the class in the default C++ ClassManager (must be declared before the CHAOS_DECLARE_OBJECT_CLASS usage) */
 	template<typename CPP_TYPE>
-	static MyClass<CPP_TYPE> const* MyDeclareCPPClass(char const * name);
+	static MyCppClassRegisterResult<CPP_TYPE> MyDeclareCPPClass(char const * name);
 
 public:
 
@@ -418,7 +465,7 @@ public:
 };
 
 template<typename CPP_TYPE>
-MyClass<CPP_TYPE> const* A::MyDeclareCPPClass(char const * name)
+MyCppClassRegisterResult<CPP_TYPE> A::MyDeclareCPPClass(char const * name)
 {
 	return MyCPPClassManager::GetInstance()->RegisterCPPClass<CPP_TYPE>(name);
 }
@@ -440,7 +487,7 @@ class B : public A
 
 public:
 
-	MY_CHAOS_DECLARE_OBJECT_CLASS(B, A);
+	MY_CHAOS_DECLARE_OBJECT_CLASS(B, A).ShortName("bbb");
 
 	B() { std::cout << "B::B()" << std::endl; }
 };
@@ -462,7 +509,7 @@ int main(int argc, char ** argv, char ** env)
 
 
 	MyClass<A> const * ca = MyCPPClassManager::GetInstance()->FindClass("A");
-	MyClass<B> const * cb = MyCPPClassManager::GetInstance()->FindClass("B");
+	MyClass<B> const * cb = MyCPPClassManager::GetInstance()->FindClass("bbb");
 
 	BidonC cc;  
 	auto inherit1 = ca->InheritsFrom<A>();

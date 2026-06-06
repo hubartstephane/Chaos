@@ -21,6 +21,8 @@ protected:
 	}
 };
 
+
+
 //-----------------------------------------------------------
 
 template<typename CPP_TYPE>
@@ -34,8 +36,9 @@ class MyClassManager;
 
 //-----------------------------------------------------------
 
-class MyClassBase
+class MyClassBase : public ReferenceCountedInterface
 {
+	friend class MyClassManager;
 	friend class MyCPPClassManager;
 
 	template<typename CPP_TYPE>
@@ -53,7 +56,7 @@ public:
 	/** gets the class size */
 	size_t GetClassSize() const { return class_size; }
 	/** returns whether the class has been registered */
-	bool IsFullyInitialized() const { return info != nullptr; }
+	bool IsFullyInitialized() const { return manager != nullptr; }
 	/** gets the parent class */
 	MyClassBase const* GetParentClass() const { return parent_class; }
 	/** gets the class manager */
@@ -90,7 +93,6 @@ void MyClassBase::SetShortName(std::string in_shorname)
 	assert(short_name.empty());
 	short_name = std::move(in_shorname); 
 }
-
 
 //-----------------------------------------------------------
 
@@ -159,8 +161,8 @@ public:
 
 	static MyClass * GetCPPClassInstance()
 	{
-		static MyClass<CPP_TYPE> result;
-		return &result;
+		static shared_ptr<MyClass<CPP_TYPE>> result = new MyClass<CPP_TYPE>;
+		return result.get();
 	}
 
 protected:
@@ -192,7 +194,7 @@ class MyClassFindResult
 {
 	friend class MyClassManager;
 
-	using iterator_type = std::vector<MyClassBase*>::iterator;
+	using iterator_type = std::vector<shared_ptr<MyClassBase>>::iterator;
 
 public:
 
@@ -238,6 +240,9 @@ public:
 	/** constructor */
 	MyClassManager(MyClassManager* in_parent_manager = nullptr);
 
+	/** destructor */
+	~MyClassManager();
+
 	/** gets the parent manager */
 	MyClassManager* GetParentManager() { return parent_manager.get(); }
 	/** gets the parent manager */
@@ -250,7 +255,7 @@ protected:
 	/* the parent class manager */
 	shared_ptr<MyClassManager> parent_manager;
 	/** the classes owned by this manager */
-	std::vector<MyClassBase*> classes;
+	std::vector<shared_ptr<MyClassBase>> classes;
 };
 
 
@@ -259,8 +264,11 @@ MyClassManager::MyClassManager(MyClassManager* in_parent_manager) :
 {
 }
 
-
-
+MyClassManager::~MyClassManager()
+{
+	for (auto & cls : classes)
+		cls->manager = nullptr;
+}
 
 MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags flags)
 {
@@ -276,7 +284,7 @@ MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags fla
 	while (manager != nullptr)
 	{
 		ClassMatchType match_type = ClassMatchType::Name;
-		auto it = std::ranges::find_if(manager->classes, [name, &match_type, flags](MyClassBase const* cls)
+		auto it = std::ranges::find_if(manager->classes, [name, &match_type, flags](shared_ptr<MyClassBase> const & cls)
 		{
 			if (HasAnyFlags(flags, FindClassFlags::Name))
 			{
@@ -325,7 +333,7 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 	// check for the very first entry (string comparaison not necessary)
 	if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
 	{
-		result = *iterator;
+		result = iterator->get();
 		return (MyClass<OBJECT_TYPE>*)result;
 	}
 	++iterator; // no need to test again for this iterator
@@ -337,8 +345,8 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 
 	// we know that the iterator points on a valid entry. get the string that made this entry a good one
 	std::string const& searched_name = (match_type == ClassMatchType::Name) ?
-		(*iterator)->GetClassName() :
-		(*iterator)->GetShortName();
+		iterator->get()->GetClassName() :
+		iterator->get()->GetShortName();
 
 	// search in manager chain
 	while (class_manager != nullptr)
@@ -351,7 +359,7 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 				{
 					if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
 					{
-						result = *iterator; // cache the result for next call
+						result = iterator->get(); // cache the result for next call
 						return (MyClass<OBJECT_TYPE>*)result;
 					}
 					++iterator;
@@ -364,7 +372,7 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 				{
 					if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
 					{
-						result = *iterator; // cache the result for next call
+						result = iterator->get(); // cache the result for next call
 						return (MyClass<OBJECT_TYPE>*)result;
 					}
 				}
@@ -477,6 +485,13 @@ MyCppClassRegisterResult<CPP_TYPE> A::MyDeclareCPPClass(char const * name)
 
 
 
+//-----------------------------------------------------------
+
+
+
+
+
+
 
 
 
@@ -532,53 +547,3 @@ int main(int argc, char ** argv, char ** env)
 
 	return 0;
 }
-
-
-
-
-#if 0
-
-
-
-template<typename CLASS_TYPE>
-class MyClass : public MyClassBase
-{
-public:
-
-	using Super = MyClassBase;
-
-	MyClass(std::string in_name, std::type_info const& in_info = typeid(CLASS_TYPE)) :
-		Super(std::move(in_name), in_info) {
-	}
-
-	virtual CLASS_TYPE* CreateInstance() const
-	{
-		return new CLASS_TYPE;
-	}
-};
-
-template<typename CLASS_TYPE>
-	requires
-(
-	HasInternalSuperType<CLASS_TYPE> || HasExternalSuperType<CLASS_TYPE>
-	)
-	class MyClass<CLASS_TYPE> : public MyClass<SuperClass_t<CLASS_TYPE>>
-{
-public:
-
-	using Super = MyClass<SuperClass_t<CLASS_TYPE>>;
-
-	MyClass(std::string in_name, std::type_info const& in_info = typeid(CLASS_TYPE)) :
-		Super(std::move(in_name), in_info) {
-	}
-
-	virtual CLASS_TYPE* CreateInstance() const override
-	{
-		return new CLASS_TYPE;
-	}
-};
-
-
-
-
-#endif

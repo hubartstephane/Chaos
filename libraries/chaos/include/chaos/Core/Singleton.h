@@ -15,8 +15,16 @@ public:
 	/** get the instances */
 	static T* GetInstance()
 	{
-		static T single_instance;
-		return &single_instance;
+		if constexpr (std::is_base_of_v<ReferenceCountedInterface, T>)
+		{
+			static DisableReferenceCount<T> single_instance;
+			return &single_instance;			
+		}
+		else
+		{
+			static T single_instance;
+			return &single_instance;
+		}
 	}
 
 protected:

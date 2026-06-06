@@ -17,13 +17,20 @@ public:
 	{
 		if constexpr (std::is_base_of_v<ReferenceCountedInterface, T>)
 		{
-			static DisableReferenceCount<T> single_instance;
-			return &single_instance;			
+			static shared_ptr<T> result = new T;
+			return result.get();	
 		}
 		else
 		{
-			static T single_instance;
-			return &single_instance;
+			class ReferencedInstance : public T, public ReferenceCountedInterface
+			{
+			public:
+
+				using T::T;
+			};
+
+			static shared_ptr<ReferencedInstance> result = new ReferencedInstance;
+			return result.get();
 		}
 	}
 

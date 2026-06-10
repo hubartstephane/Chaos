@@ -40,6 +40,7 @@ class MyClassBase : public ReferenceCountedInterface
 {
 	friend class MyClassManager;
 	friend class MyCPPClassManager;
+	friend class MyClassLoader;
 
 	template<typename CPP_TYPE>
 	friend class MyCppClassRegisterResult;
@@ -201,6 +202,8 @@ public:
 	template<typename OBJECT_TYPE>
 	operator MyClass<OBJECT_TYPE> * () const;
 
+	operator MyClassBase * () const;
+
 protected:
 
 	/** constructor */
@@ -234,6 +237,7 @@ MyClassFindResult::MyClassFindResult(MyClassManager* in_class_manager, iterator_
 class MyClassManager : public Object
 {
 	friend class MyClassFindResult;
+	friend class MyClassLoader;
 
 public:
 
@@ -392,6 +396,14 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 	return nullptr;
 };
 
+MyClassFindResult::operator MyClassBase* () const
+{
+
+
+
+	return nullptr;
+}
+
 //-----------------------------------------------------------
 
 template<typename CPP_TYPE>
@@ -444,6 +456,216 @@ public:
 
 
 
+
+
+//-----------------------------------------------------------
+
+class CHAOS_API MyClassLoader
+{
+public:
+
+	/** load one class by its path */
+	virtual MyClassBase* LoadClass(MyClassManager* manager, FilePathParam const& path) const;
+	/** load all classes in one directory */
+	virtual bool LoadClassesInDirectory(MyClassManager* manager, FilePathParam const& path) const;
+
+protected:
+
+	/** internal method to declare a class without finding yet its parent (used for directory iteration) */
+	MyClassBase* DoCreateSpecialClass(MyClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json) const; // XXX : no const return value here !! (for Finalization of special class)
+	/** finalization of a special class (called from ClassLoader) : find parent */
+	bool DoSetSpecialClassParent(MyClassManager* manager, MyClassBase* cls, std::string const& parent_class_name) const;
+	/** internal method called from ClassLoader to abord a failed loaded class */
+	void DoDeleteSpecialClass(MyClassManager* manager, MyClassBase* cls) const;
+	/** internal method to complete the load */
+	bool DoCompleteSpecialClassMissingData(MyClassBase* cls) const;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+//-----------------------------------------------------------
+
+
+// an utility function to load a JSON file a find the approriate classname
+static MyClassBase* DoLoadClassHelper(FilePathParam const& path, LightweightFunction<MyClassBase* (std::string, std::string, std::string, nlohmann::json)> func)
+{
+	nlohmann::json json;
+	if (JSONTools::LoadJSONFile(path, json))
+	{
+		// get or build a class name
+		std::string class_name;
+		if (!JSONTools::GetAttribute(&json, "class_name", class_name))
+			class_name = PathTools::PathToName(path.GetResolvedPath());
+		// parent class is MANDATORY for Special objects
+		std::string parent_class_name;
+		if (!JSONTools::GetAttribute(&json, "parent_class", parent_class_name))
+		{
+			ClassLog::Error("DoLoadClassHelper : special class [%s] require a parent class", class_name.c_str());
+			return nullptr;
+		}
+		// create the class
+		if (!class_name.empty())
+		{
+			std::string short_name;
+			JSONTools::GetAttribute(&json, "short_name", short_name);
+			return func(std::move(class_name), std::move(short_name), std::move(parent_class_name), std::move(json));
+		}
+	}
+	return nullptr;
+}
+
+MyClassBase* MyClassLoader::LoadClass(MyClassManager* manager, FilePathParam const& path) const
+{
+	assert(manager != nullptr);
+
+	return DoLoadClassHelper(path, [this, manager](std::string class_name, std::string short_name, std::string parent_class_name, nlohmann::json json) -> MyClassBase*
+	{
+		if (MyClassBase* result = DoCreateSpecialClass(manager, std::move(class_name), std::move(short_name), std::move(json)))
+		{
+			if (DoSetSpecialClassParent(manager, result, parent_class_name))
+			{
+				DoCompleteSpecialClassMissingData(result);
+				return result;
+			}
+			DoDeleteSpecialClass(manager, result);
+		}
+		return nullptr;
+	});
+}
+
+bool MyClassLoader::LoadClassesInDirectory(MyClassManager* manager, FilePathParam const& path) const
+{
+	assert(manager != nullptr);
+
+	using ClassRegistrationType = std::pair<MyClassBase*, std::string>; // <class, parent_class_name>
+
+	std::vector<ClassRegistrationType> loaded_classes;
+
+	// Step 1: load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
+	FileTools::WithDirectoryContent(path, [this, manager, &loaded_classes](boost::filesystem::path const& p)
+	{
+		DoLoadClassHelper(p, [this, manager, &loaded_classes](std::string class_name, std::string short_name, std::string parent_class_name, nlohmann::json json)
+		{
+			MyClassBase* result = DoCreateSpecialClass(manager, std::move(class_name), std::move(short_name), std::move(json));
+			if (result != nullptr)
+				loaded_classes.push_back({ result, std::move(parent_class_name) });
+			return result;
+		});
+		return false; // don't stop
+	});
+
+	// Step 2: set parents
+	for (ClassRegistrationType& class_registration : loaded_classes)
+		DoSetSpecialClassParent(manager, class_registration.first, class_registration.second);
+
+	//  Step 3: complete inheritance chain
+	std::vector<MyClassBase*> to_remove;
+
+	for (ClassRegistrationType& class_registration : loaded_classes)
+	{
+		if (!DoCompleteSpecialClassMissingData(class_registration.first)) // if it fais, this means that parent chain is broken
+		{
+			ClassLog::Error("MyClassLoader::LoadClassesInDirectory : special class [%s] has a broken inheritance chain.", class_registration.first->GetClassName().c_str());
+			to_remove.push_back(class_registration.first);
+		}
+	}
+
+	// Step 4: remove classes that have to
+	for (MyClassBase* cls : to_remove)
+		DoDeleteSpecialClass(manager, cls);
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
+bool MyClassLoader::DoCompleteSpecialClassMissingData(MyClassBase* cls) const
+{
+	// the class is already fully initialized
+	if (cls->declared)
+		return true;
+	// cannot complete the initialization
+	if (cls->parent == nullptr)
+		return false;
+	// recursively initialize children
+	if (!DoCompleteSpecialClassMissingData(const_cast<Class*>(cls->parent))) // forced to remove constness here
+		return false;
+	// get missing data
+	cls->declared = true;
+	cls->class_size = cls->parent->class_size;
+	cls->info = cls->parent->info;
+	return true;
+}
+
+Class* MyClassLoader::DoCreateSpecialClass(MyClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json) const
+{
+	// check parameter and not already registered
+	assert(!StringTools::IsEmpty(class_name));
+
+	if (manager->FindClass(class_name.c_str(), FindClassFlags::Name) != nullptr)
+	{
+		ClassLog::Error("ClassLoader::DoCreateSpecialClass(...): class already existing [%s]", class_name.c_str());
+		return nullptr;
+	}
+
+	if (Class* result = new ClassWithJSONInitialization(std::move(class_name), std::move(json)))
+	{
+		if (!StringTools::IsEmpty(short_name))
+			result->SetShortName(std::move(short_name));
+		manager->InsertClass(result);
+		return result;
+	}
+	return nullptr;
+}
+
+
+
+
+bool MyClassLoader::DoSetSpecialClassParent(MyClassManager* manager, MyClassBase* cls, std::string const& parent_class_name) const
+{
+	// parent class is MANDATORY for Special objects
+	cls->parent_class = manager->FindClass(parent_class_name.c_str());
+	if (cls->parent_class == nullptr)
+	{
+		ClassLog::Error("MyClassLoader::DoSetSpecialClassParent : special class [%s] has unknown parent class [%s]", cls->name.c_str(), parent_class_name.c_str());
+		return false;
+	}
+	return true;
+}
+
+void MyClassLoader::DoDeleteSpecialClass(MyClassManager* manager, MyClassBase* cls) const
+{
+	// remove & delete the class
+	assert(cls != nullptr);
+	manager->classes.erase(std::ranges::find(manager->classes, cls));
+	delete(cls);
+}
+
+
+
+
+
+
+//-----------------------------------------------------------
+
+
+
+
 //-----------------------------------------------------------
 
 #define MY_CHAOS_DECLARE_OBJECT_CLASS(CLASS, PARENT_CLASS)\
@@ -459,7 +681,7 @@ protected:
 
 	/** declare the class in the default C++ ClassManager (must be declared before the CHAOS_DECLARE_OBJECT_CLASS usage) */
 	template<typename CPP_TYPE>
-	static MyCppClassRegisterResult<CPP_TYPE> MyDeclareCPPClass(char const * name);
+	static MyCppClassRegisterResult<CPP_TYPE> MyDeclareCPPClass(char const* name);
 
 public:
 
@@ -467,30 +689,16 @@ public:
 
 	virtual ~A() = default;
 
-	static MyClass<A> const * GetStaticClass() { return A_class; }
+	static MyClass<A> const* GetStaticClass() { return A_class; }
 	virtual MyClass<A> const* GetClass() const { return A_class; }
 	static inline MyClass<A> const* A_class = MyDeclareCPPClass<A>("A");
 };
 
 template<typename CPP_TYPE>
-MyCppClassRegisterResult<CPP_TYPE> A::MyDeclareCPPClass(char const * name)
+MyCppClassRegisterResult<CPP_TYPE> A::MyDeclareCPPClass(char const* name)
 {
 	return MyCPPClassManager::GetInstance()->RegisterCPPClass<CPP_TYPE>(name);
 }
-
-//-----------------------------------------------------------
-
-
-
-
-
-
-//-----------------------------------------------------------
-
-
-
-
-
 
 
 

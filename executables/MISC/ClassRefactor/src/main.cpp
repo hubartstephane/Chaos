@@ -330,27 +330,36 @@ MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags fla
 template<typename OBJECT_TYPE>
 MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 {
-	// check for cached result or stop if no class_manager
+	// check for cached result (class_manager == nullptr -> can use result as a cached result (even if null))
 	if (result != nullptr || class_manager == nullptr)
 		return (MyClass<OBJECT_TYPE>*)result;
 
-	// check for the very first entry (string comparaison not necessary)
+	// check for the very first entry (string comparaison already done)
 	if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
 	{
 		result = iterator->get();
+		class_manager = nullptr;
 		return (MyClass<OBJECT_TYPE>*)result;
-	}
-	++iterator; // no need to test again for this iterator
-	if (iterator != class_manager->classes.end())
-	{
-		class_manager = nullptr; // so we have early result next time this function is called
-		return nullptr;
 	}
 
 	// we know that the iterator points on a valid entry. get the string that made this entry a good one
 	std::string const& searched_name = (match_type == ClassMatchType::Name) ?
 		iterator->get()->GetClassName() :
 		iterator->get()->GetShortName();
+
+	++iterator; // no need to test again for this iterator
+
+	if (iterator == class_manager->classes.end())
+	{
+		if (class_manager->GetParentManager() == nullptr || !HasAnyFlags(find_flags, FindClassFlags::ParentManager))
+		{
+			result = nullptr;
+			class_manager = nullptr;
+			return nullptr;
+		}
+		class_manager = class_manager->GetParentManager();
+		iterator      = class_manager->classes.begin();
+	}
 
 	// search in manager chain
 	while (class_manager != nullptr)
@@ -398,8 +407,11 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 
 MyClassFindResult::operator MyClassBase* () const
 {
+	if (result != nullptr || class_manager == nullptr)
+		return result;
 
-
+	if (iterator != class_manager->classes.end())
+		return iterator->get();
 
 	return nullptr;
 }
@@ -457,6 +469,35 @@ public:
 
 
 
+
+
+
+
+
+
+
+
+#if 0
+
+//-----------------------------------------------------------
+
+class CHAOS_API MyClassWithJSONInitialization : public Class
+{
+	friend class ClassLoader;
+
+protected:
+
+	/** constructor */
+	ClassWithJSONInitialization(std::string in_name, nlohmann::json in_json);
+
+	/** override */
+	virtual void OnObjectInstanceInitialized(Object* object) const override;
+
+protected:
+
+	/** the data to apply at object instance creation */
+	nlohmann::json json;
+};
 
 //-----------------------------------------------------------
 
@@ -612,7 +653,7 @@ bool MyClassLoader::DoCompleteSpecialClassMissingData(MyClassBase* cls) const
 	return true;
 }
 
-Class* MyClassLoader::DoCreateSpecialClass(MyClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json) const
+MyClassBase* MyClassLoader::DoCreateSpecialClass(MyClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json) const
 {
 	// check parameter and not already registered
 	assert(!StringTools::IsEmpty(class_name));
@@ -623,6 +664,10 @@ Class* MyClassLoader::DoCreateSpecialClass(MyClassManager* manager, std::string 
 		return nullptr;
 	}
 
+
+
+
+
 	if (Class* result = new ClassWithJSONInitialization(std::move(class_name), std::move(json)))
 	{
 		if (!StringTools::IsEmpty(short_name))
@@ -630,6 +675,8 @@ Class* MyClassLoader::DoCreateSpecialClass(MyClassManager* manager, std::string 
 		manager->InsertClass(result);
 		return result;
 	}
+
+
 	return nullptr;
 }
 
@@ -656,6 +703,7 @@ void MyClassLoader::DoDeleteSpecialClass(MyClassManager* manager, MyClassBase* c
 	delete(cls);
 }
 
+#endif
 
 
 
@@ -663,6 +711,25 @@ void MyClassLoader::DoDeleteSpecialClass(MyClassManager* manager, MyClassBase* c
 
 //-----------------------------------------------------------
 
+class A;
+
+class MyClassA : public MyClassBase
+{
+public:
+
+	MyClassA()
+	{
+		int i = 0;
+		++i;
+	}
+
+};
+
+template<>
+struct MyClassSuper<A>
+{
+	using type = MyClassA;
+};
 
 
 

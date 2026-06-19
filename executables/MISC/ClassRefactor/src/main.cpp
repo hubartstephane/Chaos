@@ -57,7 +57,7 @@ public:
 	/** gets the class size */
 	size_t GetClassSize() const { return class_size; }
 	/** returns whether the class has been registered */
-	bool IsFullyInitialized() const { return manager != nullptr; }
+	bool IsFullyInitialized() const { return info != nullptr; }
 	/** gets the parent class */
 	MyClassBase const* GetParentClass() const { return parent_class; }
 	/** gets the class manager */
@@ -71,6 +71,7 @@ public:
 
 protected:
 
+	/** change the shortname of the class (just used at construction) */
 	void SetShortName(std::string in_shorname);
 
 protected:
@@ -166,6 +167,34 @@ public:
 		return result.get();
 	}
 
+	virtual MyClass<CPP_TYPE> * CreateChildClass(MyClassManager * in_manager, char const * in_name)
+	{		
+		if (in_manager != nullptr)
+		{
+			// search if target manager is a child manager
+			// (bad idea to have a child manager having a derived class from one's ancestor)
+			if (this->manager != nullptr)
+				if (this->manager->IsAncestorManagerFor(in_manager))
+					return nullptr;
+			// search if there already is a class with same name in target manager (do not search in parent managers)
+			if (in_manager->FindClass(in_name, FindClassFlags::Name) != nullptr)
+				return nullptr;
+		}
+		
+		MyClass<CPP_TYPE> * result == new MyClass<CPP_TYPE>();
+		if (result == nullptr)
+			return nullptr;
+
+		result->name = in_name;
+		result->class_size = this->class_size;
+		result->info = this->info;
+		result->parent_class = this;
+
+		if (in_manager != nullptr)		
+			in_manager->classes.push_back(result);
+		return result;
+	};
+
 protected:
 
 	MyClass() = default;
@@ -199,8 +228,8 @@ class MyClassFindResult
 
 public:
 
-	template<typename OBJECT_TYPE>
-	operator MyClass<OBJECT_TYPE> * () const;
+	template<typename CPP_TYPE>
+	operator MyClass<CPP_TYPE> * () const;
 
 	operator MyClassBase * () const;
 
@@ -208,6 +237,11 @@ protected:
 
 	/** constructor */
 	MyClassFindResult(MyClassManager* in_class_manager, iterator_type in_iterator, ClassMatchType in_match_type, FindClassFlags in_find_flags);
+
+	/** check whether the result is empty */
+	bool operator == (nullptr_t) const;
+	/** check whether the result is empty */
+	bool operator != (nullptr_t) const;
 
 protected:
 
@@ -232,6 +266,16 @@ MyClassFindResult::MyClassFindResult(MyClassManager* in_class_manager, iterator_
 {
 }
 
+bool MyClassFindResult::operator == (nullptr_t) const
+{
+	return (result == nullptr) && (class_manager == nullptr); // no cached result, nothing more starting point for searching
+}
+
+bool MyClassFindResult::operator != (nullptr_t) const
+{
+	return !operator == (nullptr);
+}
+
 //-----------------------------------------------------------
 
 class MyClassManager : public Object
@@ -252,6 +296,10 @@ public:
 	/** gets the parent manager */
 	MyClassManager const* GetParentManager() const { return parent_manager.get(); }
 
+	/** search whether manager is an ancestor of another manager */
+	bool IsAncestorManagerFor(MyClassManager const* child_manager) const;
+
+	/** search for a class with miscelleous criteria. return intermediate for last moment class requirement resolution */
 	MyClassFindResult FindClass(char const* name, FindClassFlags flags = FindClassFlags::All);
 
 protected:
@@ -318,7 +366,22 @@ MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags fla
 	return { nullptr, classes.end(), ClassMatchType::Name, flags }; // empty ClassFindResult result
 }
 
+bool MyClassManager::IsAncestorManagerFor(MyClassManager const* child_manager) const
+{
+	assert(child_manager != nullptr);
 
+	if (child_manager == this)
+		return false;
+
+	MyClassManager const * target_manager = child_manager->parent_manager.get();
+	while (target_manager != nullptr)
+	{
+		if (target_manager == this)
+			return true;
+		target_manager = target_manager->parent_manager.get();
+	}
+	return false;
+}
 
 
 
@@ -327,19 +390,19 @@ MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags fla
 //-----------------------------------------------------------
 
 
-template<typename OBJECT_TYPE>
-MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
+template<typename CPP_TYPE>
+MyClassFindResult::operator MyClass<CPP_TYPE> * () const
 {
 	// check for cached result (class_manager == nullptr -> can use result as a cached result (even if null))
 	if (result != nullptr || class_manager == nullptr)
-		return (MyClass<OBJECT_TYPE>*)result;
+		return (MyClass<CPP_TYPE>*)result;
 
 	// check for the very first entry (string comparaison already done)
-	if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
+	if ((*iterator)->InheritsFrom<CPP_TYPE>(true))
 	{
 		result = iterator->get();
 		class_manager = nullptr;
-		return (MyClass<OBJECT_TYPE>*)result;
+		return (MyClass<CPP_TYPE>*)result;
 	}
 
 	// we know that the iterator points on a valid entry. get the string that made this entry a good one
@@ -370,10 +433,10 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 			{
 				if (StringTools::Stricmp((*iterator)->GetClassName(), searched_name) == 0)
 				{
-					if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
+					if ((*iterator)->InheritsFrom<CPP_TYPE>(true))
 					{
 						result = iterator->get(); // cache the result for next call
-						return (MyClass<OBJECT_TYPE>*)result;
+						return (MyClass<CPP_TYPE>*)result;
 					}
 					++iterator;
 					continue; // the class does not match no matter what. no need to check for the short name
@@ -383,10 +446,10 @@ MyClassFindResult::operator MyClass<OBJECT_TYPE> * () const
 			{
 				if (StringTools::Stricmp((*iterator)->GetShortName(), searched_name) == 0)
 				{
-					if ((*iterator)->InheritsFrom<OBJECT_TYPE>(true))
+					if ((*iterator)->InheritsFrom<CPP_TYPE>(true))
 					{
 						result = iterator->get(); // cache the result for next call
-						return (MyClass<OBJECT_TYPE>*)result;
+						return (MyClass<CPP_TYPE>*)result;
 					}
 				}
 			}
@@ -715,6 +778,8 @@ class A;
 
 class MyClassA : public MyClassBase
 {
+	using InitializationFunction = std::function<void(A *)>;
+
 public:
 
 	MyClassA()
@@ -723,6 +788,10 @@ public:
 		++i;
 	}
 
+protected:
+
+
+	InitializationFunction initialization_function;
 };
 
 template<>

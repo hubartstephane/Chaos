@@ -64,10 +64,10 @@ public:
 	MyClassManager* GetClassManager() const { return manager; } // no need to have a manager const
 
 	/** check whether we inherit from another class */
-	bool InheritsFrom(MyClassBase const * base, bool accept_equal = true) const;
+	bool InheritsFrom(MyClassBase const * base, bool accept_same = true) const;
 	/** check whether we inherit from another class */
 	template<typename CPP_TYPE>
-	bool InheritsFrom(bool accept_equal = true) const;
+	bool InheritsFrom(bool accept_same = true) const;
 
 protected:
 
@@ -98,10 +98,10 @@ void MyClassBase::SetShortName(std::string in_shorname)
 
 //-----------------------------------------------------------
 
-bool MyClassBase::InheritsFrom(MyClassBase const* base, bool accept_equal) const
+bool MyClassBase::InheritsFrom(MyClassBase const* base, bool accept_same) const
 {
 	if (base == this)
-		return accept_equal;
+		return accept_same;
 
 	MyClassBase const* cls = parent_class;
 	while (cls != nullptr)
@@ -114,9 +114,9 @@ bool MyClassBase::InheritsFrom(MyClassBase const* base, bool accept_equal) const
 }
 
 template<typename CPP_TYPE>
-bool MyClassBase::InheritsFrom(bool accept_equal) const
+bool MyClassBase::InheritsFrom(bool accept_same) const
 {
-	return InheritsFrom(MyClass<CPP_TYPE>::GetCPPClassInstance(), accept_equal);
+	return InheritsFrom(MyClass<CPP_TYPE>::GetCPPClassInstance(), accept_same);
 }
 
 //-----------------------------------------------------------
@@ -147,6 +147,10 @@ template<typename CPP_TYPE>
 class MyClass : public MyClassSuper_t<CPP_TYPE>
 {
 	friend class MyClassManager;
+	friend class MyCPPClassManager;
+
+	template<typename CPP_TYPE>
+	friend class MyCppClassRegisterResult;
 
 public:
 
@@ -161,39 +165,21 @@ public:
 		return result;
 	}
 
-	static MyClass * GetCPPClassInstance()
+	static MyClass const * GetCPPClassInstance()
+	{
+		return GetMutableCPPClassInstance();
+	}
+
+	virtual MyClass<CPP_TYPE> * CreateChildClass(MyClassManager * in_manager, char const * in_name) const;
+
+
+protected:
+
+	static MyClass* GetMutableCPPClassInstance()
 	{
 		static shared_ptr<MyClass<CPP_TYPE>> result = new MyClass<CPP_TYPE>;
 		return result.get();
 	}
-
-	virtual MyClass<CPP_TYPE> * CreateChildClass(MyClassManager * in_manager, char const * in_name)
-	{		
-		if (in_manager != nullptr)
-		{
-			// search if target manager is a child manager
-			// (bad idea to have a child manager having a derived class from one's ancestor)
-			if (this->manager != nullptr)
-				if (this->manager->IsAncestorManagerFor(in_manager))
-					return nullptr;
-			// search if there already is a class with same name in target manager (do not search in parent managers)
-			if (in_manager->FindClass(in_name, FindClassFlags::Name) != nullptr)
-				return nullptr;
-		}
-		
-		MyClass<CPP_TYPE> * result == new MyClass<CPP_TYPE>();
-		if (result == nullptr)
-			return nullptr;
-
-		result->name = in_name;
-		result->class_size = this->class_size;
-		result->info = this->info;
-		result->parent_class = this;
-
-		if (in_manager != nullptr)		
-			in_manager->classes.push_back(result);
-		return result;
-	};
 
 protected:
 
@@ -233,15 +219,16 @@ public:
 
 	operator MyClassBase * () const;
 
-protected:
-
-	/** constructor */
-	MyClassFindResult(MyClassManager* in_class_manager, iterator_type in_iterator, ClassMatchType in_match_type, FindClassFlags in_find_flags);
 
 	/** check whether the result is empty */
 	bool operator == (nullptr_t) const;
 	/** check whether the result is empty */
 	bool operator != (nullptr_t) const;
+
+protected:
+
+	/** constructor */
+	MyClassFindResult(MyClassManager* in_class_manager, iterator_type in_iterator, ClassMatchType in_match_type, FindClassFlags in_find_flags);
 
 protected:
 
@@ -283,6 +270,9 @@ class MyClassManager : public Object
 	friend class MyClassFindResult;
 	friend class MyClassLoader;
 
+	template<typename CPP_TYPE>
+	friend class MyClass;
+
 public:
 
 	/** constructor */
@@ -297,10 +287,15 @@ public:
 	MyClassManager const* GetParentManager() const { return parent_manager.get(); }
 
 	/** search whether manager is an ancestor of another manager */
-	bool IsAncestorManagerFor(MyClassManager const* child_manager) const;
+	bool IsAncestorManagerFor(MyClassManager const* child_manager, bool accept_same = true) const;
 
 	/** search for a class with miscelleous criteria. return intermediate for last moment class requirement resolution */
 	MyClassFindResult FindClass(char const* name, FindClassFlags flags = FindClassFlags::All);
+
+protected:
+
+	/** insert a new class in this manager */
+	void InsertClass(MyClassBase* cls);
 
 protected:
 
@@ -366,12 +361,12 @@ MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags fla
 	return { nullptr, classes.end(), ClassMatchType::Name, flags }; // empty ClassFindResult result
 }
 
-bool MyClassManager::IsAncestorManagerFor(MyClassManager const* child_manager) const
+bool MyClassManager::IsAncestorManagerFor(MyClassManager const* child_manager, bool accept_same) const
 {
 	assert(child_manager != nullptr);
 
 	if (child_manager == this)
-		return false;
+		return accept_same;
 
 	MyClassManager const * target_manager = child_manager->parent_manager.get();
 	while (target_manager != nullptr)
@@ -383,9 +378,45 @@ bool MyClassManager::IsAncestorManagerFor(MyClassManager const* child_manager) c
 	return false;
 }
 
+void MyClassManager::InsertClass(MyClassBase* cls)
+{
+	assert(cls != nullptr);
+	assert(cls->manager == nullptr);
+
+	classes.push_back(cls);
+	cls->manager = this;
+}
 
 
+template<typename CPP_TYPE>
+MyClass<CPP_TYPE>* MyClass<CPP_TYPE>::CreateChildClass(MyClassManager* in_manager, char const* in_name) const
+{
+	if (in_manager != nullptr)
+	{
+		// search if target manager is a child manager
+		// (bad idea to have an ancestor manager having a derived class from one's child manager)
+		if (this->manager != nullptr)
+			if (in_manager->IsAncestorManagerFor(this->manager), false)
+				return nullptr;
+		// search if there already is a class with same name in target manager (do not search in parent managers)
+		if (in_manager->FindClass(in_name, FindClassFlags::Name) != nullptr)
+			return nullptr;
+	}
 
+	MyClass<CPP_TYPE>* result = new MyClass<CPP_TYPE>();
+	if (result == nullptr)
+		return nullptr;
+
+	result->name = in_name;
+	result->class_size = this->class_size;
+	result->info = this->info;
+	result->parent_class = this;
+	result->manager = in_manager;
+
+	if (in_manager != nullptr)
+		in_manager->InsertClass(result);
+	return result;
+};
 
 //-----------------------------------------------------------
 
@@ -486,18 +517,25 @@ class MyCppClassRegisterResult
 {
 public:
 
+	MyCppClassRegisterResult(MyClass<CPP_TYPE>* in_target_class):
+		target_class(in_target_class){}
+
 	/** set the short name for the class */
 	MyCppClassRegisterResult& ShortName(std::string in_short_name)
 	{
-		MyClass<CPP_TYPE>::GetCPPClassInstance()->SetShortName(std::move(in_short_name));
+		target_class->SetShortName(std::move(in_short_name));
 		return *this;
 	}
 
 	/** convert the registration to the class */
 	operator MyClass<CPP_TYPE> * () const
 	{
-		return MyClass<CPP_TYPE>::GetCPPClassInstance();
+		return target_class;
 	}
+
+protected:
+
+	MyClass<CPP_TYPE> * target_class = nullptr;
 };
 
 
@@ -510,11 +548,11 @@ public:
 	template<typename CPP_TYPE>
 	MyCppClassRegisterResult<CPP_TYPE> RegisterCPPClass(char const * name)
 	{
-		MyClass<CPP_TYPE>* result = MyClass<CPP_TYPE>::GetCPPClassInstance();
+		MyClass<CPP_TYPE>* result = MyClass<CPP_TYPE>::GetMutableCPPClassInstance();
 		if (result->IsFullyInitialized()) // class has already be registered ?
 		{
 			assert(StringTools::Stricmp(result->name, name) == 0); // ensure class is registered with same name
-			return {};
+			return { result };
 		}
 
 		result->name = name;
@@ -525,7 +563,7 @@ public:
 			result->parent_class = MyClass<SuperClass_t<CPP_TYPE>>::GetCPPClassInstance();
 
 		classes.push_back(result);
-		return {};
+		return { result };
 	}
 };
 

@@ -57,12 +57,12 @@ namespace chaos
 	concept HasExternalSuperType = requires
 	{
 		requires (std::is_class_v<
-			decltype(ChaosGetSuperClass(std::type_identity_t<T>()))
+			decltype(ChaosGetSuperClass(std::type_identity<T>()))
 		>);
 
 		// XXX: same here !!!
 
-		//requires IsBaseOf_v<decltype(ChaosGetSuperClass(std::type_identity_t<T>())), T>;
+		//requires IsBaseOf_v<decltype(ChaosGetSuperClass(std::type_identity<T>())), T>;
 	};
 
 	// meta function to get super class 
@@ -82,11 +82,11 @@ namespace chaos
 	template<typename T>
 	requires
 	(
-		!HasInternalSuperType<T>&& HasExternalSuperType<T>
+		!HasInternalSuperType<T> && HasExternalSuperType<T>
 	)
 	struct SuperClass<T>
 	{
-		using type = decltype(ChaosGetSuperClass(std::type_identity_t<T>()));
+		using type = decltype(ChaosGetSuperClass(std::type_identity<T>()));
 	};
 
 	template<typename T>
@@ -96,7 +96,7 @@ namespace chaos
 		HasInternalSuperType<T> &&
 		IsSame_v<
 			typename T::Super,
-			decltype(ChaosGetSuperClass(std::type_identity_t<T>()))
+			decltype(ChaosGetSuperClass(std::type_identity<T>()))
 		>
 	)
 	struct SuperClass<T>
@@ -110,7 +110,7 @@ namespace chaos
 		HasExternalSuperType<T> &&
 		HasInternalSuperType<T> &&
 		IsBaseStrictOf_v<
-			decltype(ChaosGetSuperClass(std::type_identity_t<T>())),
+			decltype(ChaosGetSuperClass(std::type_identity<T>())),
 			typename T::Super
 		>
 	)
@@ -126,12 +126,12 @@ namespace chaos
 		HasInternalSuperType<T> &&
 		IsBaseStrictOf_v<
 			typename T::Super,
-			decltype(ChaosGetSuperClass(std::type_identity_t<T>()))
+			decltype(ChaosGetSuperClass(std::type_identity<T>()))
 		>
 	)
 	struct SuperClass<T>
 	{
-		using type = decltype(ChaosGetSuperClass(std::type_identity_t<T>()));
+		using type = decltype(ChaosGetSuperClass(std::type_identity<T>()));
 	};
 
 	// the meta function
@@ -148,7 +148,7 @@ namespace chaos
 
 	// defines an external inheritance
 	#define CHAOS_DECLARE_EXTERNAL_SUPER(TARGET_CLASS, SUPER_CLASS)\
-	SUPER_CLASS ChaosGetSuperClass(std::type_identity_t<TARGET_CLASS>);
+	SUPER_CLASS ChaosGetSuperClass(std::type_identity<TARGET_CLASS>);
 
 #endif
 

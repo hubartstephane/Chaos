@@ -140,8 +140,14 @@ struct MyClassSuper<CPP_TYPE>
 template<typename CPP_TYPE>
 using MyClassSuper_t = typename MyClassSuper<CPP_TYPE>::type;
 
-//-----------------------------------------------------------
 
+
+
+
+
+
+
+//-----------------------------------------------------------
 
 template<typename CPP_TYPE>
 class MyClass : public MyClassSuper_t<CPP_TYPE>
@@ -156,7 +162,7 @@ public:
 
 	using Super = MyClassSuper_t<CPP_TYPE>;
 
-	CPP_TYPE* CreateInstance() const
+	virtual CPP_TYPE* CreateInstance() const
 	{
 		assert(this->IsFullyInitialized());
 		CPP_TYPE* result = AllocateInstance();
@@ -171,6 +177,10 @@ public:
 	}
 
 	virtual MyClass<CPP_TYPE> * CreateChildClass(MyClassManager * in_manager, char const * in_name) const;
+
+	template<typename FUNC>
+	requires std::invocable<FUNC, CPP_TYPE *>
+	decltype(auto) CreateSubclass(FUNC && func) const;
 
 
 protected:
@@ -190,11 +200,14 @@ protected:
 		return new CPP_TYPE;
 	}
 
+
 	void InitializeInstance(CPP_TYPE* instance) const
 	{
+#if 0
 		if (this->parent_class != nullptr)
 			this->parent_class->InitializeInstance(instance);
 		DoInitializeInstance(instance);
+#endif
 	}
 
 	virtual void DoInitializeInstance(CPP_TYPE* instance) const
@@ -203,6 +216,49 @@ protected:
 };
 
 //-----------------------------------------------------------
+
+template<typename PARENT_CLASS, typename FUNC>
+class MySubClass : public PARENT_CLASS
+{
+public:
+
+	MySubClass(FUNC const & in_func):
+		func(in_func)
+	{
+		int i = 0;
+		++i;
+	}
+
+	MySubClass(FUNC && in_func) :
+		func(std::move(in_func))
+	{
+		int i = 0;
+		++i;
+	}
+
+
+protected:
+
+	FUNC func;
+};
+
+//-----------------------------------------------------------
+
+template<typename CPP_TYPE>
+template<typename FUNC>
+requires std::invocable<FUNC, CPP_TYPE*>
+decltype(auto) MyClass<CPP_TYPE>::CreateSubclass(FUNC&& func) const
+{
+	class R : public MyClass<CPP_TYPE>
+	{
+	
+	};
+
+	return new R;
+}
+
+
+
 
 //-----------------------------------------------------------
 
@@ -396,7 +452,7 @@ MyClass<CPP_TYPE>* MyClass<CPP_TYPE>::CreateChildClass(MyClassManager* in_manage
 		// search if target manager is a child manager
 		// (bad idea to have an ancestor manager having a derived class from one's child manager)
 		if (this->manager != nullptr)
-			if (in_manager->IsAncestorManagerFor(this->manager), false)
+			if (in_manager->IsAncestorManagerFor(this->manager, false))
 				return nullptr;
 		// search if there already is a class with same name in target manager (do not search in parent managers)
 		if (in_manager->FindClass(in_name, FindClassFlags::Name) != nullptr)
@@ -814,17 +870,33 @@ void MyClassLoader::DoDeleteSpecialClass(MyClassManager* manager, MyClassBase* c
 
 class A;
 
-class MyClassA : public MyClassBase
+
+
+class MyClassABase : public MyClassBase
 {
 	using InitializationFunction = std::function<void(A *)>;
 
 public:
 
-	MyClassA()
+	MyClassABase()
 	{
 		int i = 0;
 		++i;
 	}
+
+	virtual A * CreateInstance() const = 0;
+
+
+
+
+
+protected:
+
+	//virtual void DoInitializeInstance(A * instance) const override
+	//{
+	//}
+
+
 
 protected:
 
@@ -835,7 +907,7 @@ protected:
 template<>
 struct MyClassSuper<A>
 {
-	using type = MyClassA;
+	using type = MyClassABase;
 };
 
 
@@ -895,8 +967,123 @@ class BidonC : public MyClass<B>
 {
 };
 
+
+
+
+// ------------------------------------------------------------
+
+class ClassManagerBase;
+class CustomClassManager;
+class NativeClassManager;
+
+class ClassManagerBase
+{
+public:
+
+	CustomClassManager* CreateChildManager() const;
+};
+
+class CustomClassManager : public ClassManagerBase
+{
+public:
+
+	
+
+
+};
+
+class NativeClassManager : public ClassManagerBase, public Singleton<NativeClassManager>
+{
+	// no real class insertion method
+
+
+
+
+};
+
+CustomClassManager * ClassManagerBase::CreateChildManager() const
+{
+	return nullptr;
+}
+
+class Truc 
+{
+public:
+
+
+	Truc()
+	{
+		int i = 0;
+		++i;
+	}
+
+};
+
+// ------------------------------------------------------------
+
 int main(int argc, char ** argv, char ** env)
 {
+
+	MyClass<A> const * aaa = MyClass<A>::GetCPPClassInstance();
+	
+
+	auto XXX = [](A * a)
+	{
+		a = a;
+		
+		
+	};
+
+	MyClass<A> const * subclass = aaa->CreateSubclass(XXX)->CreateSubclass([](A * a)
+	{
+		a = a;
+		
+	});
+
+	A * res = subclass->CreateInstance();
+
+
+
+
+
+
+
+
+	MyClass<Truc> const * truc_class = MyCPPClassManager::GetInstance()->RegisterCPPClass<Truc>("truc");
+
+	Truc * truc = truc_class->CreateInstance();
+
+
+	std::function<void(A*)> myfa = [](A*)
+		{
+			int i = 0;
+			++i;
+			return 0;
+		};
+
+	std::function<void(B*)> myfb = myfa;
+
+
+	A * a = nullptr;
+	B * b = nullptr;
+
+	//myf(a);
+	myfb(b);
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	DebugOutputBuf debugBuf;
 	std::cout.rdbuf(&debugBuf);
 

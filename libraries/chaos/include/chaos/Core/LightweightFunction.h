@@ -33,7 +33,7 @@ namespace chaos
 	 *                                        ^
 	 *                                        |
 	 *                                 parameter on the stack
-	 *                   (being destroyed at the end of construor/copy operator)
+	 *                   (being destroyed at the end of constructor/copy operator)
 	 * 
 	 */
 

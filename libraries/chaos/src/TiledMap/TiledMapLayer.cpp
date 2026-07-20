@@ -225,7 +225,7 @@ namespace chaos
 				{
 					// get the processor class
 					Class<TileFlagProcessor> const * processor_class = NativeClassManager::GetInstance()->FindClass(name.c_str());
-					if (processor_class)
+					if (processor_class != nullptr)
 					{
 						// create the processor and run it
 						shared_ptr<TileFlagProcessor> processor = processor_class->CreateInstance();

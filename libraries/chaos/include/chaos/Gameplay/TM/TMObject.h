@@ -94,7 +94,7 @@ namespace chaos
 	protected:
 
 		/** the classes for camera components */
-		std::vector<Class<CameraComponent> const *> camera_component_classes;
+		std::vector<shared_ptr<Class<CameraComponent>>> camera_component_classes;
 	};
 
 	// =====================================

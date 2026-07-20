@@ -467,4 +467,20 @@ namespace chaos
 		return true;
 	}
 
+	template<typename T>
+	std::vector<shared_ptr<Class<T>>> GetSubClassesFromString(char const* src, char separator)
+	{
+		std::vector<shared_ptr<Class<T>>> result;
+
+		std::vector<std::string> class_names = StringTools::Split(src, separator);
+		for (auto& class_name : class_names)
+		{
+			class_name.erase(std::remove_if(class_name.begin(), class_name.end(), isspace), class_name.end());
+			Class<T> * cls = NativeClassManager::GetInstance()->FindClass(class_name.c_str());
+			if (cls.IsValid())
+				result.push_back(cls);
+		}
+		return result;
+	}
+
 }; // namespace chaos

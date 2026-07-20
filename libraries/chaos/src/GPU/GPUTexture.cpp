@@ -12,6 +12,7 @@ namespace chaos
 
 	GPUTexture::~GPUTexture()
 	{
+		gpu_device->OnTextureUnused(this); // give underlying resource to GPUTexturePool
 		assert(texture_id == 0);
 	}
 
@@ -294,12 +295,6 @@ namespace chaos
 		glPixelStorei(GL_UNPACK_SKIP_PIXELS, skip_pixel);
 
 		return result;
-	}
-
-	void GPUTexture::OnLastReferenceLost()
-	{
-		gpu_device->OnTextureUnused(this); // give underlying resource to GPUTexturePool
-		GPUSurface::OnLastReferenceLost();
 	}
 
 }; // namespace chaos

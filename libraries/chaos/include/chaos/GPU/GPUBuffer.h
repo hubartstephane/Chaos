@@ -65,9 +65,6 @@ namespace chaos
 		/** returns true whether the resource is valid */
 		bool IsValid() const;
 
-		/** override */
-		virtual void OnLastReferenceLost() override;
-
 	protected:
 
 		/** constructor */

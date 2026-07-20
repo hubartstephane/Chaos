@@ -16,8 +16,9 @@ namespace chaos
 
 	GPUBuffer::~GPUBuffer()
 	{
-		assert(buffer_id == 0);
 		assert(!mapped);
+		gpu_device->OnBufferUnused(this); // give underlying resource to GPUBufferPool
+		assert(buffer_id == 0);
 	}
 
 	size_t GPUBuffer::GetBufferSize() const
@@ -33,12 +34,6 @@ namespace chaos
 	bool GPUBuffer::IsValid() const
 	{
 		return (buffer_id != 0);
-	}
-
-	void GPUBuffer::OnLastReferenceLost()
-	{
-		gpu_device->OnBufferUnused(this); // give underlying resource to GPUBufferPool
-		GPUResource::OnLastReferenceLost();
 	}
 
 	bool GPUBuffer::CheckAndComputeBufferRange(size_t & inout_start, size_t & inout_size) const

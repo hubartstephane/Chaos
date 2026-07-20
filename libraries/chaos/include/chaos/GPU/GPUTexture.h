@@ -43,9 +43,6 @@ namespace chaos
 		/** generate mipmaps */
 		void GenerateMipmaps();
 
-		/** override */
-		virtual void OnLastReferenceLost() override;
-
 	protected:
 
 		/** constructor */

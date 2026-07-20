@@ -298,7 +298,7 @@ namespace chaos
 
 	void GPUTexture::OnLastReferenceLost()
 	{
-		gpu_device->OnTextureUnused(this); // give underlying resource to GPUBufferPool
+		gpu_device->OnTextureUnused(this); // give underlying resource to GPUTexturePool
 		GPUSurface::OnLastReferenceLost();
 	}
 

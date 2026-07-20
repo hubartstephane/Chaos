@@ -101,7 +101,7 @@ namespace chaos
 
 	void GPUBufferPool::OnBufferUnused(GPUBuffer * in_buffer)
 	{
-		if (WantToReuseBuffer(in_buffer))
+		if (!WantToReuseBuffer(in_buffer))
 		{
 			ReleaseBuffer(in_buffer->buffer_id);
 		}

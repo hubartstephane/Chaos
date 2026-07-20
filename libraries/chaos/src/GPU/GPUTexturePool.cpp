@@ -150,7 +150,7 @@ namespace chaos
 
 	void GPUTexturePool::OnTextureUnused(GPUTexture * in_texture)
 	{
-		if (WantToReuseTexture(in_texture))
+		if (!WantToReuseTexture(in_texture))
 		{
 			ReleaseTexture(in_texture->texture_id);
 		}

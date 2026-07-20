@@ -14,7 +14,7 @@ namespace chaos
 #define CHAOS_DECLARE_OBJECT_CLASS_METHODS(CLASS)\
 static Class<CLASS> const * GetStaticClass(){ return CLASS##_class;}\
 virtual Class<CLASS> const * GetClass() const { return CLASS##_class; }\
-static inline Class<CLASS> const * CLASS##_class = DeclareNativeClass<CLASS>(#CLASS)
+static inline Class<CLASS> const * CLASS##_class = RegisterNativeClass<CLASS>(#CLASS)
 
 #define CHAOS_DECLARE_OBJECT_CLASS(CLASS, PARENT_CLASS)\
 public:\

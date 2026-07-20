@@ -8,8 +8,6 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	CHAOS_DEFINE_LOG(ClassLog, "Class")
-
 	/**
 	 * InheritanceType: the kind if inheritance that can exist between 2 classes
 	 */
@@ -89,6 +87,10 @@ namespace chaos
 		/** function to initialize newly created instance */
 		std::function<void(void*)> initialize_instance_func;
 	};
+
+#else
+
+	CHAOS_DEFINE_LOG(ClassLog, "Class")
 
 #endif
 

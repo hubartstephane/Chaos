@@ -8,7 +8,7 @@ namespace chaos
 
 	/**
 	 * NativeClassManager: a manager dedicated to C++ native classes (should be fulfilled at startup)
-	 **/
+	 */
 
 	class CHAOS_API NativeClassManager : public ClassManager, public Singleton<NativeClassManager>
 	{
@@ -16,7 +16,7 @@ namespace chaos
 
 		/** register some native class */
 		template<typename CPP_TYPE>
-		CppClassRegisterResult<CPP_TYPE> RegisterNativeClass(char const* name)
+		ClassRegistrationResult<CPP_TYPE> RegisterNativeClass(char const* name)
 		{
 			Class<CPP_TYPE>* result = Class<CPP_TYPE>::GetMutableNativeClassInstance();
 			if (result->IsFullyInitialized()) // class has already be registered ?

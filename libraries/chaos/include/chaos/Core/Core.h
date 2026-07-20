@@ -32,7 +32,7 @@
 #include "chaos/Core/SmartPointers.h"
 #include "chaos/Core/ClassBase.h"
 #include "chaos/Core/Class.h"
-#include "chaos/Core/ClassRegistration.h"
+#include "chaos/Core/ClassRegistrationResult.h"
 #include "chaos/Core/ClassFindResult.h"
 #include "chaos/Core/ReferenceCountedInterface.h"
 #include "chaos/Core/Object.h"

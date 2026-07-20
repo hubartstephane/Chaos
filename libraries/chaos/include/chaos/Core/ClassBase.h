@@ -30,7 +30,7 @@ namespace chaos
 		friend class ClassLoader;
 
 		template<typename CPP_TYPE>
-		friend class CppClassRegisterResult;
+		friend class ClassRegistrationResult;
 
 	public:
 

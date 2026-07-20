@@ -3,8 +3,7 @@
 
 namespace chaos
 {
-	// an utility function to load a JSON file a find the approriate classname
-	static Class* DoLoadClassHelper(FilePathParam const& path, LightweightFunction<Class* (std::string, std::string, std::string, nlohmann::json)> func)
+	bool ClassLoader::DoLoadClassHelper(FilePathParam const& path, LightweightFunction<bool(std::string, std::string, std::string, nlohmann::json)> func) const
 	{
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json))
@@ -18,7 +17,7 @@ namespace chaos
 			if (!JSONTools::GetAttribute(&json, "parent_class", parent_class_name))
 			{
 				ClassLog::Error("DoLoadClassHelper : special class [%s] require a parent class", class_name.c_str());
-				return nullptr;
+				return false;
 			}
 			// create the class
 			if (!class_name.empty())
@@ -28,140 +27,321 @@ namespace chaos
 				return func(std::move(class_name), std::move(short_name), std::move(parent_class_name), std::move(json));
 			}
 		}
-		return nullptr;
+		return false;
 	}
 
-	Class * ClassLoader::LoadClass(ClassManager* manager, FilePathParam const& path) const
+	Class<Object>* ClassLoader::LoadClass(ClassManager* manager, FilePathParam const& path) const
 	{
 		assert(manager != nullptr);
 
-		return DoLoadClassHelper(path, [this, manager](std::string class_name, std::string short_name, std::string parent_class_name, nlohmann::json json) -> Class *
+		Class<Object>* result = nullptr;
+		DoLoadClassHelper(path, [this, manager, &result](std::string class_name, std::string short_name, std::string parent_class_name, nlohmann::json json)
 		{
-			if (Class* result = DoCreateSpecialClass(manager, std::move(class_name), std::move(short_name), std::move(json)))
-			{
-				if (DoSetSpecialClassParent(manager, result, parent_class_name))
-				{
-					DoCompleteSpecialClassMissingData(result);
-					return result;
-				}
-				DoDeleteSpecialClass(manager, result);
-			}
-			return nullptr;
+			result = DoCreateChildClass(manager, std::move(class_name), std::move(short_name), std::move(json), parent_class_name.c_str());
+			return (result != nullptr);
 		});
+		return result;
 	}
 
-	bool ClassLoader::LoadClassesInDirectory(ClassManager* manager, FilePathParam const& path) const
-	{
-		assert(manager != nullptr);
-
-		using ClassRegistrationType = std::pair<Class*, std::string>; // <class, parent_class_name>
-
-		std::vector<ClassRegistrationType> loaded_classes;
-
-		// Step 1: load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
-		FileTools::WithDirectoryContent(path, [this, manager, &loaded_classes](boost::filesystem::path const & p)
-		{
-			DoLoadClassHelper(p, [this, manager, &loaded_classes] (std::string class_name, std::string short_name, std::string parent_class_name, nlohmann::json json)
-			{
-				Class* result = DoCreateSpecialClass(manager, std::move(class_name), std::move(short_name), std::move(json));
-				if (result != nullptr)
-					loaded_classes.push_back({ result, std::move(parent_class_name) });
-				return result;
-			});
-			return false; // don't stop
-		});
-
-		// Step 2: set parents
-		for (ClassRegistrationType& class_registration : loaded_classes)
-			DoSetSpecialClassParent(manager, class_registration.first, class_registration.second);
-
-		//  Step 3: complete inheritance chain
-		std::vector<Class*> to_remove;
-
-		for (ClassRegistrationType& class_registration : loaded_classes)
-		{
-			if (!DoCompleteSpecialClassMissingData(class_registration.first)) // if it fais, this means that parent chain is broken
-			{
-				ClassLog::Error("Class::LoadClassesInDirectory : special class [%s] has a broken inheritance chain.", class_registration.first->GetClassName().c_str());
-				to_remove.push_back(class_registration.first);
-			}
-		}
-
-		// Step 4: remove classes that have to
-		for (Class* cls : to_remove)
-			DoDeleteSpecialClass(manager, cls);
-		return true;
-	}
-
-	bool ClassLoader::DoCompleteSpecialClassMissingData(Class* cls) const
-	{
-		// the class is already fully initialized
-		if (cls->declared)
-			return true;
-		// cannot complete the initialization
-		if (cls->parent == nullptr)
-			return false;
-		// recursively initialize children
-		if (!DoCompleteSpecialClassMissingData(const_cast<Class*>(cls->parent))) // forced to remove constness here
-			return false;
-		// get missing data
-		cls->declared = true;
-		cls->class_size = cls->parent->class_size;
-		cls->info = cls->parent->info;
-		return true;
-	}
-
-	Class * ClassLoader::DoCreateSpecialClass(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json) const
+	Class<Object>* ClassLoader::DoCreateChildClass(ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json, char const* parent_class_name) const
 	{
 		// check parameter and not already registered
 		assert(!StringTools::IsEmpty(class_name));
 
 		if (manager->FindClass(class_name.c_str(), FindClassFlags::Name) != nullptr)
 		{
-			ClassLog::Error("ClassLoader::DoCreateSpecialClass(...): class already existing [%s]", class_name.c_str());
+			ClassLog::Error("ClassLoader::DoCreateChildClass(...): class already existing [%s]", class_name.c_str());
 			return nullptr;
 		}
 
-		if (Class* result = new ClassWithJSONInitialization(std::move(class_name), std::move(json)))
+		Class<Object>* parent_class = manager->FindClass(parent_class_name);
+		if (parent_class == nullptr)
 		{
-			if (!StringTools::IsEmpty(short_name))
-				result->SetShortName(std::move(short_name));
-			manager->InsertClass(result);
-			return result;
+			ClassLog::Error("ClassLoader::DoCreateChildClass(...): can't find parent class [%s] derived from Object", parent_class_name);
+			return nullptr;
 		}
-		return nullptr;
+
+		return DoCreateChildClassHelper
+		(
+			parent_class,
+			manager,
+			std::move(class_name),
+			std::move(short_name),
+			std::move(json)
+		);
 	}
 
-	bool ClassLoader::DoSetSpecialClassParent(ClassManager* manager, Class* cls, std::string const & parent_class_name) const
+	Class<Object>* ClassLoader::DoCreateChildClassHelper(Class<Object>* parent_class, ClassManager* manager, std::string class_name, std::string short_name, nlohmann::json json) const
 	{
-		// parent class is MANDATORY for Special objects
-		cls->parent = manager->FindClass(parent_class_name.c_str());
-		if (cls->parent == nullptr)
+		Class<Object>* result = parent_class->CreateSubclass(manager, std::move(class_name), [json = std::move(json)](Object* object)
 		{
-			ClassLog::Error("Class::DoSetSpecialClassParent : special class [%s] has unknown parent class [%s]", cls->name.c_str(), parent_class_name.c_str());
-			return false;
+			if (JSONSerializableInterface* serializable = auto_cast(object))
+				serializable->SerializeFromJSON(&json);
+		});
+
+		if (result == nullptr)
+			return nullptr;
+
+		if (!StringTools::IsEmpty(short_name))
+			result->SetShortName(std::move(short_name));
+		manager->InsertClass(result);
+
+		return result;
+	}
+
+	struct LoadingClassInfo
+	{
+		/** the name of the class to create */
+		std::string class_name;
+		/** the shortname of the class to create */
+		std::string short_name;
+		/** the name of the parent_class to create */
+		std::string parent_class_name;
+		/** the json data to be used to initialize new instances */
+		nlohmann::json json;
+
+		/** the parent class_info */
+		LoadingClassInfo* parent_class_info = nullptr;
+		/** the parent class */
+		Class<Object>* parent_class = nullptr;
+		/** the effective class created */
+		Class<Object>* loaded_class = nullptr;
+
+		/** the level in hierarchy of class. Higher values must be treated first */
+		int  level = 0;
+		/** whether this info is valid, or is to be rejected */
+		bool is_valid = true;
+		/** used to detect circular classes hierarchy */
+		bool traversal_in_progress = false;
+	};
+
+	void SearchCircularReferenceMarkInvalid(LoadingClassInfo* cls, bool& error_circular_reference)
+	{
+		if (cls == nullptr)
+			return;
+		else if (!cls->is_valid)
+			return;
+		else if (cls->traversal_in_progress)
+		{
+			cls->is_valid = false;
+			error_circular_reference = true;
+		}
+		else
+		{
+			cls->traversal_in_progress = true;
+			SearchCircularReferenceMarkInvalid(cls->parent_class_info, error_circular_reference);
+			cls->traversal_in_progress = false;
+		}
+	}
+
+	bool ClassLoader::LoadClassesInDirectory(ClassManager* manager, FilePathParam const& path) const
+	{
+		assert(manager != nullptr);
+
+		std::vector<LoadingClassInfo> loaded_classes_info;
+
+		FileTools::WithDirectoryContent(path, [this, &loaded_classes_info](boost::filesystem::path const& p)
+		{
+			DoLoadClassHelper(p, [this, &loaded_classes_info](std::string class_name, std::string short_name, std::string parent_class_name, nlohmann::json json)
+			{
+				LoadingClassInfo class_info;
+				class_info.class_name = std::move(class_name);
+				class_info.short_name = std::move(short_name);
+				class_info.parent_class_name = std::move(parent_class_name);
+				class_info.json = std::move(json);
+				loaded_classes_info.push_back(std::move(class_info));
+				return true;
+			});
+			return false; // do not stop iterating in directory
+		});
+
+		if (loaded_classes_info.size() == 0)
+			return true;
+
+		// generate indices
+		std::vector<size_t> indices;
+		indices.reserve(loaded_classes_info.size());
+		for (size_t i = 0; i < loaded_classes_info.size(); ++i)
+			indices.push_back(i);
+
+		auto RemoveInvalidClasses = [&indices, &loaded_classes_info](LightweightFunction<void(LoadingClassInfo const& class_info)> log_func)
+		{
+			std::erase_if(indices, [&loaded_classes_info, &log_func](size_t index)
+			{
+				if (!loaded_classes_info[index].is_valid)
+				{
+					log_func(loaded_classes_info[index]);
+					return true;
+				}
+				return false;
+			});
+		};
+
+		// search classes already existing in manager
+		bool error_already_existing = false;
+		for (size_t i = 0; i < indices.size(); ++i)
+		{
+			LoadingClassInfo& class_info = loaded_classes_info[indices[i]];
+
+			if (manager->FindClass(class_info.class_name.c_str(), FindClassFlags::Name) != nullptr) // ignore short name and parent manager
+			{
+				class_info.is_valid = false;
+				error_already_existing = true;
+			}
+		}
+
+		if (error_already_existing)
+		{
+			RemoveInvalidClasses([](LoadingClassInfo const& class_info)
+			{
+				ClassLog::Error("Loading class [%s] failure: already exists in manager", class_info.class_name.c_str());
+			});
+		}
+
+		// link child-parent alltogether
+		for (size_t index1 : indices)
+		{
+			LoadingClassInfo& class_info1 = loaded_classes_info[index1];
+			for (size_t index2 : indices)
+			{
+				if (index1 == index2)
+					continue;
+				LoadingClassInfo& class_info2 = loaded_classes_info[index2];
+				if (class_info1.parent_class_name == class_info2.class_name)
+				{
+					class_info1.parent_class_info = &class_info2;
+					break;
+				}
+			}
+		}
+
+		// search real base class from manager
+		bool error_base_class_not_found = false;
+		for (size_t index : indices)
+		{
+			LoadingClassInfo& class_info = loaded_classes_info[index];
+
+			if (class_info.parent_class_info != nullptr) // we need to find an already exising base class ?
+				continue;
+			if (Class<Object>* parent_class = manager->FindClass(class_info.parent_class_name.c_str()))
+			{
+				class_info.parent_class = parent_class;
+			}
+			else
+			{
+				class_info.is_valid = false;
+				error_base_class_not_found = true;
+			}
+		}
+
+		if (error_base_class_not_found)
+		{
+			RemoveInvalidClasses([](LoadingClassInfo const& class_info)
+			{
+				ClassLog::Error("Loading class [%s] failure: parent [%s] not found", class_info.class_name.c_str(), class_info.parent_class_name.c_str());
+			});
+		}
+
+		// eliminate circular referenced classes
+		bool error_circular_reference = false;
+		for (size_t index : indices)
+		{
+			LoadingClassInfo& class_info = loaded_classes_info[index];
+			SearchCircularReferenceMarkInvalid(&class_info, error_circular_reference);
+		}
+
+		if (error_circular_reference)
+		{
+			RemoveInvalidClasses([](LoadingClassInfo const& class_info)
+			{
+				ClassLog::Error("Loading class [%s] failure: circular reference", class_info.class_name.c_str());
+			});
+		}
+
+		// propagate invalidity
+		bool error_propagation = false;
+
+		do
+		{
+			error_propagation = false;
+
+			for (size_t index : indices)
+			{
+				LoadingClassInfo& class_info = loaded_classes_info[index];
+				if (class_info.parent_class_info != nullptr && !class_info.parent_class_info->is_valid)
+				{
+					class_info.is_valid = false;
+					error_propagation = true;
+				}
+			}
+			if (error_propagation)
+			{
+				RemoveInvalidClasses([](LoadingClassInfo const& class_info)
+				{
+					ClassLog::Error("Loading class [%s] failure: invalid parent [%s]", class_info.class_name.c_str(), class_info.parent_class_name.c_str());
+				});
+			}
+		} while (error_propagation);
+
+		// 'sort' classes
+		// in a class is a 'parent/root' it has higher level value
+		// because the node is traversed more times
+		// 
+		//  B inherits of A
+		//
+		//     A     level = 2 (because there are two traversals of this class. one starting from A, one starting from B
+		//     |
+		//     v
+		//     B     level = 1 (a single traversal for this class. the one starting from B)
+		//
+		// at the end, we just have to handle classes in order of decreasing values
+		auto IncrementClassDataLevel = [](LoadingClassInfo* class_info)
+		{
+			do
+			{
+				++class_info->level;
+				class_info = class_info->parent_class_info;
+			} while (class_info != nullptr);
+		};
+
+		for (size_t index : indices)
+			IncrementClassDataLevel(&loaded_classes_info[index]);
+
+		// sort thoses indices according the level
+		std::ranges::sort(indices, [&loaded_classes_info](size_t index1, size_t index2)
+			{
+				return loaded_classes_info[index1].level > loaded_classes_info[index2].level;
+			});
+
+		// handle class_info according to the decreasing level
+		for (size_t index : indices)
+		{
+			LoadingClassInfo& class_info = loaded_classes_info[index];
+
+			if (class_info.parent_class != nullptr)
+			{
+				class_info.loaded_class = DoCreateChildClassHelper(
+					class_info.parent_class,
+					manager,
+					std::move(class_info.class_name),
+					std::move(class_info.short_name),
+					std::move(class_info.json)
+				);
+			}
+			else if (class_info.parent_class_info != nullptr)
+			{
+				assert(class_info.parent_class_info->loaded_class != nullptr);
+
+				class_info.loaded_class = DoCreateChildClassHelper(
+					class_info.parent_class_info->loaded_class,
+					manager,
+					std::move(class_info.class_name),
+					std::move(class_info.short_name),
+					std::move(class_info.json)
+				);
+			}
 		}
 		return true;
-	}
-
-	void ClassLoader::DoDeleteSpecialClass(ClassManager* manager, Class * cls) const
-	{
-		// remove & delete the class
-		assert(cls != nullptr);
-		manager->classes.erase(std::ranges::find(manager->classes, cls));
-		delete(cls);
-	}
-
-	ClassWithJSONInitialization::ClassWithJSONInitialization(std::string in_name, nlohmann::json in_json) :
-		Class(std::move(in_name)),
-		json(std::move(in_json))
-	{
-	}
-
-	void ClassWithJSONInitialization::OnObjectInstanceInitialized(Object* object) const
-	{
-		if (JSONSerializableInterface* serializable = auto_cast(object))
-			serializable->SerializeFromJSON(&json);
 	}
 
 }; // namespace chaos

@@ -8,15 +8,17 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * ClassSuperClass: utility meta class to get the inheritance from a Class<>
+	 * ClassSuperClass: utility meta class to get the inheritance from a Class<...>
 	 */
 
+	// default template
 	template<typename CPP_TYPE>
 	struct ClassSuperClass
 	{
 		using type = ClassBase;
 	};
 
+	// template used if super class is known
 	template<typename CPP_TYPE>
 	requires
 	(
@@ -27,6 +29,7 @@ namespace chaos
 		using type = Class<SuperClass_t<CPP_TYPE>>;
 	};
 
+	// shortcut
 	template<typename CPP_TYPE>
 	using ClassSuperClass_t = typename ClassSuperClass<CPP_TYPE>::type;
 
@@ -41,7 +44,7 @@ namespace chaos
 		friend class NativeClassManager;
 
 		template<typename CPP_TYPE>
-		friend class CppClassRegisterResult;
+		friend class ClassRegistrationResult;
 
 	public:
 
@@ -62,7 +65,7 @@ namespace chaos
 			return GetMutableNativeClassInstance();
 		}
 		/** generate a derived class from this one by adding special initialization handler */
-		virtual CppClassRegisterResult<CPP_TYPE> CreateSubclass(ClassManager* in_manager, std::string in_name, std::function<void(CPP_TYPE*)> in_func = {}) const;
+		virtual ClassRegistrationResult<CPP_TYPE> CreateSubclass(ClassManager* in_manager, std::string in_name, std::function<void(CPP_TYPE*)> in_func = {}) const;
 
 	protected:
 
@@ -129,7 +132,7 @@ namespace chaos
 	};
 
 	template<typename CPP_TYPE>
-	CppClassRegisterResult<CPP_TYPE> Class<CPP_TYPE>::CreateSubclass(ClassManager* in_manager, std::string in_name, std::function<void(CPP_TYPE*)> in_func) const
+	ClassRegistrationResult<CPP_TYPE> Class<CPP_TYPE>::CreateSubclass(ClassManager* in_manager, std::string in_name, std::function<void(CPP_TYPE*)> in_func) const
 	{
 		Class<CPP_TYPE>* result = CreateChildClass(in_manager, std::move(in_name));
 		if (result == nullptr)
@@ -138,9 +141,9 @@ namespace chaos
 		if (in_func)
 		{
 			result->initialize_instance_func = [func = std::move(in_func)](void* instance)
-				{
-					func((CPP_TYPE*)instance);
-				};
+			{
+				func((CPP_TYPE*)instance);
+			};
 		}
 		return { result };
 	}

@@ -137,7 +137,7 @@ namespace chaos
 
 		/** a concept for node */
 		template<typename T>
-		concept Implement_IsUseful = requires(T t)
+		concept Implement_IsUseful = requires(T const & t)
 		{
 			{t.IsUseful()} -> std::convertible_to<bool>;
 		};
@@ -219,7 +219,7 @@ namespace chaos
 
 			int result = 0;
 			int multiplier = 1;
-			for (int i = 0; i < DIMENSION; ++i, multiplier *= DIMENSION)
+			for (int i = 0; i < DIMENSION; ++i, multiplier *= 3)
 			{
 				if (info.position[i] >= central_child_range.first[i])
 				{

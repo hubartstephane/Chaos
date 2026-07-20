@@ -31,7 +31,7 @@ namespace chaos
 		/** conversion method */
 		CHAOS_API uint64_t EndianSwap(uint64_t src);
 		/** conversion method */
-		int64_t EndianSwap(int64_t src);
+		CHAOS_API int64_t EndianSwap(int64_t src);
 		/** conversion method */
 		CHAOS_API float EndianSwap(float src);
 		/** conversion method */

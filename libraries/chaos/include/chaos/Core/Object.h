@@ -1,9 +1,10 @@
+namespace chaos
+{
+
 #ifdef CHAOS_FORWARD_DECLARATION
 
-/**
- * Macros for declaring classes in object derivated classes
- */
-
+// Macros for declaring classes in object derivated classes
+//
 // It's important that last line is:    static inline .... DeclareNativeClass ... (no comma)
 // so that we can use the short class name syntax
 //    CHAOS_DECLARE_OBJECT_CLASS(child_class, parent_class).ShortName("short_name");
@@ -20,16 +21,10 @@ public:\
 using Super = PARENT_CLASS;\
 CHAOS_DECLARE_OBJECT_CLASS_METHODS(CLASS)
 
-namespace chaos
-{
 	class Object;
-
-}; // namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-namespace chaos
-{
 	/**
 	* Object: base class for most objects
 	*/
@@ -50,18 +45,14 @@ namespace chaos
 		CHAOS_DECLARE_OBJECT_CLASS_METHODS(Object);
 	};
 
-}; // namespace chaos
-
 #else // defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-namespace chaos
-{
 	template<typename CPP_TYPE>
 	ClassRegistrationResult<CPP_TYPE> Object::RegisterNativeClass(char const* name)
 	{
 		return NativeClassManager::GetInstance()->RegisterNativeClass<CPP_TYPE>(name);
 	}
 
-}; // namespace chaos
-
 #endif
+
+}; // namespace chaos

@@ -2,152 +2,148 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	enum class InheritanceType;
-
+	template<typename CPP_TYPE>
 	class Class;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * CHAOS_REGISTER_CLASS : a macro that helps register classes automatically
+	 * ClassSuperClass: utility meta class to get the inheritance from a Class<>
 	 */
 
-#define CHAOS_REGISTER_CLASS(CLASS, ...) static inline chaos::Class const * CLASS##_class = chaos::ClassManager::GetDefaultInstance()->DeclareCPPClass<CLASS __VA_OPT__(,) __VA_ARGS__>(#CLASS)
-
-	/**
-	 * InheritanceType : the kind if inheritance that can exist between 2 classes
-	 */
-
-	enum class InheritanceType : int
+	template<typename CPP_TYPE>
+	struct ClassSuperClass
 	{
-		Unknown = -1,
-		No = 0,
-		Yes = 1
+		using type = ClassBase;
 	};
 
-	/**
-	 * Class : a registered class
-	 */
-	class CHAOS_API Class
+	template<typename CPP_TYPE>
+	requires
+	(
+		HasSuperType<CPP_TYPE>
+	)
+	struct ClassSuperClass<CPP_TYPE>
 	{
-		friend class ClassLoader;
-		friend class ClassRegistration;
-		friend class ClassFindResult;
+		using type = Class<SuperClass_t<CPP_TYPE>>;
+	};
+
+	template<typename CPP_TYPE>
+	using ClassSuperClass_t = typename ClassSuperClass<CPP_TYPE>::type;
+
+	/**
+	 * Class: represent a class. can be used as a factory to generate elements 
+	 */
+
+	template<typename CPP_TYPE>
+	class Class : public ClassSuperClass_t<CPP_TYPE>
+	{
 		friend class ClassManager;
+		friend class NativeClassManager;
 
-	protected:
-
-		/** constructor */
-		Class(std::string in_name);
+		template<typename CPP_TYPE>
+		friend class CppClassRegisterResult;
 
 	public:
 
-		/** the type of the function to allocate an object */
-		using create_instance_function_type = std::function<Object* ()>;
-		/** the type of the function to create an object on the stack an call a function on it */
-		using create_instance_on_stack_function_type = std::function<void(LightweightFunction<void(Object*)>)>;
+		using Super = ClassSuperClass_t<CPP_TYPE>;
 
-		/** destructor */
-		virtual ~Class() = default;
-
-		/** gets the class size */
-		size_t GetClassSize() const { return class_size; }
-		/** gets the parent class */
-		Class const* GetParentClass() const { return parent; }
-		/** gets the class name */
-		std::string const& GetClassName() const { return name; }
-		/** gets the short name */
-		std::string const& GetShortName() const { return short_name; }
-
-		/** returns whether the class has been registered */
-		bool IsDeclared() const;
-		/** returns whether we can create instances */
-		bool CanCreateInstance() const;
-		/** returns whether we can create instances */
-		bool CanCreateInstanceOnStack() const;
-
-		/** gets the class manager */
-		ClassManager* GetClassManager() const { return manager; } // no need to have a manager const
-
-		/** static inheritance method */
-		static InheritanceType InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal = false);
-		/** returns whether the class inherits from parent */
-		InheritanceType InheritsFrom(Class const* parent_class, bool accept_equal = false) const;
-
-		/** create a temporary instance on the stack an call the functor on it */
-		template<typename FUNC>
-		bool CreateInstanceOnStack(FUNC const& func) const;
-		/** method to create an instance of the object */
-		Object* CreateInstance() const;
-		/** creation operator */
-		Object* operator ()() const;
+		/** create an instance of the described class */
+		virtual CPP_TYPE* CreateInstance(void* inplace_buffer = nullptr) const
+		{
+			assert(this->IsFullyInitialized());
+			CPP_TYPE* result = AllocateInstance(inplace_buffer);
+			if (result != nullptr)
+				this->InitializeInstance(result);
+			return result;
+		}
+		/** get the singleton for native c++ classes */
+		static Class const* GetNativeClassInstance()
+		{
+			return GetMutableNativeClassInstance();
+		}
+		/** generate a derived class from this one by adding special initialization handler */
+		virtual CppClassRegisterResult<CPP_TYPE> CreateSubclass(ClassManager* in_manager, std::string in_name, std::function<void(CPP_TYPE*)> in_func = {}) const;
 
 	protected:
 
-#if _DEBUG
-		/** search whether the some parent class is in a child manager */
-		bool HasCyclicParent() const;
-#endif // #if _DEBUG
+		/** protected constructor */
+		Class() = default;
 
-		/** object initialization function */
-		virtual void OnObjectInstanceInitialized(Object* object) const;
+		/** get the singleton for native c++ classes (mutable getter) */
+		static Class* GetMutableNativeClassInstance()
+		{
+			static shared_ptr<Class<CPP_TYPE>> result = new Class<CPP_TYPE>;
+			return result.get();
+		}
 
-		/** initialize the object instance */
-		void InitializeObjectInstance(Object* object) const;
-		/** get the create instance function */
-		create_instance_function_type const* GetCreateInstanceFunc() const;
-		/** get the create instance on stack function */
-		create_instance_on_stack_function_type const* GetCreateInstanceOnStackFunc() const;
+		/** instance allocation method (does not apply initializer) */
+		virtual CPP_TYPE* AllocateInstance(void* inplace_buffer) const
+		{
+			if (inplace_buffer == nullptr)
+				return new CPP_TYPE;
+			return new (inplace_buffer) CPP_TYPE;
+		}
 
-		/** set the parent class */
-		void SetParentClass(Class const* in_parent);
-		/** set the short name */
-		void SetShortName(std::string in_short_name);
-
-	protected:
-
-		/** the parent of the class */
-		Class const* parent = nullptr;
-		/** get class size */
-		size_t class_size = 0;
-		/** the optional name of the class */
-		std::string name;
-		/** the optional short name of the class */
-		std::string short_name;
-		/** whether the class has been fully declared */
-		bool declared = false;
-		/** create an instance of the object delegate */
-		create_instance_function_type create_instance;
-		/** delegate to create a temporary instance of the object on the stack and call a functor on it */
-		create_instance_on_stack_function_type create_instance_on_stack;
-		/** the type_info for the class */
-		std::type_info const* info = nullptr;
-		/** the manager for this class */
-		ClassManager* manager = nullptr;
+		/** internal method to create a child class from this one */
+		virtual Class<CPP_TYPE>* CreateChildClass(ClassManager* in_manager, std::string in_name) const;
 	};
 
 #else
 
-CHAOS_DEFINE_LOG(ClassLog, "Class")
-
-template<typename FUNC>
-bool Class::CreateInstanceOnStack(FUNC const& func) const
-{
-	if (create_instance_on_stack_function_type const* create_func = GetCreateInstanceOnStackFunc())
+	template<typename CPP_TYPE>
+	Class<CPP_TYPE>* Class<CPP_TYPE>::CreateChildClass(ClassManager* in_manager, std::string in_name) const
 	{
-		(*create_func)([this, &func](Object* object)
+		if (in_manager != nullptr)
 		{
-			InitializeObjectInstance(this, object);
-			func(auto_cast_checked(object));
-		});
-		return true;
-	}
-	else
+			// search if target manager is a child manager
+			// (bad idea to have an ancestor manager having a derived class from one's child manager)
+			if (this->manager != nullptr)
+			{
+				if (in_manager->IsAncestorManagerFor(this->manager, false))
+				{
+					ClassLog::Error("Can't create a child class in an ancestor ClassManager");
+					return nullptr;
+				}
+			}
+			// search if there already is a class with same name
+			if (in_manager->FindClass(in_name.c_str(), FindClassFlags::Name | FindClassFlags::ParentManager) != nullptr) // ignore short name
+			{
+				ClassLog::Error("Can't load class [%s]: already existing in manager", in_name);
+				return nullptr;
+			}
+		}
+
+		Class<CPP_TYPE>* result = new Class<CPP_TYPE>();
+		if (result == nullptr)
+			return nullptr;
+
+		result->name = in_name;
+		result->class_size = this->class_size;
+		result->info = this->info;
+		result->parent_class = this;
+		result->manager = in_manager;
+
+		if (in_manager != nullptr)
+			in_manager->InsertClass(result);
+		return result;
+	};
+
+	template<typename CPP_TYPE>
+	CppClassRegisterResult<CPP_TYPE> Class<CPP_TYPE>::CreateSubclass(ClassManager* in_manager, std::string in_name, std::function<void(CPP_TYPE*)> in_func) const
 	{
-		ClassLog::Error("Class::CreateInstanceOnStack : the class [%s] cannot be instanciated", name.c_str());
-		return false;
+		Class<CPP_TYPE>* result = CreateChildClass(in_manager, std::move(in_name));
+		if (result == nullptr)
+			return {};
+
+		if (in_func)
+		{
+			result->initialize_instance_func = [func = std::move(in_func)](void* instance)
+				{
+					func((CPP_TYPE*)instance);
+				};
+		}
+		return { result };
 	}
-}
 
 #endif
 

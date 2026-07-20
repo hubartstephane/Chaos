@@ -3,58 +3,32 @@
 
 namespace chaos
 {
-	// ==========================================================
-	// ClassFindResult functions
-	// ==========================================================
-
-	ClassFindResult::ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, ClassMatchType in_match_type):
+	ClassFindResult::ClassFindResult(ClassManager* in_class_manager, iterator_type in_iterator, ClassMatchType in_match_type, FindClassFlags in_find_flags) :
 		class_manager(in_class_manager),
 		iterator(in_iterator),
-		match_type(in_match_type)
+		match_type(in_match_type),
+		find_flags(in_find_flags)
 	{
 	}
 
-	ClassFindResult::operator Class* () const
+	bool ClassFindResult::operator == (nullptr_t) const
 	{
-		return Resolve(nullptr);
+		return (result == nullptr) && (class_manager == nullptr); // no cached result, nothing more starting point for searching
 	}
 
-	Class* ClassFindResult::Resolve(Class const * check_class) const
+	bool ClassFindResult::operator != (nullptr_t) const
 	{
-		// check for cached result or stop if no class_manager
+		return !operator == (nullptr);
+	}
+
+	ClassFindResult::operator ClassBase* () const
+	{
 		if (result != nullptr || class_manager == nullptr)
 			return result;
 
-		// we know that the iterator points on a valid entry. get the string that made this entry a good one
-		std::string const& searched_name = (match_type == ClassMatchType::Name) ?
-			(*iterator)->GetClassName() :
-			(*iterator)->GetShortName();
+		if (iterator != class_manager->classes.end())
+			return iterator->get();
 
-		// check for the very first entry (string comparaison not necessary)
-		if (check_class == nullptr || (*iterator)->InheritsFrom(check_class, true) == InheritanceType::Yes)
-		{
-			result = *iterator;
-			return result;
-		}
-
-		// process manager chain
-		while (class_manager != nullptr)
-		{
-			// search all classes of the manager
-			for (; iterator != class_manager->classes.end(); ++iterator)
-			{
-				if ((StringTools::Stricmp((*iterator)->GetClassName(), searched_name) == 0) ||
-					(StringTools::Stricmp((*iterator)->GetShortName(), searched_name) == 0))
-				{
-					result = *iterator;
-					return result;
-				}
-			}
-			// next manager in chain
-			class_manager = class_manager->parent_manager.get();
-			if (class_manager != nullptr)
-				iterator = class_manager->classes.begin();
-		}
 		return nullptr;
 	}
 

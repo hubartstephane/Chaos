@@ -64,7 +64,7 @@ class MyClassBase : public ReferenceCountedInterface
 	friend class MyClassLoader;
 
 	template<typename CPP_TYPE>
-	friend class MyCppClassRegisterResult;
+	friend class MyCClassRegisterResult;
 
 public:
 
@@ -80,7 +80,7 @@ public:
 	/** returns whether the class has been registered */
 	bool IsFullyInitialized() const { return info != nullptr; }
 	/** gets the parent class */
-	MyClassBase const* GetParentClass() const { return parent_class.get(); }
+	MyClassBase const* GetParentClass() const { return parent_class; }
 	/** gets the class manager */
 	MyClassManager* GetClassManager() const { return manager; } // no need to have a manager const
 
@@ -115,7 +115,7 @@ protected:
 	/** the type_info for the class */
 	std::type_info const * info = nullptr;
 	/** the parent of the class */
-	shared_ptr<MyClassBase> parent_class;
+	MyClassBase const * parent_class = nullptr;
 	/** the manager for this class */
 	MyClassManager* manager = nullptr;
 	/** function to initialize newly created instance */
@@ -135,12 +135,12 @@ bool MyClassBase::InheritsFrom(MyClassBase const* base, bool accept_same) const
 	if (base == this)
 		return accept_same;
 
-	MyClassBase const* cls = parent_class.get();
+	MyClassBase const* cls = parent_class;
 	while (cls != nullptr)
 	{
 		if (cls == base)
 			return true;
-		cls = cls->parent_class.get();
+		cls = cls->parent_class;
 	}
 	return false;
 }
@@ -332,86 +332,6 @@ protected:
 };
 
 
-MyClassManager::MyClassManager(MyClassManager* in_parent_manager) :
-	parent_manager(in_parent_manager)
-{
-}
-
-MyClassManager::~MyClassManager()
-{
-	for (auto & cls : classes) // make all classes "orphan"
-		cls->manager = nullptr;
-}
-
-MyClassFindResult MyClassManager::FindClass(char const* name, FindClassFlags flags)
-{
-	assert(name != nullptr);
-	assert(HasAnyFlags(flags, FindClassFlags::Name | FindClassFlags::Shortname)); // at least one search criteria
-
-	// early exit
-	if (StringTools::IsEmpty(name))
-		return { nullptr, classes.end(), ClassMatchType::Name, flags }; // empty ClassFindResult result
-
-	// search in manager chain
-	MyClassManager* manager = this;
-	while (manager != nullptr)
-	{
-		ClassMatchType match_type = ClassMatchType::Name;
-		auto it = std::ranges::find_if(manager->classes, [name, &match_type, flags](shared_ptr<MyClassBase> const & cls)
-		{
-			if (HasAnyFlags(flags, FindClassFlags::Name))
-			{
-				if (StringTools::Stricmp(cls->GetClassName(), name) == 0)
-				{
-					match_type = ClassMatchType::Name;
-					return true;
-				}
-			}
-			if (HasAnyFlags(flags, FindClassFlags::Shortname))
-			{
-				if (StringTools::Stricmp(cls->GetShortName(), name) == 0)
-				{
-					match_type = ClassMatchType::Shortname;
-					return true;
-				}
-			}
-			return false;
-		});
-		if (it != manager->classes.end())
-			return { manager, it, match_type, flags };
-		if (!HasAnyFlags(flags, FindClassFlags::ParentManager))
-			break;
-		manager = manager->parent_manager.get();
-	}
-	// no class, no possible alias
-	return { nullptr, classes.end(), ClassMatchType::Name, flags }; // empty ClassFindResult result
-}
-
-bool MyClassManager::IsAncestorManagerFor(MyClassManager const* child_manager, bool accept_same) const
-{
-	assert(child_manager != nullptr);
-
-	if (child_manager == this)
-		return accept_same;
-
-	MyClassManager const * target_manager = child_manager->parent_manager.get();
-	while (target_manager != nullptr)
-	{
-		if (target_manager == this)
-			return true;
-		target_manager = target_manager->parent_manager.get();
-	}
-	return false;
-}
-
-void MyClassManager::InsertClass(MyClassBase* cls)
-{
-	assert(cls != nullptr);
-	assert(cls->manager == nullptr);
-
-	classes.push_back(cls);
-	cls->manager = this;
-}
 
 // --------------------------------------------------------------------------------------------------------------
 
@@ -1085,6 +1005,54 @@ public:
 
 
 
+
+
+
+
+class BaseClass : public chaos::Object, public chaos::JSONSerializableInterface
+{
+public:
+
+	MY_CHAOS_DECLARE_OBJECT_CLASS(BaseClass, chaos::Object).ShortName("BC"); // with a short name
+
+	BaseClass()
+	{
+
+	}
+
+	virtual bool SerializeIntoJSON(nlohmann::json* json) const override
+	{
+		if (!chaos::PrepareSaveObjectIntoJSON(json))
+			return false;
+		chaos::JSONTools::SetAttribute(json, "value", value);
+		return true;
+	}
+
+	virtual bool SerializeFromJSON(chaos::JSONReadConfiguration config) override
+	{
+		if (!chaos::JSONSerializableInterface::SerializeFromJSON(config))
+			return false;
+		chaos::JSONTools::GetAttribute(config, "value", value);
+		return true;
+	}
+
+	int value = 13;
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class MyApplication : public chaos::Application
 {
 	CHAOS_DECLARE_OBJECT_CLASS(MyApplication, chaos::Application);
@@ -1122,6 +1090,7 @@ protected:
 		return true;
 	}
 };
+
 
 
 // ------------------------------------------------------------

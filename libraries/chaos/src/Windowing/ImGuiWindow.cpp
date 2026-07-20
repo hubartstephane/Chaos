@@ -48,7 +48,7 @@ namespace chaos
 
 		if (ImGuiWindowData const* imgui_window_data = GetImGuiWindowData())
 		{
-			ImGuiObject* imgui_object = imgui_window_data->imgui_object_class.CreateInstance();
+			ImGuiObject* imgui_object = imgui_window_data->imgui_object_class->CreateInstance();
 			if (imgui_object == nullptr)
 				return false;
 			SetContent(imgui_object);	

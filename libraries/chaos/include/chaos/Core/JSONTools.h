@@ -407,9 +407,11 @@ namespace chaos
 			if (json_class != nullptr)
 			{
 				Class<T> const* dst_class = Class<T>::GetNativeClassInstance();
-				if (dst_class != nullptr)
-					if (json_class->InheritsFrom(dst_class, true)) // accept equal
-						return (T*)json_class->CreateInstance();
+				if (json_class->InheritsFrom(dst_class, true)) // accept equal
+				{
+					Class<T> const * cls = (Class<T> const*)json_class;
+					return cls->CreateInstance();
+				}
 			}
 		}
 		return new T;
@@ -519,13 +521,13 @@ namespace chaos
 				*json = nlohmann::json::object(); // create the JSON object if not already set
 
 			// get the class of the C++ object
-			Class const* src_class = nullptr;
+			Class<T> const* src_class = nullptr;
 			if constexpr (check_method_GetClass_v<T const>)
 				src_class = src.GetClass();
-			if (src_class == nullptr || !src_class->IsDeclared())
-				src_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
+			if (src_class == nullptr || !src_class->IsRegistered())
+				src_class = Class<T>::GetNativeClassInstance();
 			// write the class into the json object
-			if (src_class != nullptr && src_class->IsDeclared())
+			if (src_class != nullptr && src_class->IsRegistered())
 				JSONTools::SetAttribute(json, "classname", src_class->GetClassName());
 			// save into JSON
 			return src.SerializeIntoJSON(json);

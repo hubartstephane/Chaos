@@ -57,7 +57,7 @@ namespace chaos
 			if (JSONTools::GetAttribute(classes_config, "classes_directory", classes_directory))
 			{
 				ClassLoader loader;
-				loader.LoadClassesInDirectory(ClassManager::GetDefaultInstance(), classes_directory);
+				loader.LoadClassesInDirectory(NativeClassManager::GetInstance(), classes_directory);
 			}
 		}
 		return true;

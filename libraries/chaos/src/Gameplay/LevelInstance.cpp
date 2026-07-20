@@ -64,7 +64,7 @@ namespace chaos
 
 	PlayerPawn* LevelInstance::DoCreatePlayerPawn()
 	{
-		return player_pawn_class.CreateInstance();
+		return player_pawn_class->CreateInstance();
 	}
 
 	PlayerPawn * LevelInstance::CreatePlayerPawn(Player* player)
@@ -97,7 +97,7 @@ namespace chaos
 
 	PlayerDisplacementComponent* LevelInstance::DoCreatePlayerDisplacementComponent()
 	{
-		return player_displacement_component_class.CreateInstance();
+		return player_displacement_component_class->CreateInstance();
 	}
 
 	void LevelInstance::DestroyPlayerPawn(Player* player)
@@ -119,7 +119,7 @@ namespace chaos
 
 	Camera* LevelInstance::DoCreateCamera()
 	{
-		return camera_class.CreateInstance();
+		return camera_class->CreateInstance();
 	}
 
 	Camera* LevelInstance::CreateCamera()

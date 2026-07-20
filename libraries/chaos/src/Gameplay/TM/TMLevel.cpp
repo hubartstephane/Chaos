@@ -81,7 +81,7 @@ namespace chaos
 		// return the factory based on this subclass
 		return [this, in_layer_instance, subclass](TiledMap::GeometricObject const * in_geometric_object, TMObjectReferenceSolver & in_reference_solver)
 		{
-			return subclass.CreateInstance();
+			return subclass->CreateInstance();
 		};
 	}
 

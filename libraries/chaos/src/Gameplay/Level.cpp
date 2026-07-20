@@ -24,7 +24,7 @@ namespace chaos
 
 	LevelInstance * Level::DoCreateLevelInstance()
 	{
-		return level_instance_class.CreateInstance();
+		return level_instance_class->CreateInstance();
 	}
 
 }; // namespace chaos

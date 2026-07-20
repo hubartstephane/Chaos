@@ -100,7 +100,7 @@ namespace chaos
 
 	Player * GameInstance::DoCreatePlayer()
 	{
-		return player_class.CreateInstance();
+		return player_class->CreateInstance();
 	}
 
 	double GameInstance::GetMainClockTime() const

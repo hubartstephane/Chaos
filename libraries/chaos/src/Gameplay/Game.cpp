@@ -587,7 +587,7 @@ namespace chaos
 			return false;
 
 		Class<GameViewportWidget> const * game_viewport_class = nullptr;
-		GameViewportWidget* game_viewport_widget = game_viewport_class.CreateInstance();
+		GameViewportWidget* game_viewport_widget = game_viewport_class->CreateInstance();
 		if (game_viewport_widget == nullptr)
 			return false;
 
@@ -754,7 +754,7 @@ namespace chaos
 
 	SM::StateMachine * Game::DoCreateGameStateMachine()
 	{
-		return game_sm_class.CreateInstance();
+		return game_sm_class->CreateInstance();
 	}
 
 	GameStateMachineInstance * Game::DoCreateGameStateMachineInstance(SM::StateMachine * state_machine)
@@ -1330,7 +1330,7 @@ namespace chaos
 
 	GameInstance * Game::DoCreateGameInstance()
 	{
-		return game_instance_class.CreateInstance();
+		return game_instance_class->CreateInstance();
 	}
 
 	bool Game::IsFreeCameraMode() const

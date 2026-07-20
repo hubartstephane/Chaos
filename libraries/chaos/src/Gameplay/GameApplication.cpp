@@ -20,7 +20,7 @@ namespace chaos
 		assert(glfwGetCurrentContext() == shared_context);
 
 		// create the game
-		game = GetGameApplicationData()->game_class.CreateInstance();
+		game = GetGameApplicationData()->game_class->CreateInstance();
 		if (game == nullptr)
 			return false;
 		GiveChildConfiguration(game.get(), "game");

@@ -31,6 +31,19 @@ protected:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 //-----------------------------------------------------------
 
 template<typename CPP_TYPE>
@@ -67,7 +80,7 @@ public:
 	/** returns whether the class has been registered */
 	bool IsFullyInitialized() const { return info != nullptr; }
 	/** gets the parent class */
-	MyClassBase const* GetParentClass() const { return parent_class; }
+	MyClassBase const* GetParentClass() const { return parent_class.get(); }
 	/** gets the class manager */
 	MyClassManager* GetClassManager() const { return manager; } // no need to have a manager const
 
@@ -82,7 +95,7 @@ public:
 
 protected:
 
-	/** initialize newly created instance (for the moment this is untyped) */
+	/** initialize newly created instance (at this point type of 'instance' is unknown) */
 	void InitializeInstance(void * instance) const
 	{
 		if (parent_class != nullptr)
@@ -102,7 +115,7 @@ protected:
 	/** the type_info for the class */
 	std::type_info const * info = nullptr;
 	/** the parent of the class */
-	MyClassBase const* parent_class = nullptr;
+	shared_ptr<MyClassBase> parent_class;
 	/** the manager for this class */
 	MyClassManager* manager = nullptr;
 	/** function to initialize newly created instance */
@@ -111,7 +124,7 @@ protected:
 
 void MyClassBase::SetShortName(std::string in_shorname)
 { 
-	assert(short_name.empty());
+	assert(short_name.empty()); // this should only be called/set a single time
 	short_name = std::move(in_shorname); 
 }
 
@@ -122,12 +135,12 @@ bool MyClassBase::InheritsFrom(MyClassBase const* base, bool accept_same) const
 	if (base == this)
 		return accept_same;
 
-	MyClassBase const* cls = parent_class;
+	MyClassBase const* cls = parent_class.get();
 	while (cls != nullptr)
 	{
 		if (cls == base)
 			return true;
-		cls = cls->parent_class;
+		cls = cls->parent_class.get();
 	}
 	return false;
 }

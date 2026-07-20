@@ -19,7 +19,7 @@ namespace chaos
 		/** name of the window */
 		char const * window_name = nullptr;
 		/** class of the window */
-		SubClassOf<Window> window_class;
+		Class<Window> const * window_class = nullptr;
 		/** placement of the window */
 		WindowPlacementInfo window_placement_info;
 		/** creation params */

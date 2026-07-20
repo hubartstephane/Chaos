@@ -12,6 +12,8 @@ namespace chaos
 
 	class CHAOS_API LinearComposerLayoutWidget : public LinearComposerWidget
 	{
+		CHAOS_DECLARE_OBJECT_CLASS(LinearComposerLayoutWidget, LinearComposerWidget);
+
 	public:
 
 		/** override */

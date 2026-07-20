@@ -356,8 +356,8 @@ namespace chaos
 				std::string classname;
 				if (JSONTools::GetAttribute(src, "classname", classname))
 				{
-					SubClassOf<T> subclass = ClassManager::GetDefaultInstance()->FindClass(classname.c_str());
-					if (!subclass.IsValid())
+					Class<T> const * subclass = NativeClassManager::GetInstance()->FindClass(classname.c_str());
+					if (subclass == nullptr)
 						return false;
 				}
 			}
@@ -403,12 +403,12 @@ namespace chaos
 		std::string classname;
 		if (JSONTools::GetAttribute(src, "classname", classname))
 		{
-			Class const* json_class = ClassManager::GetDefaultInstance()->FindClass(classname.c_str());
+			ClassBase const* json_class = NativeClassManager::GetInstance()->FindClass(classname.c_str());
 			if (json_class != nullptr)
 			{
-				Class const* dst_class = ClassManager::GetDefaultInstance()->FindCPPClass<T>();
+				Class<T> const* dst_class = Class<T>::GetNativeClassInstance();
 				if (dst_class != nullptr)
-					if (json_class->InheritsFrom(dst_class, true) == InheritanceType::Yes) // accept equal
+					if (json_class->InheritsFrom(dst_class, true)) // accept equal
 						return (T*)json_class->CreateInstance();
 			}
 		}

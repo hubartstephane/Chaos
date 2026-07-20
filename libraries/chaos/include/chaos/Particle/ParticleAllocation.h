@@ -34,7 +34,7 @@ namespace chaos
 		bool IsVisible() const;
 
 		/** returns the ID representing the class of the particle */
-		virtual Class const * GetParticleClass() const { return nullptr; }
+		virtual ClassBase const * GetParticleClass() const { return nullptr; }
 
 		/** get the size of one particle */
 		virtual size_t GetParticleSize() const { return 0; }
@@ -67,7 +67,7 @@ namespace chaos
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible() const
 		{
-			return Class::InheritsFrom(GetParticleClass(), ClassManager::GetDefaultInstance()->FindCPPClass<PARTICLE_TYPE>(), true) == InheritanceType::Yes;
+			return GetParticleClass()->InheritsFrom<PARTICLE_TYPE>(true);
 		}
 
         /** get an AutoCasting particle accessor */
@@ -172,12 +172,12 @@ namespace chaos
             ParticleAllocationBase(in_layer),
 			DataOwner<allocation_trait_type>(in_allocation_trait)
         {
-			assert(ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>() != nullptr); // ensure class is declared
+			assert(Class<particle_type>::GetNativeClassInstance()->IsRegistered()); // ensure class is declared
         }
 		/** override */
-		virtual Class const * GetParticleClass() const override
+		virtual ClassBase const * GetParticleClass() const override
 		{
-			return ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>();
+			return Class<particle_type>::GetNativeClassInstance();
 		}
 
         /** override */

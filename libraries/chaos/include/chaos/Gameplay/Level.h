@@ -43,7 +43,7 @@ namespace chaos
 		int level_index = 0;
 
 		/** the level instance class */
-		SubClassOf<LevelInstance> level_instance_class;
+		Class<LevelInstance> const * level_instance_class = nullptr;
 	};
 
 #endif

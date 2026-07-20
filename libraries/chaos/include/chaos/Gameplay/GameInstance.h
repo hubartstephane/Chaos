@@ -134,7 +134,7 @@ namespace chaos
 		Game* game = nullptr;
 
 		/** the player class */
-		SubClassOf<Player> player_class;
+		Class<Player> const * player_class = nullptr;
 
 		/** all the players present in the game */
 		std::vector<shared_ptr<Player>> players;

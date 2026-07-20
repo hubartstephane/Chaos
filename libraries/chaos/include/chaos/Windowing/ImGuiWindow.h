@@ -18,7 +18,7 @@ namespace chaos
 	public:
 
 		/** the class for the content of this window */
-		SubClassOf<ImGuiObject> imgui_object_class;
+		Class<ImGuiObject> const * imgui_object_class = nullptr;
 	};
 
 	/**

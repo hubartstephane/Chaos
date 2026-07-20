@@ -53,7 +53,7 @@ namespace chaos
 		/** create an instance of the described class */
 		virtual CPP_TYPE* CreateInstance(void* inplace_buffer = nullptr) const
 		{
-			assert(this->IsFullyInitialized());
+			assert(this->IsRegistered());
 			CPP_TYPE* result = AllocateInstance(inplace_buffer);
 			if (result != nullptr)
 				this->InitializeInstance(result);

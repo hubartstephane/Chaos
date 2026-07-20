@@ -15,8 +15,7 @@ namespace chaos
 	// shu49
 	class CHAOS_API GameEntity : public GPURenderable, public JSONSerializableInterface
 	{
-
-		CHAOS_DECLARE_OBJECT_CLASS(GameEntity, Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS(GameEntity, GPURenderable);
 
 	public:
 

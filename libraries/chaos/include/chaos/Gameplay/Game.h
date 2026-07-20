@@ -375,7 +375,7 @@ namespace chaos
 
 		/** pointer on the state_machine */
 		shared_ptr<SM::StateMachine> game_sm;
-		SubClassOf<SM::StateMachine> game_sm_class;
+		Class<SM::StateMachine> const * game_sm_class = nullptr;
 		/** pointer on the state_machine instance */
 		shared_ptr<GameStateMachineInstance> game_sm_instance;
 
@@ -412,7 +412,7 @@ namespace chaos
 
 		/** the game instance */
 		shared_ptr<GameInstance> game_instance;
-		SubClassOf<GameInstance> game_instance_class;
+		Class<GameInstance> const * game_instance_class = nullptr;
 
 		/** the free camera */
 		mutable shared_ptr<Camera> free_camera;

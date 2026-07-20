@@ -571,7 +571,7 @@ namespace chaos
 			return false;
 
 		// create main window
-		SubClassOf<Window>  window_class;
+		Class<Window> const * window_class = nullptr;
 		WindowPlacementInfo window_placement_info;
 		WindowCreateParams  create_params;
 		if (window_application->GetArguments().size() > 0)
@@ -586,7 +586,7 @@ namespace chaos
 		if (root_widget == nullptr)
 			return false;
 
-		SubClassOf<GameViewportWidget> game_viewport_class;
+		Class<GameViewportWidget> const * game_viewport_class = nullptr;
 		GameViewportWidget* game_viewport_widget = game_viewport_class.CreateInstance();
 		if (game_viewport_widget == nullptr)
 			return false;

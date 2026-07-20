@@ -160,13 +160,13 @@ namespace chaos
 		std::vector<shared_ptr<Camera>> cameras;
 
 		/** class for the player pawn */
-		SubClassOf<PlayerPawn> player_pawn_class;
+		Class<PlayerPawn> const * player_pawn_class = nullptr;
 
 		/** class for the player displacement component */
-		SubClassOf<PlayerDisplacementComponent> player_displacement_component_class;
+		Class<PlayerDisplacementComponent> const * player_displacement_component_class = nullptr;
 
 		/** class for the camera */
-		SubClassOf<Camera> camera_class;
+		Class<Camera> const * camera_class = nullptr;
 	};
 
 #endif

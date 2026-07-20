@@ -13,7 +13,7 @@ namespace chaos
 
 	public:
 
-		SubClassOf<Game> game_class;
+		Class<Game> const * game_class = nullptr;
 	};
 
 

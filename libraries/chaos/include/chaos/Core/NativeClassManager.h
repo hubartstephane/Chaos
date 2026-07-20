@@ -6,6 +6,9 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+#define CHAOS_REGISTER_CLASS(CLASS, ...)\
+static inline chaos::Class<CLASS> const * CLASS##_class = chaos::NativeClassManager::GetInstance()->RegisterNativeClass<CLASS __VA_OPT__(,) __VA_ARGS__>(#CLASS)
+
 	/**
 	 * NativeClassManager: a manager dedicated to C++ native classes (should be fulfilled at startup)
 	 */
@@ -15,11 +18,11 @@ namespace chaos
 	public:
 
 		/** register some native class */
-		template<typename CPP_TYPE>
+		template<typename CPP_TYPE, typename PARENT_CPP_TYPE = void>
 		ClassRegistrationResult<CPP_TYPE> RegisterNativeClass(char const* name)
 		{
 			Class<CPP_TYPE>* result = Class<CPP_TYPE>::GetMutableNativeClassInstance();
-			if (result->IsFullyInitialized()) // class has already be registered ?
+			if (result->IsRegistered()) // class has already be registered ?
 			{
 				assert(StringTools::Stricmp(result->name, name) == 0); // ensure class is registered with same name
 				return { result };

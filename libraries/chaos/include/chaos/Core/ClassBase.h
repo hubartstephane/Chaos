@@ -44,7 +44,7 @@ namespace chaos
 		/** gets the class size */
 		size_t GetClassSize() const { return class_size; }
 		/** returns whether the class has been registered */
-		bool IsFullyInitialized() const { return info != nullptr; }
+		bool IsRegistered() const { return info != nullptr; }
 		/** gets the parent class */
 		ClassBase const* GetParentClass() const { return parent_class; }
 		/** gets the class manager */

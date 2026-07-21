@@ -66,14 +66,14 @@ namespace chaos
 		return false;
 	}
 
-	bool WindowImGuiContext::OnMouseWheelImpl(double scroll_x, double scroll_y)
+	bool WindowImGuiContext::OnMouseWheelImpl(MouseWheelEvent const & mouse_wheel_event)
 	{
 		assert(IsImGuiContextCurrent());
 
 		// only gives wheel event to ImGui if the cursor hovers some window
 		if (ShouldCaptureInputEvent())
 		{
-			ImGui_ImplGlfw_ScrollCallback(window->GetGLFWHandler(), scroll_x, scroll_y);
+			ImGui_ImplGlfw_ScrollCallback(window->GetGLFWHandler(), mouse_wheel_event.scroll.x, mouse_wheel_event.scroll.y);
 			return true;
 		}
 		return false;
@@ -124,13 +124,13 @@ namespace chaos
 		return false;
 	}
 
-	bool WindowImGuiContext::OnCharEventImpl(unsigned int c)
+	bool WindowImGuiContext::OnCharEventImpl(CharEvent const& char_event)
 	{
 		assert(IsImGuiContextCurrent());
 
 		if (ShouldCaptureInputEvent())
 		{
-			ImGui_ImplGlfw_CharCallback(window->GetGLFWHandler(), c);
+			ImGui_ImplGlfw_CharCallback(window->GetGLFWHandler(), char_event.char_value);
 			return true;
 		}
 		return false;

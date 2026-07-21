@@ -15,7 +15,7 @@ public:
 	/** try to catch button input */
 	void OnGamepadButtonReceived(chaos::GamepadState const * in_gamepad_state);
 	/** override */
-	virtual bool OnCharEventImpl(unsigned int c) override;
+	virtual bool OnCharEventImpl(chaos::CharEvent const & char_event) override;
 
 	/** returns the position inside the challenge */
 	size_t GetChallengePosition(bool gamepad) const;

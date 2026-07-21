@@ -5,8 +5,10 @@
 #include "Ludum41JujuAndBarbGame.h"
 #include "Ludum41JujuAndBarbGameInstance.h"
 
-bool LudumChallenge::OnCharEventImpl(unsigned int c)
+bool LudumChallenge::OnCharEventImpl(chaos::CharEvent const& char_event)
 {
+	unsigned int c = std::tolower(char_event.char_value);
+
 	LudumGame* game = game_instance->GetGame();
 	if (game->IsPaused())
 		return false;
@@ -15,13 +17,13 @@ bool LudumChallenge::OnCharEventImpl(unsigned int c)
 
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 	{
-		if (keyboard_challenge[keyboard_challenge_position] == c)
+		if (std::tolower(keyboard_challenge[keyboard_challenge_position]) == c)
 			AdvanceChallenge();
 		else
 			OnChallengeError(false);
 		return true;
 	}
-	return chaos::InputReceiverInterface::OnCharEventImpl(c);
+	return chaos::InputReceiverInterface::OnCharEventImpl(char_event);
 }
 
 void LudumChallenge::Show(bool visible)

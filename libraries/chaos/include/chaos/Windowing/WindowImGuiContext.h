@@ -43,11 +43,11 @@ namespace chaos
 		/** override */
 		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
 		/** override */
-		virtual bool OnMouseWheelImpl(double scroll_x, double scroll_y) override;
+		virtual bool OnMouseWheelImpl(MouseWheelEvent const& mouse_wheel_event) override;
 		/** override */
 		virtual bool OnKeyEventImpl(KeyEvent const& key_event) override;
 		/** override */
-		virtual bool OnCharEventImpl(unsigned int c) override;
+		virtual bool OnCharEventImpl(CharEvent const& char_event) override;
 
 		/** override */
 		virtual void OnDrawImGuiMenu(Window* window, ImGuiMenuBuilder const & menu_builder) override;

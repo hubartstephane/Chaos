@@ -735,8 +735,11 @@ namespace chaos
 			keyboard_and_mouse_device->SetInputValue(Input2D::MouseWheel, { float(scroll_x + previous_wheel.x), float(scroll_y + previous_wheel.y) });
 		}
 
-		// dispatch event
-		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseWheel, scroll_x, scroll_y))
+		// dispatch the event
+		MouseWheelEvent mouse_wheel_event;
+		mouse_wheel_event.scroll = { float(scroll_x), float(scroll_y) };
+
+		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseWheel, mouse_wheel_event))
 		{
 			MarkInputConsumedInApplicationCache(Input2D::MouseWheel); // mark MouseWheelX & MouseWheelY as consumed as well
 
@@ -795,7 +798,10 @@ namespace chaos
 			return;
 
 		// dispatch the event
-		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnCharEvent, c);
+		CharEvent char_event;
+		char_event.char_value = c;
+
+		my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnCharEvent, char_event);
 	}
 
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)

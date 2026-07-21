@@ -78,9 +78,9 @@ namespace chaos
 		return false;
 	}
 
-	bool InputReceiverInterface::OnMouseWheel(double scroll_x, double scroll_y)
+	bool InputReceiverInterface::OnMouseWheel(MouseWheelEvent const& mouse_wheel_event)
 	{
-		if (OnMouseWheelImpl(scroll_x, scroll_y))
+		if (OnMouseWheelImpl(mouse_wheel_event))
 		{
 			SetInputMode(InputMode::Mouse);
 			return true;
@@ -98,9 +98,9 @@ namespace chaos
 		return false;
 	}
 
-	bool InputReceiverInterface::OnCharEvent(unsigned int c)
+	bool InputReceiverInterface::OnCharEvent(CharEvent const& char_event)
 	{
-		if (OnCharEventImpl(c))
+		if (OnCharEventImpl(char_event))
 		{
 			SetInputMode(InputMode::Keyboard);
 			return true;
@@ -123,12 +123,12 @@ namespace chaos
 		return ProcessInputEvent(key_event.key);
 	}
 
-	bool InputReceiverInterface::OnMouseWheelImpl(double scroll_x, double scroll_y)
+	bool InputReceiverInterface::OnMouseWheelImpl(MouseWheelEvent const & mouse_wheel_event)
 	{
 		return ProcessInputEvent(Input2D::MouseWheel);
 	}
 
-	bool InputReceiverInterface::OnCharEventImpl(unsigned int c)
+	bool InputReceiverInterface::OnCharEventImpl(CharEvent const& char_event)
 	{
 		return false;
 	}

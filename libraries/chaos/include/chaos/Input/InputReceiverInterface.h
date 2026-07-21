@@ -55,11 +55,11 @@ namespace chaos
 		/** called whenever the mouse button is down / up */
 		bool OnMouseButton(MouseButtonEvent const &mouse_button_event);
 		/** called whenever the mouse wheel is changed */
-		bool OnMouseWheel(double scroll_x, double scroll_y);
+		bool OnMouseWheel(MouseWheelEvent const& mouse_wheel_event);
 		/** called whenever a key is pressed */
 		bool OnKeyEvent(KeyEvent const& key_event);
 		/** called whenever a char is generated */
-		bool OnCharEvent(unsigned int c);
+		bool OnCharEvent(CharEvent const& char_event);
 
 		/** traverse all receivers hierarchy and call a functor on all elements */
 		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
@@ -75,11 +75,11 @@ namespace chaos
 		/** called whenever the mouse button is down / up */
 		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event);
 		/** called whenever the mouse wheel is changed */
-		virtual bool OnMouseWheelImpl(double scroll_x, double scroll_y);
+		virtual bool OnMouseWheelImpl(MouseWheelEvent const& mouse_wheel_event);
 		/** called whenever a key is pressed */
 		virtual bool OnKeyEventImpl(KeyEvent const& key_event);
 		/** called whenever a char is generated */
-		virtual bool OnCharEventImpl(unsigned int c);
+		virtual bool OnCharEventImpl(CharEvent const& char_event);
 
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode);

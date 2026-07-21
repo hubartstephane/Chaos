@@ -24,7 +24,7 @@ namespace chaos
 			virtual bool CheckAndProcess(InputConditionBase const & in_condition, char const * in_title, InputAction const & in_action) override
 			{
 				ImGui::TableNextRow();
-				ImGui::BeginDisabled(!in_action.enabled);
+				ImGui::BeginDisabled(!in_action.IsEnabled());
 
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -52,7 +52,7 @@ namespace chaos
 					ImGui::TextColored(color, "Rejected", in_title);
 
 				ImGui::TableSetColumnIndex(column_index++);
-				if (!in_action.enabled)
+				if (!in_action.IsEnabled())
 					ImGui::TextColored(color, "Disabled", in_title);
 
 				ImGui::EndDisabled();

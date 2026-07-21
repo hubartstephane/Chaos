@@ -28,10 +28,13 @@ namespace chaos
 			enabled(in_enabled)
 		{}
 
+		/** returns whether the action is enabled */
+		bool IsEnabled() const { return enabled; }
+
 		/** processing function */
 		void Process() const;
 
-	public:
+	protected:
 
 		/** the function to execute */
 		InputActionFunction action_function;

@@ -15,11 +15,11 @@ namespace chaos
 	public:
 
 		/** the default mapping with keyboard */
-		static MappedInput1D const default_keyboard_mapping;
+		static MappedInput1D const keyboard_arrows;
 		/** the default mapping with dpad */
-		static MappedInput1D const default_dpad_mapping;
+		static MappedInput1D const gamepad_dpad;
 		/** the unknown object */
-		static MappedInput1D const UNKNOWN;
+		static MappedInput1D const Unknown;
 
 	public:
 

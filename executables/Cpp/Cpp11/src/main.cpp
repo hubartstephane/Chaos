@@ -41,9 +41,9 @@ auto Compose(PARAM1 Input1, PARAMS... params)
 }
 auto r1 = Compose(Key::A, Key::B);
 auto r2 = Compose(Input1D::GAMEPAD_LEFT_AXIS_X, Input1D::GAMEPAD_FIRST);
-auto r3 = Compose(MappedInput1D::default_dpad_mapping, Input1D::GAMEPAD_FIRST);
-auto r4 = Compose(Input1D::GAMEPAD_FIRST, MappedInput1D::default_dpad_mapping, Input1D::GAMEPAD_FIRST);
-auto r5 = Compose(Input2D::GAMEPAD_LEFT_STICK, MappedInput2D::default_dpad_mapping, Input2D::GAMEPAD_FIRST);
+auto r3 = Compose(MappedInput1D::gamepad_dpad, Input1D::GAMEPAD_FIRST);
+auto r4 = Compose(Input1D::GAMEPAD_FIRST, MappedInput1D::gamepad_dpad, Input1D::GAMEPAD_FIRST);
+auto r5 = Compose(Input2D::GAMEPAD_LEFT_STICK, MappedInput2D::gamepad_dpad, Input2D::GAMEPAD_FIRST);
 
 #endif
 

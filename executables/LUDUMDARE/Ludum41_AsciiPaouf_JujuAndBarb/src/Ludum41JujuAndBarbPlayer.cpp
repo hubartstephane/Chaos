@@ -62,7 +62,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 	{
 		float value = 0.0f;
 
-		auto MoveRequest = QueryInput(chaos::MappedInput1D::default_keyboard_mapping, &value);
+		auto MoveRequest = QueryInput(chaos::MappedInput1D::keyboard_arrows, &value);
 
 		if (in_action_processor.CheckAndProcess(MoveRequest, "Move", [&]()
 		{

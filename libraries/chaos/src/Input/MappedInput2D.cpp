@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	MappedInput2D const MappedInput2D::default_keyboard_mapping =
+	MappedInput2D const MappedInput2D::keyboard_arrows =
 	{
 		Key::Left,
 		Key::Right,
@@ -12,7 +12,7 @@ namespace chaos
 		Key::Up
 	};
 
-	MappedInput2D const MappedInput2D::default_dpad_mapping =
+	MappedInput2D const MappedInput2D::gamepad_dpad =
 	{
 		Key::GamepadDpadLeft,
 		Key::GamepadDpadRight,
@@ -20,7 +20,7 @@ namespace chaos
 		Key::GamepadDpadUp
 	};
 
-	MappedInput2D const MappedInput2D::UNKNOWN =
+	MappedInput2D const MappedInput2D::Unknown =
 	{
 		Key::Unknown,
 		Key::Unknown,

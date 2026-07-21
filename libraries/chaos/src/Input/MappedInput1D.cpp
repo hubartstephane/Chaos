@@ -4,19 +4,19 @@
 
 namespace chaos
 {
-	MappedInput1D const MappedInput1D::default_keyboard_mapping =
+	MappedInput1D const MappedInput1D::keyboard_arrows =
 	{
 		Key::Left,
 		Key::Right
 	};
 
-	MappedInput1D const MappedInput1D::default_dpad_mapping =
+	MappedInput1D const MappedInput1D::gamepad_dpad =
 	{
 		Key::GamepadDpadLeft,
 		Key::GamepadDpadRight
 	};
 
-	MappedInput1D const MappedInput1D::UNKNOWN =
+	MappedInput1D const MappedInput1D::Unknown =
 	{
 		Key::Unknown,
 		Key::Unknown

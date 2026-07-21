@@ -51,7 +51,7 @@ namespace chaos
 		bool CheckKeyDown(Key const* keys);
 
 		/** called whenever the mouse is moved */
-		bool OnMouseMove(glm::vec2 const & delta);
+		bool OnMouseMove(MouseMoveEvent const& mouse_move_event);
 		/** called whenever the mouse button is down / up */
 		bool OnMouseButton(MouseButtonEvent const &mouse_button_event);
 		/** called whenever the mouse wheel is changed */
@@ -71,7 +71,7 @@ namespace chaos
 	protected:
 
 		/** called whenever the mouse is moved */
-		virtual bool OnMouseMoveImpl(glm::vec2 const& delta);
+		virtual bool OnMouseMoveImpl(MouseMoveEvent const& mouse_move_event);
 		/** called whenever the mouse button is down / up */
 		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event);
 		/** called whenever the mouse wheel is changed */

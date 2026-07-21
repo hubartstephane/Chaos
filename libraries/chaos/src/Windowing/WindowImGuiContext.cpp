@@ -40,7 +40,7 @@ namespace chaos
 			ImGui_ImplGlfw_MonitorCallback(monitor, monitor_state); // manually call ImGui delegate
 	}
 
-	bool WindowImGuiContext::OnMouseMoveImpl(glm::vec2 const& delta)
+	bool WindowImGuiContext::OnMouseMoveImpl(MouseMoveEvent const& mouse_move_event)
 	{
 		assert(IsImGuiContextCurrent());
 

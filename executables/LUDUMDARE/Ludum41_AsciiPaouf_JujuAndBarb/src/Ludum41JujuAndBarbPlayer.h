@@ -36,7 +36,7 @@ protected:
 	/** override */
 	virtual void TickPlayerDisplacement(float delta_time) override;
 	/** override */
-	virtual bool OnMouseMoveImpl(glm::vec2 const & delta) override;
+	virtual bool OnMouseMoveImpl(chaos::MouseMoveEvent const& mouse_move_event) override;
 
 	/** override */
 	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context);

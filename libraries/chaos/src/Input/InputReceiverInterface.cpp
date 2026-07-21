@@ -58,9 +58,9 @@ namespace chaos
 	{
 	}
 
-	bool InputReceiverInterface::OnMouseMove(glm::vec2 const& delta)
+	bool InputReceiverInterface::OnMouseMove(MouseMoveEvent const& mouse_move_event)
 	{
-		if (OnMouseMoveImpl(delta))
+		if (OnMouseMoveImpl(mouse_move_event))
 		{
 			SetInputMode(InputMode::Mouse);
 			return true;
@@ -108,7 +108,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputReceiverInterface::OnMouseMoveImpl(glm::vec2 const& delta)
+	bool InputReceiverInterface::OnMouseMoveImpl(MouseMoveEvent const& mouse_move_event)
 	{
 		return ProcessInputEvent(Input2D::MouseDelta);
 	}

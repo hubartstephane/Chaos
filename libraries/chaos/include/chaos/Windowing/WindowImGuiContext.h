@@ -39,7 +39,7 @@ namespace chaos
 		bool ShouldCaptureInputEvent() const;
 
 		/** override */
-		virtual bool OnMouseMoveImpl(glm::vec2 const& delta) override;
+		virtual bool OnMouseMoveImpl(MouseMoveEvent const& mouse_move_event) override;
 		/** override */
 		virtual bool OnMouseButtonImpl(MouseButtonEvent const &mouse_button_event) override;
 		/** override */

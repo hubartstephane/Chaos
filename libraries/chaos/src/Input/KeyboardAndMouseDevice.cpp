@@ -103,7 +103,7 @@ namespace chaos
 
 	void KeyboardAndMouseDevice::ResetCumulatedInputs()
 	{
-		for (Input1D input : {Input1D::MouseWheelX, Input1D::MouseWheelY})
+		for (Input1D input : {Input1D::MouseDeltaX, Input1D::MouseDeltaY, Input1D::MouseWheelX, Input1D::MouseWheelY})
 		{
 			size_t input_index = size_t(input) - size_t(Input1D::MouseFirst);
 			mouse_input1D_state[input_index].SetValue(0.0f);

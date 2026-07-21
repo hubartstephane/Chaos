@@ -635,18 +635,22 @@ namespace chaos
 
 		my_window->mouse_position = position;
 
+		MouseMoveEvent mouse_move_event;
+		mouse_move_event.delta = delta;
+
 		// update device state
 		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 		if (keyboard_and_mouse_device != nullptr)
 		{
 			glm::vec2 previous_delta = keyboard_and_mouse_device->GetInputValue(Input2D::MouseDelta); // accumulate. This will be set to zero at the beginning of next frame
 
-			keyboard_and_mouse_device->SetInputValue(Input1D::MouseDeltaX, float(delta.x + previous_delta.x));
-			keyboard_and_mouse_device->SetInputValue(Input1D::MouseDeltaY, float(delta.y + previous_delta.y));
-			keyboard_and_mouse_device->SetInputValue(Input2D::MouseDelta, delta + previous_delta);
+			mouse_move_event.delta += previous_delta;
+			keyboard_and_mouse_device->SetInputValue(Input1D::MouseDeltaX, float(mouse_move_event.delta.x));
+			keyboard_and_mouse_device->SetInputValue(Input1D::MouseDeltaY, float(mouse_move_event.delta.y));
+			keyboard_and_mouse_device->SetInputValue(Input2D::MouseDelta, mouse_move_event.delta);
 		}
 
-		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseMove, delta)) // dispatch the event
+		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseMove, mouse_move_event)) // dispatch the event
 		{
 			MarkInputConsumedInApplicationCache(Input2D::MouseDelta); // mark MouseDeltaX & MouseDeltaY as consumed as well
 
@@ -724,21 +728,22 @@ namespace chaos
 		if (my_window == nullptr)
 			return;
 
+		MouseWheelEvent mouse_wheel_event;
+		mouse_wheel_event.scroll = { float(scroll_x), float(scroll_y) };
+
 		// update device state
 		KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 		if (keyboard_and_mouse_device != nullptr)
 		{
 			glm::vec2 previous_wheel = keyboard_and_mouse_device->GetInputValue(Input2D::MouseWheel); // accumulate. This will be set to zero at the beginning of next frame
 
-			keyboard_and_mouse_device->SetInputValue(Input1D::MouseWheelX, float(scroll_x + previous_wheel.x));
-			keyboard_and_mouse_device->SetInputValue(Input1D::MouseWheelY, float(scroll_y + previous_wheel.y));
-			keyboard_and_mouse_device->SetInputValue(Input2D::MouseWheel, { float(scroll_x + previous_wheel.x), float(scroll_y + previous_wheel.y) });
+			mouse_wheel_event.scroll += previous_wheel;
+			keyboard_and_mouse_device->SetInputValue(Input1D::MouseWheelX, float(mouse_wheel_event.scroll.x));
+			keyboard_and_mouse_device->SetInputValue(Input1D::MouseWheelY, float(mouse_wheel_event.scroll.y));
+			keyboard_and_mouse_device->SetInputValue(Input2D::MouseWheel, mouse_wheel_event.scroll);
 		}
 
 		// dispatch the event
-		MouseWheelEvent mouse_wheel_event;
-		mouse_wheel_event.scroll = { float(scroll_x), float(scroll_y) };
-
 		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseWheel, mouse_wheel_event))
 		{
 			MarkInputConsumedInApplicationCache(Input2D::MouseWheel); // mark MouseWheelX & MouseWheelY as consumed as well

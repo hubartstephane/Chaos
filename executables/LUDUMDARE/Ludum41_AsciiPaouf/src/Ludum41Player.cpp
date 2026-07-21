@@ -44,8 +44,10 @@ void LudumPlayer::DisplacePlayerRacket(float delta_x)
 }
 
 
-bool LudumPlayer::OnMouseMoveImpl(glm::vec2 const & delta)
+bool LudumPlayer::OnMouseMoveImpl(chaos::MouseMoveEvent const& mouse_move_event)
 {
+	glm::vec2 const& delta = mouse_move_event.delta;
+
 	chaos::Game const * game = GetGame();
 	if (game == nullptr)
 		return true;

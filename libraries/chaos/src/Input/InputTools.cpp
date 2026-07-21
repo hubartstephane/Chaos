@@ -22,10 +22,11 @@ namespace chaos
 
 		bool EnumerateVirtualInput2DDefinition(VirtualInput2DDefinitionEnumerationFunction func)
 		{
-			static const std::array<VirtualInput2DDefinition, 3> definitions =
+			static const std::array<VirtualInput2DDefinition, 4> definitions =
 			{
 				VirtualInput2DDefinition { Input2D::GamepadLeftStick, Input1D::GamepadLeftAxisX, Input1D::GamepadLeftAxisY },
 				VirtualInput2DDefinition { Input2D::GamepadRightStick, Input1D::GamepadRightAxisX, Input1D::GamepadRightAxisY },
+				VirtualInput2DDefinition { Input2D::MouseDelta, Input1D::MouseDeltaX, Input1D::MouseDeltaY },
 				VirtualInput2DDefinition { Input2D::MouseWheel, Input1D::MouseWheelX, Input1D::MouseWheelY }
 			};
 

@@ -640,15 +640,22 @@ namespace chaos
 		if (keyboard_and_mouse_device != nullptr)
 		{
 			glm::vec2 previous_delta = keyboard_and_mouse_device->GetInputValue(Input2D::MouseDelta); // accumulate. This will be set to zero at the beginning of next frame
+
+			keyboard_and_mouse_device->SetInputValue(Input1D::MouseDeltaX, float(delta.x + previous_delta.x));
+			keyboard_and_mouse_device->SetInputValue(Input1D::MouseDeltaY, float(delta.y + previous_delta.y));
 			keyboard_and_mouse_device->SetInputValue(Input2D::MouseDelta, delta + previous_delta);
 		}
 
 		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseMove, delta)) // dispatch the event
 		{
-			MarkInputConsumedInApplicationCache(Input2D::MouseDelta);
+			MarkInputConsumedInApplicationCache(Input2D::MouseDelta); // mark MouseDeltaX & MouseDeltaY as consumed as well
 
 			if (keyboard_and_mouse_device != nullptr)
+			{
+				keyboard_and_mouse_device->SetInputValue(Input1D::MouseDeltaX, 0.0f);
+				keyboard_and_mouse_device->SetInputValue(Input1D::MouseDeltaY, 0.0f);
 				keyboard_and_mouse_device->SetInputValue(Input2D::MouseDelta, { 0.0f, 0.0f });
+			}
 		}
 	}
 
@@ -731,7 +738,7 @@ namespace chaos
 		// dispatch event
 		if (my_window->DispatchInputEventWithContext(&InputReceiverInterface::OnMouseWheel, scroll_x, scroll_y))
 		{
-			MarkInputConsumedInApplicationCache(Input2D::MouseWheel);
+			MarkInputConsumedInApplicationCache(Input2D::MouseWheel); // mark MouseWheelX & MouseWheelY as consumed as well
 
 			if (keyboard_and_mouse_device != nullptr) // the mouse wheel is a volatile amount. if catched, reset it
 			{

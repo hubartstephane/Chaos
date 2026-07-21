@@ -15,8 +15,10 @@ namespace chaos
 		Unknown       = -1,
 
 		MouseFirst = 1000,
-		MouseWheelX = MouseFirst + 0,
-		MouseWheelY = MouseFirst + 1,
+		MouseDeltaX = MouseFirst + 0,
+		MouseDeltaY = MouseFirst + 1,
+		MouseWheelX = MouseFirst + 2,
+		MouseWheelY = MouseFirst + 3,
 		MouseLast  = MouseWheelY,
 
 		GamepadFirst = 2000,

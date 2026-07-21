@@ -244,7 +244,7 @@ namespace chaos
 		if (current_state != nullptr)
 		{
 			if (InputReceiverInterface* input_receiver_state = auto_cast(current_state))
-				if (in_traverser.Traverse(input_receiver_state))
+				if (in_traverser.Traverse(input_receiver_state, in_input_device))
 					return true;
 
 			//for (SM::Transition* transition : current_state->outgoing_transitions)

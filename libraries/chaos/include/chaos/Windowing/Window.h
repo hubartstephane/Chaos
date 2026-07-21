@@ -222,7 +222,7 @@ namespace chaos
 		virtual bool EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context) override;
 
 		/** special input receiver traversal for event dispatching (handle imgui and application) */
-		bool TraverseInputReceiverFull(InputReceiverTraverser& in_traverser, InputDeviceInterface const * in_input_device = KeyboardAndMouseDevice::GetInstance());
+		bool TraverseInputReceiverFull(InputReceiverTraverser& in_traverser, InputDeviceInterface const * in_input_device);
 
 	protected:
 
@@ -387,8 +387,10 @@ namespace chaos
 
 			return WithWindowContext([this, &process_function]()
 			{
+				KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+
 				DelegateInputReceiverTraverser traverser(process_function);
-				return TraverseInputReceiverFull(traverser);
+				return TraverseInputReceiverFull(traverser, keyboard_and_mouse_device);
 			});
 		}
 

@@ -106,27 +106,28 @@ namespace chaos
 	template<InputType INPUT_TYPE>
 	bool InputReceiverInterface::ProcessInputEvent(INPUT_TYPE in_input)
 	{
-		// XXX: do not use WindowApplication::consumption_cache
-		//      (elsewhere the event polling would fail)
-		//      we only want to register inside it the key for current key_event
-		//      if current key/input1D/input2D is handled here, all inputs involved 
-		//      here will be locked in application cache (for that next poll step)
-		InputConsumptionCache consumption_cache;
+		KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 
-		// XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
-		auto process_function = [&](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device)
+		return InvokeWithUpgradedInputDevice(keyboard_and_mouse_device, [this, in_input](InputDeviceInterface const* in_input_device)
 		{
-			OnEventInputActionProcessor<INPUT_TYPE> action_processor(in_input_receiver, in_input_device, in_input, &consumption_cache);
-			if (in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnEvent))
+			// XXX: do not use WindowApplication::consumption_cache on purpose
+			//
+			//      the traversal with InputConsumptionCache consumes a lot of inputs and we only want to consume the ones relative with incomming event
+			//      elsewhere we would end up locking inputs for the Poll step to come later in the timeline
+			//
+			//      that's why we are using a temporary InputConsumptionCache and manually lock inputs in application InputConsumptionCache
+			//      only if the inputs are consummed for real
+
+			InputConsumptionCache consumption_cache;
+
+			OnEventInputActionProcessor<INPUT_TYPE> action_processor(this, in_input_device, in_input, &consumption_cache);
+			if (EnumerateInputActions(action_processor, EnumerateInputActionContext::OnEvent))
 			{
 				MarkInputConsumedInApplicationCache(in_input, in_input_device);
 				return true;
 			}
 			return false;
-		};
-
-		DelegateInputReceiverTraverser traverser(process_function);
-		return traverser.Traverse(this);
+		});
 	}
 
 	template<InputType INPUT_TYPE>

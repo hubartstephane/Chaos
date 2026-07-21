@@ -55,7 +55,7 @@ namespace chaos
 		UnknownInput     = 1, // the request involved the input UNKNOWN
 		KnownInput       = 2, // the request involved a KNOWN input
 		UnhandledInput   = 4, // the request involved an input that was not handled by the InputDevice
-		SuccessfulInput  = 8 // the request involved an input that was succesfully 
+		SuccessfulInput  = 8  // the request involved an input that was succesfully 
 	};
 
 	/**

@@ -72,8 +72,10 @@ namespace chaos
 				return false; // pass through all receivers
 			};
 
+			KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+
 			DelegateInputReceiverTraverser traverser(process_function);
-			window->TraverseInputReceiverFull(traverser); // include ImGuiWindowContext and WindowApplication in the traversal
+			window->TraverseInputReceiverFull(traverser, keyboard_and_mouse_device); // include ImGuiWindowContext and WindowApplication in the traversal
 		});
 	}
 

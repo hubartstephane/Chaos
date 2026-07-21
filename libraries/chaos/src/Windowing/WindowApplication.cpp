@@ -525,20 +525,22 @@ namespace chaos
 		};
 		DelegateInputReceiverTraverser traverser(process_function);
 
+		KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+
 		if (Window* focused_window = GetFocusedWindow())
 		{
-			focused_window->WithWindowContext([&traverser, focused_window]() // important elsewhere the ImGuiContext wouldn't be processed  
+			focused_window->WithWindowContext([&traverser, focused_window, keyboard_and_mouse_device]() // important elsewhere the ImGuiContext wouldn't be processed  
 			{
-				focused_window->TraverseInputReceiverFull(traverser); // include ImGuiContext, window, application 
+				focused_window->TraverseInputReceiverFull(traverser, keyboard_and_mouse_device); // include ImGuiContext, window, application 
 			});			
 		}
 		else
 		{
-			traverser.Traverse(this); // only application
+			traverser.Traverse(this, keyboard_and_mouse_device); // only application
 		}
 
 		// prepare next frame
-		if (KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
+		if (keyboard_and_mouse_device != nullptr)
 			keyboard_and_mouse_device->ResetCumulatedInputs();
 
 		consumption_cache.Clear(); 

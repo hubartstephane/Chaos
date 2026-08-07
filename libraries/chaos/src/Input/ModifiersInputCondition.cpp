@@ -54,5 +54,14 @@ namespace chaos
 		return InputConditionResult::True;
 	}
 
+	ModifiersInputCondition RequireModifiers(KeyModifier in_modifiers)
+	{
+		return ModifiersInputCondition(in_modifiers, true);
+	}
+
+	ModifiersInputCondition ForbidModifiers(KeyModifier in_modifiers)
+	{
+		return ModifiersInputCondition(in_modifiers, false);
+	}
 
 }; // namespace chaos

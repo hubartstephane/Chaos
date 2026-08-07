@@ -47,28 +47,32 @@ namespace chaos
 	* Some request getters
 	**/
 
+	CHAOS_API ModifiersInputCondition RequireModifiers(KeyModifier in_modifiers);
+
+	CHAOS_API ModifiersInputCondition ForbidModifiers(KeyModifier in_modifiers);
+
 	template<InputRequestType REQUEST_TYPE> 
 	auto RequireModifiers(KeyModifier in_modifiers, REQUEST_TYPE const& in_condition)
 	{
-		return And(in_condition, ModifiersInputCondition(in_modifiers, true));
+		return And(RequireModifiers(in_modifiers), in_condition);
 	}
 
 	template<InputRequestType REQUEST_TYPE>
 	auto RequireModifiers(KeyModifier in_modifiers, REQUEST_TYPE && in_condition)
 	{
-		return And(std::move(in_condition), ModifiersInputCondition(in_modifiers, true));
+		return And(RequireModifiers(in_modifiers), std::move(in_condition));
 	}
 
 	template<InputRequestType REQUEST_TYPE>
 	auto ForbidModifiers(KeyModifier in_modifiers, REQUEST_TYPE const& in_condition)
 	{
-		return And(in_condition, ModifiersInputCondition(in_modifiers, false));
+		return And(ForbidModifiers(in_modifiers), in_condition);
 	}
 
 	template<InputRequestType REQUEST_TYPE>
 	auto ForbidModifiers(KeyModifier in_modifiers, REQUEST_TYPE&& in_condition)
 	{
-		return And(std::move(in_condition), ModifiersInputCondition(in_modifiers, false));
+		return And(ForbidModifiers(in_modifiers), std::move(in_condition));
 	}
 
 #endif

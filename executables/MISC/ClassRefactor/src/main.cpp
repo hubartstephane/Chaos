@@ -7,31 +7,6 @@ using namespace chaos;
 
 //-----------------------------------------------------------
 
-class DebugOutputBuf : public std::streambuf
-{
-protected:
-
-
-	virtual std::streamsize xsputn(const char* s, std::streamsize n) override
-	{
-		OutputDebugStringA(std::string(s, n).c_str());
-		return n;
-	}
-	 
-	virtual int overflow(int c) override
-	{
-		if (c != EOF)
-		{
-			char ch = static_cast<char>(c);
-			OutputDebugStringA(std::string(1, ch).c_str());
-		}
-		return c;
-	}
-};
-
-
-
-
 
 
 
@@ -1128,7 +1103,8 @@ protected:
 
 int main(int argc, char ** argv, char ** env)
 {
-	DebugOutputBuf debugBuf;
+
+	StreamToDebugOutputBuf debugBuf;
 	std::cout.rdbuf(&debugBuf);
 
 	chaos::ApplicationData application_data;

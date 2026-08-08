@@ -2,16 +2,50 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T>
+	template<typename T, bool ENABLE_RECYCLING = true>
 	class ObjectPool64;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	template<typename T>
+	concept RecycleMethodExists = requires(T * src)
+	{
+		{ src->Recycle() };
+	};
+
+	template<typename T>
+	concept RecycleFunctionExists = requires(T * src)
+	{
+		{ Recycle(src) };
+	};
+
+	/**
+	* ObjectPool64RecyclableBase: a base for ObjectPool64 depending whether objects can be recycled
+	*/
+
+	namespace details
+	{
+		template<bool USE_RECYCLABLE_FEATURE>
+		class ObjectPool64RecyclableBase
+		{};
+
+		template<>
+		class ObjectPool64RecyclableBase<true>
+		{
+		protected:
+
+			/** a bitfield indicating which instances has been constructed once (must be recycled) */
+			uint64_t constructed_instances = 0;
+		};
+
+
+	}; // namespace details
+
 	/**
 	* This is an allocator that contains up to 64 instances of an object
 	**/
-	template<typename T>
-	class ObjectPool64
+	template<typename T, bool ENABLE_RECYCLING>
+	class ObjectPool64 : public details::ObjectPool64RecyclableBase<ENABLE_RECYCLING || RecycleMethodExists<T> || RecycleFunctionExists<T>>
 	{
 
 	public:
@@ -19,6 +53,8 @@ namespace chaos
 		using type = T;
 
 		static constexpr size_t pool_size = 64;
+
+		static constexpr bool recycling_enabled = ENABLE_RECYCLING || RecycleMethodExists<T> || RecycleFunctionExists<T>;
 
 		/** constructor */
 		ObjectPool64() = default;
@@ -31,42 +67,103 @@ namespace chaos
 		~ObjectPool64()
 		{
 			// destroy all objects
-			BitTools::ForEachBitForward(used_instanced, [this](int64_t index)
+			uint64_t objects = used_instances;
+			if constexpr (recycling_enabled)
+				objects |= this->constructed_instances;
+
+			BitTools::ForEachBitForward(objects, [this](uint64_t index)
 			{
-				Free(GetObjectPtr(index));
+				FreeHelper(GetObjectPtr(index), true);
 			});
 		}
 
 		/** release an object inside the pool for further usage */
 		void Free(type* object)
 		{
-			if (object != nullptr)
-			{
-				assert(IsObjectInsidePool(object));
-				// update the available flag
-				int64_t index = GetObjectIndex(object);
-				assert((used_instanced >> index) & 1); // ensure the object was not already freed
-				used_instanced = BitTools::SetBit(used_instanced, index, false);
-				--reserved_count;
-				// manually call the destructor
-				object->~type();
-			}
+			assert(object != nullptr);
+			assert(IsObjectInsidePool(object));
+			assert(IsAllocatedObject(object));
+
+			FreeHelper(object, false);
 		}
 
 		/** allocate a new object from pool */
 		template<typename ...PARAMS>
-		type* Allocate(PARAMS ...params)
+		type* Allocate(PARAMS && ...params)
 		{
 			if (!HasAvailableInstanceLeft())
 				return nullptr;
-			// update the available flag
-			int64_t index = BitTools::bsr(~used_instanced);
-			used_instanced = BitTools::SetBit(used_instanced, index, true);
-			++reserved_count;
-			// manually call constructor
-			type* result = GetObjectPtr(index);
-			new (result) type(std::forward<PARAMS>(params)...);
-			return result;
+
+			auto ReserveObjectForConstruction = [this](uint64_t objects_mask) -> type *
+			{
+				if (objects_mask == 0)
+					return nullptr;
+
+				uint64_t index = BitTools::bsr(objects_mask);
+
+				used_instances = BitTools::SetBit(used_instances, index, true);
+				if constexpr (recycling_enabled)
+					this->constructed_instances = BitTools::SetBit(this->constructed_instances, index, true);
+
+				return GetObjectPtr(index); // at this point, the return value might just a pointer on junk memory
+			};
+
+			// try in recycle list first
+			if constexpr (recycling_enabled)
+			{
+				constexpr bool initialize_method_exists = requires(T * src, PARAMS && ...params)
+				{
+					src->Initialize(std::forward<PARAMS>(params)...);
+				};
+
+				constexpr bool initialize_function_exists = requires(T * src, PARAMS && ...params)
+				{
+					Initialize(src, std::forward<PARAMS>(params)...);
+				};
+
+				if constexpr (initialize_method_exists || initialize_function_exists)
+				{
+					// TRY 1: we have some elements we can recyle
+					uint64_t existing_free_instance = ~used_instances & this->constructed_instances;
+					if (type* result = ReserveObjectForConstruction(existing_free_instance))
+					{
+						if constexpr (initialize_method_exists) // method first (higher priority if both exists)
+							result->Initialize(std::forward<PARAMS>(params)...);
+						else if constexpr (initialize_function_exists)
+							Initialize(result, std::forward<PARAMS>(params)...);
+
+						return result;
+					}
+				}
+
+				// TRY 2: we have some free room in the buffer with junk data inside: call constructor
+				uint64_t non_existing_free_instance = ~used_instances & ~this->constructed_instances;
+				if (type* result = ReserveObjectForConstruction(non_existing_free_instance))
+				{
+					new (result) type(std::forward<PARAMS>(params)...);
+					return result;
+				}
+
+				// TRY 3: recycling is enabled but the arguments for this function don't match any Initialize(...) implementation
+				//        free some existing but unused element first
+				if constexpr (!initialize_method_exists && !initialize_function_exists)
+				{
+					uint64_t existing_free_instance = ~used_instances & this->constructed_instances;
+					if (existing_free_instance != 0)
+					{
+						uint64_t index = BitTools::bsr(existing_free_instance);
+						FreeHelper(GetObjectPtr(index), true); // let fallback do the rest
+					}
+				}
+			}
+
+			// fallback
+			if (type* result = ReserveObjectForConstruction(~used_instances))
+			{
+				new (result) type(std::forward<PARAMS>(params)...);
+				return result;
+			}
+			return nullptr;
 		}
 
 		/** check whether an object is inside the pool */
@@ -79,20 +176,20 @@ namespace chaos
 		/** returns true whether all instanced have allready been allocated */
 		bool HasAvailableInstanceLeft() const
 		{
-			return (used_instanced != int64_t(-1));
+			return GetReservedCount() != pool_size;
 		}
 
 		/** gets the number of reserved object */
 		size_t GetReservedCount() const
 		{
-			return reserved_count;
+			return BitTools::popcount(used_instances);
 		}
 
 		/** iterator over all objects (const version) */
 		template<typename FUNC>
 		decltype(auto) ForEachObject(FUNC const& func) const
 		{
-			return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
+			return chaos::BitTools::ForEachBitForward(used_instances, [this, &func](uint64_t index)
 			{
 				return func(GetObjectPtr(index));
 			});
@@ -102,7 +199,7 @@ namespace chaos
 		template<typename FUNC>
 		decltype(auto) ForEachObject(FUNC const& func)
 		{
-			return chaos::BitTools::ForEachBitForward(used_instanced, [this, &func](int64_t index)
+			return chaos::BitTools::ForEachBitForward(used_instances, [this, &func](uint64_t index)
 			{
 				return func(GetObjectPtr(index));
 			});
@@ -110,37 +207,100 @@ namespace chaos
 
 	protected:
 
-		/** gets the index of an object inside the pool */
-		int64_t GetObjectIndex(type const* object) const
+		/** release an object inside the pool for further usage */
+		void FreeHelper(type* object, bool final_destruction)
 		{
 			assert(object != nullptr);
-			return int64_t(object - GetObjectPtr(0));
+			assert(IsObjectInsidePool(object));
+			assert(IsValidObjectInstance(object));
+
+			if (object != nullptr)
+			{
+				// update the available flag
+				uint64_t index = GetObjectIndex(object);
+
+				used_instances = BitTools::SetBit(used_instances, index, false);
+
+				// try recyle first
+				if constexpr (recycling_enabled)
+					if (!final_destruction)
+						if (BitTools::GetBit(this->constructed_instances, index))
+							if (RecycleObjectHelper(object))
+								return;
+
+				// usual destruction elsewhere
+				if constexpr (recycling_enabled)
+					this->constructed_instances = BitTools::SetBit(this->constructed_instances, index, false);
+				object->~type();
+			}
+		}
+
+		/** Recycle the object */
+		bool RecycleObjectHelper(type * object) const
+		{
+			if constexpr (RecycleMethodExists<T>) // method first (higher priority if both exists)
+			{
+				object->Recycle();
+				return true;
+			}
+			else if constexpr (RecycleFunctionExists<T>)
+			{
+				Recycle(object);
+				return true;
+			}
+			return false;
+		}
+
+		/** Check whether there is a valid object instance at given index */
+		bool IsValidObjectInstance(type const * object) const
+		{
+			if (IsAllocatedObject(object))
+				return true;
+			if constexpr (recycling_enabled)
+			{
+				uint64_t index = GetObjectIndex(object);
+				if (this->constructed_instances & (uint64_t(1) << index))
+					return true;
+			}
+			return false;		
+		}
+
+		/** Check whether the object is allocated */
+		bool IsAllocatedObject(type const * object) const
+		{
+			uint64_t index = GetObjectIndex(object);
+			if (used_instances & (uint64_t(1) << index))
+				return true;
+			return false;
+		}
+
+		/** gets the index of an object inside the pool */
+		uint64_t GetObjectIndex(type const* object) const
+		{
+			assert(object != nullptr);
+			return uint64_t(object - GetObjectPtr(0));
 		}
 
 		/** gets the address of an object inside the pool */
-		T const* GetObjectPtr(int64_t index) const
+		T const* GetObjectPtr(uint64_t index) const
 		{
-			assert(index >= 0);
 			assert(index < pool_size);
 			return ((type*)data) + index;
 		}
 
 		/** gets the address of an object inside the pool */
-		T* GetObjectPtr(int64_t index)
+		T* GetObjectPtr(uint64_t index)
 		{
-			assert(index >= 0);
 			assert(index < pool_size);
 			return ((type*)data) + index;
 		}
 
 	protected:
 
-		/** a bitfield indicating with instances are in use */
-		int64_t used_instanced = 0;
-		/** number of reserved object */
-		size_t reserved_count = 0;
+		/** a bitfield indicating which instances are in use */
+		uint64_t used_instances = 0;
 		/** the block of data where instanced are being used */
-		alignas(8) char data[pool_size * sizeof(T)];
+		alignas(type) char data[pool_size * sizeof(type)];
 	};
 
 #endif

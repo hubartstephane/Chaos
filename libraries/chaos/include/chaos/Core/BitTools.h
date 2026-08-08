@@ -78,6 +78,13 @@ namespace chaos
 				src & ~(T(1) << bit_index);
 		}
 
+		/** check whether some bit is ON */
+		template<typename T>
+		T GetBit(T src, T bit_index)
+		{
+			return ((src >> bit_index) & T(1));
+		}
+
 		/** interate over each bit to 1 in an integer */
 		template<bool FORWARD, std::integral T, typename FUNC >
 		decltype(auto) ForEachBit(T bitfield, FUNC const& func)

@@ -106,49 +106,41 @@ namespace chaos
 		/** Popcount methods */
 		int8_t popcount(int8_t i)
 		{
-			assert(i != 0);
 			return std::popcount(static_cast<uint8_t>(i));
 		}
 
 		int16_t popcount(int16_t i)
 		{
-			assert(i != 0);
 			return std::popcount(static_cast<uint16_t>(i));
 		}
 
 		int32_t popcount(int32_t i)
 		{
-			assert(i != 0);
 			return std::popcount(static_cast<uint32_t>(i));
 		}
 
 		int64_t popcount(int64_t i)
 		{
-			assert(i != 0);
 			return std::popcount(static_cast<uint64_t>(i));
 		}
 
 		uint8_t popcount(uint8_t i)
 		{
-			assert(i != 0);
 			return std::popcount(i);
 		}
 
 		uint16_t popcount(uint16_t i)
 		{
-			assert(i != 0);
 			return std::popcount(i);
 		}
 
 		uint32_t popcount(uint32_t i)
 		{
-			assert(i != 0);
 			return std::popcount(i);
 		}
 
 		uint64_t popcount(uint64_t i)
 		{
-			assert(i != 0);
 			return std::popcount(i);
 		}
 

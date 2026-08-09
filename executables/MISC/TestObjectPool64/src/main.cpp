@@ -14,7 +14,52 @@ class NoDefaultConstructible
 {
 public:
 
-	NoDefaultConstructible(int i) {}
+	NoDefaultConstructible(uint64_t i) {}
+};
+
+class Recyclable
+{
+public:
+
+	void Initialize()
+	{
+		std::cout << "Test3: Initialize called" << std::endl;
+	}
+
+	void Recycle()
+	{
+		std::cout << "Test3: Recycle called" << std::endl;
+	}
+};
+
+class BadInitializeParams
+{
+public:
+
+	BadInitializeParams()
+	{
+	}
+
+	BadInitializeParams(bool)
+	{
+		std::cout << "Test4: BadInitializeParams constructor called" << std::endl;
+	}
+
+	~BadInitializeParams()
+	{
+		std::cout << "Test4: ~BadInitializeParams called" << std::endl;
+	}
+
+
+	void Initialize()
+	{
+		std::cout << "Test4: Initialize called" << std::endl;
+	}
+
+	void Recycle()
+	{
+		std::cout << "Test4: Recycle called" << std::endl;
+	}
 };
 
 class MyApplication : public chaos::Application
@@ -49,10 +94,31 @@ protected:
 		}
 	}
 
+	void Test3()
+	{
+		ObjectPool64<Recyclable> pool;
+		pool.Free(pool.Allocate());
+		pool.Allocate();
+	}
+
+	void Test4()
+	{
+		ObjectPool64<BadInitializeParams> pool;
+
+		BadInitializeParams * last_created = nullptr;
+		for (int i = 0 ; i < 64 ; ++i)
+			last_created = pool.Allocate();
+		pool.Free(last_created); // should be recycled
+
+		pool.Allocate(true); // bad parameters. require destruction + constructor
+	}
+
 	virtual int Main() override
 	{
 		Test1();
 		Test2();
+		Test3();
+		Test4();
 		return 0;
 	}
 };

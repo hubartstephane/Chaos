@@ -518,25 +518,39 @@ namespace chaos
 
 	void WindowApplication::PollInputDevices()
 	{
-		auto process_function = [&consumption_cache = consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const* in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
+		class PollInputReceiverTraverser : public InputReceiverTraverser
 		{
-			OnPollInputActionProcessor action_processor(in_input_receiver, in_input_device, &consumption_cache);
-			return in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnPolling);
+		public:
+
+			PollInputReceiverTraverser(InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) :
+				InputReceiverTraverser(in_input_device), consumption_cache(in_consumption_cache){}
+
+		protected:
+
+			virtual bool Process(InputReceiverInterface* in_input_receiver) override
+			{
+				OnPollInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_cache);
+				return in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnPolling);
+			}
+
+		protected:
+
+			InputConsumptionCache & consumption_cache;
 		};
-		DelegateInputReceiverTraverser traverser(process_function);
 
 		KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+		PollInputReceiverTraverser traverser(keyboard_and_mouse_device, consumption_cache);
 
 		if (Window* focused_window = GetFocusedWindow())
 		{
 			focused_window->WithWindowContext([&traverser, focused_window, keyboard_and_mouse_device]() // important elsewhere the ImGuiContext wouldn't be processed  
 			{
-				focused_window->TraverseInputReceiverFull(traverser, keyboard_and_mouse_device); // include ImGuiContext, window, application 
+				focused_window->TraverseInputReceiverFull(traverser); // include ImGuiContext, window, application 
 			});			
 		}
 		else
 		{
-			traverser.Traverse(this, keyboard_and_mouse_device); // only application
+			traverser.Traverse(this); // only application
 		}
 
 		// prepare next frame

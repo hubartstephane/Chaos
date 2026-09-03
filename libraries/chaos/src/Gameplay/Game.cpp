@@ -71,22 +71,22 @@ namespace chaos
 			hud->Tick(delta_time);
 	}
 
-	bool Game::TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device)
+	bool Game::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
 		// try with game sm
 		if (game_sm_instance != nullptr)
-			if (in_traverser.Traverse(game_sm_instance.get(), in_input_device))
+			if (in_traverser.Traverse(game_sm_instance.get()))
 				return true;
 		// try with game instance
 		if (game_instance != nullptr)
-			if (in_traverser.Traverse(game_instance.get(), in_input_device))
+			if (in_traverser.Traverse(game_instance.get()))
 				return true;
 		// try with level instance
 		if (level_instance != nullptr)
-			if (in_traverser.Traverse(level_instance.get(), in_input_device))
+			if (in_traverser.Traverse(level_instance.get()))
 				return true;
 		// super 
-		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser);
 	}
 
 	bool Game::EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context)

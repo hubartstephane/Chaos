@@ -230,7 +230,7 @@ namespace chaos
 		}
 		
 		/** override */
-		virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser& in_traverser, chaos::InputDeviceInterface const* in_input_device) override;
+		virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser& in_traverser) override;
 
 	protected:
 

@@ -62,7 +62,7 @@ namespace chaos
 		bool OnCharEvent(CharEvent const& char_event);
 
 		/** traverse all receivers hierarchy and call a functor on all elements */
-		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser);
 		/** enumerate some declared key actions */
 		virtual bool EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context);
 		/** upgrade the input device and call some functor */
@@ -120,7 +120,7 @@ namespace chaos
 
 			InputConsumptionCache consumption_cache;
 
-			OnEventInputActionProcessor<INPUT_TYPE> action_processor(this, in_input_device, in_input, &consumption_cache);
+			OnEventInputActionProcessor<INPUT_TYPE> action_processor(this, in_input_device, &consumption_cache, in_input);
 			if (EnumerateInputActions(action_processor, EnumerateInputActionContext::OnEvent))
 			{
 				MarkInputConsumedInApplicationCache(in_input, in_input_device);

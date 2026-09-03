@@ -25,9 +25,9 @@ namespace chaos
 		assert(in_camera != nullptr);
 	}
 
-	bool CameraComponent::TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device)
+	bool CameraComponent::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
-		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser);
 	}
 
 	bool CameraComponent::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)

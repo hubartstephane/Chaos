@@ -16,16 +16,28 @@ namespace chaos
 
 	public:
 
+		/** constructor */
+		InputReceiverTraverser(InputDeviceInterface const* in_input_device):
+			input_device(in_input_device){}
+
 		/** destructor */
 		virtual ~InputReceiverTraverser() = default;
 
 		/** enter an InputEventReceiver */
-		virtual bool Traverse(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device);
+		virtual bool Traverse(InputReceiverInterface * in_input_receiver);
+
+		/** get the input device */
+		InputDeviceInterface const* GetInputDevice() const;
 
 	protected:
 
 		/** process the InputEventReceiver */
-		virtual bool Process(InputReceiverInterface * in_input_receiver, InputDeviceInterface const* in_input_device);
+		virtual bool Process(InputReceiverInterface * in_input_receiver);
+
+	protected:
+
+		/** the initial InputDevice */
+		InputDeviceInterface const* input_device = nullptr;
 	};
 
 #endif

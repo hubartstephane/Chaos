@@ -40,14 +40,14 @@ namespace chaos
 			game->OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool GameViewportWidget::TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device)
+	bool GameViewportWidget::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
 		// try with game
 		if (game != nullptr)
-			if (in_traverser.Traverse(game.get(), in_input_device))
+			if (in_traverser.Traverse(game.get()))
 				return true;
 		// super method
-		return Widget::TraverseInputReceiver(in_traverser, in_input_device);
+		return Widget::TraverseInputReceiver(in_traverser);
 	}
 
 	bool GameViewportWidget::OnDraw(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, WindowDrawParams const& draw_params)

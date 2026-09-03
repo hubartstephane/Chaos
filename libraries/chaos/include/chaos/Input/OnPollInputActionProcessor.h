@@ -14,8 +14,7 @@ namespace chaos
 	{
 	public:
 
-		/** constructor */
-		OnPollInputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache);
+		using InputActionProcessor::InputActionProcessor;
 
 		/** override */
 		virtual bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action) override;

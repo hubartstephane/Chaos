@@ -186,11 +186,21 @@ namespace chaos
 		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
 	}
 
+	template<MappedInputType MAPPED_INPUT_TYPE>
+	InputStateResponse_t<MAPPED_INPUT_TYPE> InputConsumptionCache::QueryMappedInputState(MAPPED_INPUT_TYPE const& in_input, std::initializer_list<Key> const& keys, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
+	{
+		InputStateResponseFlags  response_flags = InputStateResponseFlags::None;
+		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
+		for (Key key : keys)
+			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
+		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
+	}
+
 	template<InputTypeExt INPUT_TYPE_EXT>
  	InputStateResponse_t<INPUT_TYPE_EXT> InputConsumptionCache::FinalizeResponse(INPUT_TYPE_EXT const & in_input, InputDeviceInterface const* in_input_device, InputStateResponseFlags response_flags, InputStateResponseStatus response_status)
 	{
 		if (response_status == InputStateResponseStatus::Failure)
-			return { {}, InputStateResponseStatus::Failure, InputStateResponseFlags::None }; // in case of FAILURE, ignore additionnal flags info. They are incomplete (missing UNHANDLED_INPUT)
+			return { {}, InputStateResponseStatus::Failure, InputStateResponseFlags::None }; // in case of FAILURE, ignore additionnal flags info. They are incomplete anyway (missing UNHANDLED_INPUT)
 
 		auto input_state = in_input_device->GetInputState(in_input);
 
@@ -201,16 +211,6 @@ namespace chaos
 				response_flags |= InputStateResponseFlags::UnhandledInput;
 
 		return { input_state, InputStateResponseStatus::Success, response_flags };
-	}
-
-	template<MappedInputType MAPPED_INPUT_TYPE>
-	InputStateResponse_t<MAPPED_INPUT_TYPE> InputConsumptionCache::QueryMappedInputState(MAPPED_INPUT_TYPE const& in_input, std::initializer_list<Key> const& keys, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
-	{
-		InputStateResponseFlags  response_flags = InputStateResponseFlags::None;
-		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
-		for (Key key : keys)
-			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
-		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
 	}
 
 #endif

@@ -133,14 +133,14 @@ namespace chaos
 		return true;
 	}
 
-	bool Camera::TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device)
+	bool Camera::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
 		for (size_t i = 0; i < components.size(); ++i)
 			if (CameraComponent* component = components[i].get())
-				if (in_traverser.Traverse(component, in_input_device))
+				if (in_traverser.Traverse(component))
 					return true;
 
-		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser);
 	}
 
 	bool Camera::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)

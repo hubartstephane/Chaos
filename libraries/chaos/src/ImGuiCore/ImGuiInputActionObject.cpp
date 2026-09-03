@@ -16,11 +16,6 @@ namespace chaos
 
 			using InputActionProcessor::InputActionProcessor;
 
-			OnQueryInputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache):
-				InputActionProcessor(in_input_receiver, in_input_device, in_consumption_cache)
-			{
-			}
-
 			virtual bool CheckAndProcess(InputConditionBase const & in_condition, char const * in_title, InputAction const & in_action) override
 			{
 				ImGui::TableNextRow();
@@ -61,21 +56,32 @@ namespace chaos
 			}
 		};
 
+		class QueryInputReceiverTraverser : public InputReceiverTraverser
+		{
+		public:
+
+			using InputReceiverTraverser::InputReceiverTraverser;
+
+		protected:
+
+			virtual bool Process(InputReceiverInterface* in_input_receiver) override
+			{
+				OnQueryInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_cache);
+				in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnQuery);
+				return false; // pass through all receivers			
+			}
+
+		protected:
+
+			InputConsumptionCache consumption_cache;
+		};
+
 		ImGuiTools::DrawImGuiTable("objects", {}, "Description", "Object", "Input", "Request Status", "Enabled")([&]()
 		{
-			InputConsumptionCache consumption_cache;
-
-			auto process_function = [&consumption_cache](InputReceiverInterface* in_input_receiver, InputDeviceInterface const * in_input_device) // XXX: mandatory to have a VARIABLE lambda so that the underlying DelegateTraverser's LightweightFunction does not point on a deleted object
-			{
-				OnQueryInputActionProcessor action_processor(in_input_receiver, in_input_device, &consumption_cache);
-				in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnQuery);
-				return false; // pass through all receivers
-			};
-
 			KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 
-			DelegateInputReceiverTraverser traverser(process_function);
-			window->TraverseInputReceiverFull(traverser, keyboard_and_mouse_device); // include ImGuiWindowContext and WindowApplication in the traversal
+			QueryInputReceiverTraverser traverser(keyboard_and_mouse_device);
+			window->TraverseInputReceiverFull(traverser); // include ImGuiWindowContext and WindowApplication in the traversal
 		});
 	}
 

@@ -21,7 +21,7 @@ namespace chaos
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** override */
-		virtual bool TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
 		/** override */
 		virtual bool EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context) override;
 

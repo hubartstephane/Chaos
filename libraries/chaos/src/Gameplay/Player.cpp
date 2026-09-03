@@ -384,12 +384,12 @@ namespace chaos
 		return in_func(&composed_device);
 	}
 
-	bool Player::TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device)
+	bool Player::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
 		if (displacement_component != nullptr)
-			if (in_traverser.Traverse(displacement_component.get(), in_input_device))
+			if (in_traverser.Traverse(displacement_component.get()))
 				return true;
-		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser);
 	}
 
 	bool Player::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)

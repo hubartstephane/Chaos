@@ -20,8 +20,8 @@ namespace chaos
 		OnEventInputActionProcessor(
 			InputReceiverInterface const* in_input_receiver,
 			InputDeviceInterface const* in_input_device,
-			INPUT_TYPE const& in_input,
-			InputConsumptionCache* in_consumption_cache
+			InputConsumptionCache* in_consumption_cache,
+			INPUT_TYPE const& in_input
 		):
 			InputActionProcessor(in_input_receiver, in_input_device, in_consumption_cache),
 			input(in_input)

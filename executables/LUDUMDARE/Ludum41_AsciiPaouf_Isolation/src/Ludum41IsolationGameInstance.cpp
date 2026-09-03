@@ -794,14 +794,14 @@ bool LudumGameInstance::Initialize(chaos::Game * in_game)
 	return true;
 }
 
-bool LudumGameInstance::TraverseInputReceiver(chaos::InputReceiverTraverser& in_traverser, chaos::InputDeviceInterface const* in_input_device)
+bool LudumGameInstance::TraverseInputReceiver(chaos::InputReceiverTraverser& in_traverser)
 {
 	if (game->IsPlaying() && sequence_challenge != nullptr)
 	{
 		chaos::shared_ptr<chaos::Object> keep_alive = sequence_challenge;
 
-		if (in_traverser.Traverse(sequence_challenge.get(), in_input_device))
+		if (in_traverser.Traverse(sequence_challenge.get()))
 			return true;
 	}
-	return chaos::GameInstance::TraverseInputReceiver(in_traverser, in_input_device);
+	return chaos::GameInstance::TraverseInputReceiver(in_traverser);
 }

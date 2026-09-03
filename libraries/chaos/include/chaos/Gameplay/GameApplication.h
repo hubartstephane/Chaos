@@ -43,7 +43,7 @@ namespace chaos
 		virtual bool FillAtlasGeneratorInput(AtlasInput& input) override;
 
 		/** override */
-		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
 		/** override */
 		virtual bool DoPollGamepad(PhysicalGamepad * physical_gamepad) override;
 

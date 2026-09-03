@@ -29,13 +29,13 @@ namespace chaos
 		return false;
 	}
 
-	bool GameInstance::TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device)
+	bool GameInstance::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
-			if (in_traverser.Traverse(players[i].get(), in_input_device))
+			if (in_traverser.Traverse(players[i].get()))
 				return true;
-		return InputReceiverInterface::TraverseInputReceiver(in_traverser, in_input_device);
+		return InputReceiverInterface::TraverseInputReceiver(in_traverser);
 	}
 
 	Player * GameInstance::CreatePlayer(PhysicalGamepad * in_physical_gamepad)

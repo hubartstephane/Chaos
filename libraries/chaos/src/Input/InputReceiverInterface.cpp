@@ -143,9 +143,9 @@ namespace chaos
 		return false;
 	}
 
-	bool InputReceiverInterface::TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device)
+	bool InputReceiverInterface::TraverseInputReceiver(InputReceiverTraverser & in_traverser)
 	{
-		return in_traverser.Process(this, in_input_device);
+		return in_traverser.Process(this);
 	}
 
 }; // namespace chaos

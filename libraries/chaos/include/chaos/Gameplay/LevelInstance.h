@@ -21,7 +21,7 @@ namespace chaos
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** override */
-		virtual bool TraverseInputReceiver(InputReceiverTraverser& in_traverser, InputDeviceInterface const* in_input_device) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
 
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();

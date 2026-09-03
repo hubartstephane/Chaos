@@ -217,12 +217,12 @@ namespace chaos
 		void SetWindowClient(WindowClient * in_client);
 
 		/** override */
-		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser, InputDeviceInterface const* in_input_device) override;
+		virtual bool TraverseInputReceiver(InputReceiverTraverser & in_traverser) override;
 		/** override */
 		virtual bool EnumerateInputActions(InputActionProcessor & in_action_processor, EnumerateInputActionContext in_context) override;
 
 		/** special input receiver traversal for event dispatching (handle imgui and application) */
-		bool TraverseInputReceiverFull(InputReceiverTraverser& in_traverser, InputDeviceInterface const * in_input_device);
+		bool TraverseInputReceiverFull(InputReceiverTraverser& in_traverser);
 
 	protected:
 
@@ -387,10 +387,10 @@ namespace chaos
 
 			return WithWindowContext([this, &process_function]()
 			{
-				KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
+				KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 
-				DelegateInputReceiverTraverser traverser(process_function);
-				return TraverseInputReceiverFull(traverser, keyboard_and_mouse_device);
+				DelegateInputReceiverTraverser traverser(keyboard_and_mouse_device, process_function);
+				return TraverseInputReceiverFull(traverser);
 			});
 		}
 

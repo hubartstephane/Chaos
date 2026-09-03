@@ -229,11 +229,11 @@ protected:
 		return true;
 	}
 
-	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser, chaos::InputDeviceInterface const * in_input_device) override
+	virtual bool TraverseInputReceiver(chaos::InputReceiverTraverser & in_traverser) override
 	{
-		if (in_traverser.Traverse(&fps_view_controller, in_input_device))
+		if (in_traverser.Traverse(&fps_view_controller))
 			return true;
-		return chaos::Window::TraverseInputReceiver(in_traverser, in_input_device);
+		return chaos::Window::TraverseInputReceiver(in_traverser);
 	}
 
 	void UpdateClockTimeScale(chaos::Clock * clock, float offset)

@@ -2,15 +2,15 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class OnPollInputActionProcessor;
+	class PollInputActionProcessor;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * OnPollInputActionProcessor: a specialization of InputActionProcessor dedicated to input polling
+	 * PollInputActionProcessor: a specialization of InputActionProcessor dedicated to input polling
 	 */
 
-	class CHAOS_API OnPollInputActionProcessor : public InputActionProcessor
+	class CHAOS_API PollInputActionProcessor : public InputActionProcessor
 	{
 	public:
 

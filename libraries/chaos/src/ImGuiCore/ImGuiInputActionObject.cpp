@@ -10,7 +10,7 @@ namespace chaos
 
 	void ImGuiInputActionObject::OnDrawImGuiContent(Window * window)
 	{
-		class OnQueryInputActionProcessor : public InputActionProcessor
+		class ImGuiQueryInputActionProcessor : public InputActionProcessor
 		{
 		public:
 
@@ -56,7 +56,7 @@ namespace chaos
 			}
 		};
 
-		class QueryInputReceiverTraverser : public InputReceiverTraverser
+		class ImGuiQueryInputReceiverTraverser : public InputReceiverTraverser
 		{
 		public:
 
@@ -66,7 +66,7 @@ namespace chaos
 
 			virtual bool Process(InputReceiverInterface* in_input_receiver) override
 			{
-				OnQueryInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_cache);
+				ImGuiQueryInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_cache);
 				in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnQuery);
 				return false; // pass through all receivers			
 			}
@@ -80,7 +80,7 @@ namespace chaos
 		{
 			KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 
-			QueryInputReceiverTraverser traverser(keyboard_and_mouse_device);
+			ImGuiQueryInputReceiverTraverser traverser(keyboard_and_mouse_device);
 			window->TraverseInputReceiverFull(traverser); // include ImGuiWindowContext and WindowApplication in the traversal
 		});
 	}

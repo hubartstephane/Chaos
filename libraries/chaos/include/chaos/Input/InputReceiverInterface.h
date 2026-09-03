@@ -120,7 +120,7 @@ namespace chaos
 
 			InputConsumptionCache consumption_cache;
 
-			OnEventInputActionProcessor<INPUT_TYPE> action_processor(this, in_input_device, &consumption_cache, in_input);
+			EventInputActionProcessor<INPUT_TYPE> action_processor(this, in_input_device, &consumption_cache, in_input);
 			if (EnumerateInputActions(action_processor, EnumerateInputActionContext::OnEvent))
 			{
 				MarkInputConsumedInApplicationCache(in_input, in_input_device);

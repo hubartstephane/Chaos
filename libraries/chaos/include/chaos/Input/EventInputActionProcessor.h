@@ -3,21 +3,21 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	template<InputType INPUT_TYPE>
-	class OnEventInputActionProcessor;
+	class EventInputActionProcessor;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * OnEventInputActionProcessor: a specialization of InputActionProcessor dedicated to window's events handling
+	 * EventInputActionProcessor: a specialization of InputActionProcessor dedicated to window's events handling
 	 */
 
 	template<InputType INPUT_TYPE>
-	class OnEventInputActionProcessor : public InputActionProcessor
+	class EventInputActionProcessor : public InputActionProcessor
 	{
 	public:
 
 		/** constructor */
-		OnEventInputActionProcessor(
+		EventInputActionProcessor(
 			InputReceiverInterface const* in_input_receiver,
 			InputDeviceInterface const* in_input_device,
 			InputConsumptionCache* in_consumption_cache,
@@ -40,7 +40,7 @@ namespace chaos
 #else
 
 	template<InputType INPUT_TYPE>
-	bool OnEventInputActionProcessor<INPUT_TYPE>::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const& in_action)
+	bool EventInputActionProcessor<INPUT_TYPE>::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const& in_action)
 	{
 		// always consum input even if not related because, later on, maybe some composite request with the related key 
 		// and some consumed input will be checked

@@ -529,7 +529,7 @@ namespace chaos
 
 			virtual bool Process(InputReceiverInterface* in_input_receiver) override
 			{
-				OnPollInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_cache);
+				PollInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_cache);
 				return in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnPolling);
 			}
 

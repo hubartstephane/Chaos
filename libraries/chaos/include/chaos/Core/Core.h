@@ -1,3 +1,4 @@
+#include "chaos/Core/ScopedValueGuard.h"
 #include "chaos/Core/Token.h"
 #include "chaos/Core/Identifiable.h"
 #include "chaos/Core/HashBuilder.h"

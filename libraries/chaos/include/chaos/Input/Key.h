@@ -137,7 +137,7 @@ namespace chaos
 		CHAOS_KEYDEF(RightAlt, RIGHT_ALT),
 		CHAOS_KEYDEF(RightSuper, RIGHT_SUPER),
 		CHAOS_KEYDEF(Menu, MENU),
-		KeyboardLast = GLFW_KEY_MENU,
+		KeyboardLast = Menu,
 
 		MouseFirst = 1000,
 		MouseButton1 = MouseFirst + GLFW_MOUSE_BUTTON_1,

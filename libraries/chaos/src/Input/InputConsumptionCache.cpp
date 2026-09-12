@@ -157,7 +157,7 @@ namespace chaos
 			all_key_consumer = in_input_receiver;
 			return true;
 		}
-		return true;
+		return false;
 	}
 
 	bool InputConsumptionCache::SetAllInput1DConsumer(InputReceiverInterface const* in_input_receiver)
@@ -167,7 +167,7 @@ namespace chaos
 			all_input1D_consumer = in_input_receiver;
 			return true;
 		}
-		return true;
+		return false;
 	}
 
 	bool InputConsumptionCache::SetAllInput2DConsumer(InputReceiverInterface const* in_input_receiver)
@@ -177,7 +177,7 @@ namespace chaos
 			all_input2D_consumer = in_input_receiver;
 			return true;
 		}
-		return true;
+		return false;
 	}
 
 	bool InputConsumptionCache::SetAllInputConsumer(InputReceiverInterface const* in_input_receiver)

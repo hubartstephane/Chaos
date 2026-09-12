@@ -81,12 +81,12 @@ namespace chaos
 		/** whether the input as just became active */
 		bool IsJustActivated() const
 		{
-			return GetStatus() == InputStatus::JustDeactivated;
+			return GetStatus() == InputStatus::JustActivated;
 		}
 		/** whether the input as just became inactive */
 		bool IsJustDeactivated() const
 		{
-			return GetStatus() == InputStatus::JustActivated;
+			return GetStatus() == InputStatus::JustDeactivated;
 		}
 		/** returns whether the input is active and repeated */
 		bool IsActiveRepeated() const
@@ -125,14 +125,14 @@ namespace chaos
 			if (IsValueActive(value))
 			{
 				if (same_value_time == 0.0f && initialized)
-					return InputStatus::JustDeactivated;
+					return InputStatus::JustActivated;
 				else
 					return InputStatus::RepeatActive;
 			}
 			else
 			{
 				if (same_value_time == 0.0f && initialized)
-					return InputStatus::JustActivated;
+					return InputStatus::JustDeactivated;
 				else
 					return InputStatus::RepeatInactive;
 			}

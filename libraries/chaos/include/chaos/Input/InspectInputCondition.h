@@ -166,32 +166,32 @@ namespace chaos
 	}
 	
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto Active(INPUT_TYPE_EXT in_input, PARAMS... params)
+	auto Active(INPUT_TYPE_EXT in_input, PARAMS&& ...params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStatusCheckType::Active);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto JustActivated(INPUT_TYPE_EXT in_input, PARAMS... params)
+	auto JustActivated(INPUT_TYPE_EXT in_input, PARAMS&& ...params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStatusCheckType::JustActivated);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto ActiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
+	auto ActiveRepeated(INPUT_TYPE_EXT in_input, PARAMS&& ...params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStatusCheckType::ActiveRepeated);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto Inactive(INPUT_TYPE_EXT in_input, PARAMS... params)
+	auto Inactive(INPUT_TYPE_EXT in_input, PARAMS&& ...params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStatusCheckType::Inactive);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto JustDeactivated(INPUT_TYPE_EXT in_input, PARAMS... params)
+	auto JustDeactivated(INPUT_TYPE_EXT in_input, PARAMS& ...params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStatusCheckType::JustDeactivated);
 	}
 	template<InputTypeExt INPUT_TYPE_EXT, typename ...PARAMS>
-	auto InactiveRepeated(INPUT_TYPE_EXT in_input, PARAMS... params)
+	auto InactiveRepeated(INPUT_TYPE_EXT in_input, PARAMS&& ...params)
 	{
 		return QueryInput(in_input, std::forward<PARAMS>(params)..., InputStatusCheckType::InactiveRepeated);
 	}

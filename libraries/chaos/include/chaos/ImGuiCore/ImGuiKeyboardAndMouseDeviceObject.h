@@ -22,7 +22,15 @@ namespace chaos
 		virtual void OnDrawImGuiContent(Window * window) override;
 
 		/** display all keyboard or mouse keys */
-		void DisplayKeyboardAndMouseKeyStates(KeyboardAndMouseDevice const* keyboard_and_mouse_device, char const* table_title, char const * title, InputDeviceType key_type) const;
+		void DisplayKeyboardAndMouseKeyStates(KeyboardAndMouseDevice const* keyboard_and_mouse_device, char const* table_title, char const * title, bool ignore_unknown_keys, InputDeviceType key_type) const;
+
+	protected:
+
+		/** a map that stores the last time the input was active */
+		mutable std::map<Key, double> last_active_key_times;
+
+		/** whether cold keys are to be ignored */
+		bool ignore_cold_keys = false;
 	};
 
 #endif

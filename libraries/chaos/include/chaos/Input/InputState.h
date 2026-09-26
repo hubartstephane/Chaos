@@ -59,6 +59,8 @@ namespace chaos
 	template<InputType INPUT_TYPE>
 	class InputStateType
 	{
+		friend class InputDeviceInterface;
+
 	public:
 
 		using type = InputValue_t<INPUT_TYPE>;
@@ -98,41 +100,39 @@ namespace chaos
 		{
 			return GetStatus() == InputStatus::RepeatInactive;
 		}
-		/** get the timer for the same value */
-		float GetSameValueTimer() const
-		{
-			if (update_time < 0.0)
-				return 0.0f;
-			return float(FrameTimeManager::GetInstance()->GetCurrentFrameTime() - update_time);
-		}
-		/** returns whether the state has been set at least set */
-		bool IsStateInitialized() const
-		{
-			return (update_time >= 0.0);
-		}
 		/** clear the input */
 		void Clear()
 		{
-			value = type();
-			update_time = -1.0;
+			value          = {};
+			previous_value = {};
+			update_time    = -1.0;
 		}
 		/** get the input status */
 		InputStatus GetStatus() const
 		{
-			float same_value_time = GetSameValueTimer();
-			bool  initialized     = IsStateInitialized();
+			double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
 
-			if (IsValueActive(value))
+			if (frame_time == update_time) // we can rely on previous_value
 			{
-				if (same_value_time == 0.0f && initialized)
-					return InputStatus::JustActivated;
+				if (IsValueActive(value))
+				{
+					if (IsValueActive(previous_value))
+						return InputStatus::RepeatActive;
+					else
+						return InputStatus::JustActivated;
+				}
 				else
-					return InputStatus::RepeatActive;
+				{
+					if (IsValueActive(previous_value))
+						return InputStatus::JustDeactivated;
+					else
+						return InputStatus::RepeatInactive;
+				}
 			}
-			else
+			else // value is already an old value. it represents both current value and previous_value (value has not changed over time)
 			{
-				if (same_value_time == 0.0f && initialized)
-					return InputStatus::JustDeactivated;
+				if (IsValueActive(value))
+					return InputStatus::RepeatActive;
 				else
 					return InputStatus::RepeatInactive;
 			}
@@ -142,16 +142,12 @@ namespace chaos
 		void SetValue(type in_value)
 		{
 			double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
+			if (frame_time == update_time)
+				return;
 
-			if (update_time < 0.0) // very first initialization
-			{
-				update_time = frame_time;
-			}
-			else if (IsValueActive(value) != IsValueActive(in_value)) // some effective change (because for float input, there always are some slight changes, we can't rely on strict comparison)
-			{
-				update_time = frame_time;
-			}
-			value = in_value;
+			previous_value = value;
+			value          = in_value;
+			update_time    = frame_time;
 		}
 
 		/** a generic check function */
@@ -196,8 +192,13 @@ namespace chaos
 
 	public:
 
-		/** value of the button (pressed or not) */
+		/** value of the input */
 		type value = {};
+		/** value of the input during last update */
+		type previous_value = {};
+
+	protected:
+
 		/** time when the state has been updated */
 		double update_time = -1.0;
 	};

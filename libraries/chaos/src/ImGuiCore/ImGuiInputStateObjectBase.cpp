@@ -26,16 +26,13 @@ namespace chaos
 			ImGui::TableNextColumn();
 			ImGui::TextColored(color, "%s", pressed? "pressed" : "released");
 
-			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%f", state.GetSameValueTimer());
-
 			ImGui::PopID();
 		}
 	}
 
 	void ImGuiInputStateObjectBase::DisplayAllKeyInfo(InputDeviceInterface const* in_input_device, char const* table_title, char const * title, ForAllKeysFunction filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(table_title, {}, title, "State", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(table_title, {}, title, "State")([&]()
 		{
 			in_input_device->ForAllKeys([&](Key key, KeyState const & state)
 			{
@@ -69,16 +66,13 @@ namespace chaos
 			ImGui::TableNextColumn();
 			ImGui::TextColored(color, "%+f", value);
 
-			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%f", state.GetSameValueTimer());
-
 			ImGui::PopID();
 		}
 	}
 
 	void ImGuiInputStateObjectBase::DisplayAllInput1DInfo(InputDeviceInterface const* in_input_device, char const* table_title, char const * title, ForAllInput1DFunction filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(table_title, {}, title, "Value", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(table_title, {}, title, "Value")([&]()
 		{
 			in_input_device->ForAllInput1D([&](Input1D input, Input1DState const & state)
 			{
@@ -116,16 +110,13 @@ namespace chaos
 			ImGui::TableNextColumn();
 			ImGui::TextColored(color, "%f", glm::length(state.value));
 
-			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%f", state.GetSameValueTimer());
-
 			ImGui::PopID();
 		}
 	}
 
 	void ImGuiInputStateObjectBase::DisplayAllInput2DInfo(InputDeviceInterface const* in_input_device, char const* table_title, char const * title, ForAllInput2DFunction filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(table_title, {}, title, "Value", "Length", "Repeat Timer")([&]()
+		ImGuiTools::DrawImGuiTable(table_title, {}, title, "Value", "Length")([&]()
 		{
 			in_input_device->ForAllInput2D([&](Input2D input, Input2DState const & state)
 			{

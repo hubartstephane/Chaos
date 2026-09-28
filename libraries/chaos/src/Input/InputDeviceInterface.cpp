@@ -40,55 +40,74 @@ namespace chaos
 
 	std::optional<Input1DState> InputDeviceInterface::GetInputState(MappedInput1D const & input) const
 	{
+		std::optional<KeyState> neg_state = GetInputState(input.neg_key);
+		std::optional<KeyState> pos_state = GetInputState(input.pos_key);
+
+		if (!neg_state.has_value() && !pos_state.has_value())
+			return {};
+
 		Input1DState result;
 
-		auto AccumulateKeyState = [&](Key in_key, float delta_value)
+		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();		
+		auto AccumulateKeyState = [&](std::optional<KeyState> const & in_state, float in_delta_value)
 		{
-			if (in_key == Key::Unknown)
-				return true;
-			std::optional<KeyState> state = GetInputState(in_key);
-			if (!state.has_value())
-				return false;
-			if (state->GetValue())
-				result.value += delta_value;
-			result.update_time = std::max(result.update_time, state->update_time); // works even if unitialized (-1.0)
-			return true;
+			if (!in_state.has_value())
+				return;
+
+			if (in_state->value)
+				result.value += in_delta_value;
+
+			if (frame_time == in_state->update_time) // previous_value is valid
+			{
+				if (in_state->previous_value)
+					result.previous_value += in_delta_value;
+			}
+			else // value is already an old value and can be used has previous frame value
+			{
+				if (in_state->value)
+					result.previous_value += in_delta_value;
+			}
 		};
 
-		// if neg_key or pos_key is not handled by the InputDevice (and not UNKNOWN), the function fails
-		if (!AccumulateKeyState(input.neg_key, -1.0f))
-			return {};
-		if (!AccumulateKeyState(input.pos_key, +1.0f))
-			return {};
+		AccumulateKeyState(neg_state, -1.0f);
+		AccumulateKeyState(pos_state, +1.0f);
+		result.update_time = frame_time; // value & previous_value computation are fresh from current frame
+
 		return result;
 	}
 
 	std::optional<Input2DState> InputDeviceInterface::GetInputState(MappedInput2D const & input) const
 	{
+		std::optional<Input1DState> horizontal_state = GetInputState(MappedInput1D(input.left_key, input.right_key));
+		std::optional<Input1DState> vertical_state = GetInputState(MappedInput1D(input.down_key, input.up_key));
+
+		if (!horizontal_state.has_value() && !vertical_state.has_value())
+			return {};
+
 		Input2DState result;
 
-		auto AccumulateKeyState = [&](Key in_key, int axis, float delta_value)
+		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
+		auto AccumulateKeyState = [&](std::optional<Input1DState> const& in_state, size_t in_axis)
 		{
-			if (in_key == Key::Unknown)
-				return true;
-			std::optional<KeyState> state = GetInputState(in_key);
-			if (!state.has_value())
-				return false;
-			if (state->GetValue())
-				result.value[axis] += delta_value;
-			result.update_time = std::max(result.update_time, state->update_time); // works even if unitialized (-1.0)
-			return true;
+			if (!in_state.has_value())
+				return;
+
+			result.value[in_axis] = in_state->value;
+
+			if (frame_time == in_state->update_time) // previous_value is valid
+			{
+				result.previous_value[in_axis] = in_state->previous_value;
+			}
+			else // value is already an old value and can be used has previous frame value
+			{
+				result.previous_value[in_axis] = in_state->value;
+			}
 		};
-		
-		// if left_key, right_key, down_key or up_key is not handled by the InputDevice (and not UNKNOWN), the function fails
-		if (!AccumulateKeyState(input.left_key,  0, -1.0f))
-			return {};
-		if (!AccumulateKeyState(input.right_key, 0, +1.0f))
-			return {};
-		if (!AccumulateKeyState(input.down_key,  1, -1.0f))
-			return {};
-		if (!AccumulateKeyState(input.up_key,    1, +1.0f))
-			return {};
+
+		AccumulateKeyState(horizontal_state, 0);
+		AccumulateKeyState(vertical_state, 1);
+		result.update_time = frame_time; // value & previous_value are fresh from current frame
+
 		return result;
 	}
 

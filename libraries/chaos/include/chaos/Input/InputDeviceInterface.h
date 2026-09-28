@@ -113,53 +113,94 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 
 	double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
 
-	auto CheckChildStateAndPrepareResult = [&](auto & inout_result, auto const & in_state)
+	// for all child_input, check find the state, prepare optional parameter if necessary, and call user function
+	auto CombineAllChildInputs = [&](auto & inout_result, auto const & combine_child_input_func)
 	{
-		if (!in_state.has_value())
-			return false;
-		if (!inout_result.has_value())
+		auto CombineInputStates = [&](auto & inout_result, auto const & in_child_state)
 		{
-			inout_result.emplace();
-			inout_result->update_time = frame_time;
-		}
-		return true;
+			if (!in_child_state.has_value())
+				return;
+			if (!inout_result.has_value())
+			{
+				inout_result.emplace();
+				inout_result->update_time = frame_time;
+			}
+			combine_child_input_func(inout_result, in_child_state);
+		};
+
+		std::apply([&](auto const & ... child_input)
+		{
+			(CombineInputStates(inout_result, GetInputState(child_input)), ...);
+
+		}, input.child_inputs);
 	};
 
+	// KEY
 	if constexpr (std::is_same_v<input_value_type, bool>)
 	{
 		std::optional<KeyState> result;
 
-		std::apply([&](auto const & ... child_input)
+		auto CombineChildInputFunc = [&](std::optional<KeyState> & inout_result, std::optional<KeyState> const & child_state)
 		{
-			auto CombineChildInput = [&](auto const & child_input)
-			{
-				std::optional<KeyState> child_state = GetInputState(child_input);
-				if (!CheckChildStateAndPrepareResult(result, child_state))
-					return;
+			inout_result->value |= child_state->value;
 
-				result->value |= child_state->value;
+			bool child_previous_value = (child_state->update_time == frame_time)?
+				child_state->previous_value:
+				child_state->value;
+			inout_result->previous_value |= child_previous_value; // final combined input result is TRUE if at least one child input is TRUE
+		};
 
-				if (child_state->update_time == frame_time)
-					result->previous_value |= child_state->previous_value;
-				else
-					result->previous_value |= child_state->value;
-			};
-
-			(CombineChildInput(child_input), ...);
-
-		}, input.child_inputs);
+		CombineAllChildInputs(result, CombineChildInputFunc);
 
 		return result;
 	}
+	// INPUT1D
 	else if constexpr (std::is_same_v<input_value_type, float>)
 	{
-		std::apply([&](auto const & ... child_input)
-			{
-				int i = 0;
-				++i;
+		std::optional<Input1DState> result;
 
-			}, input.child_inputs);
+		float min_value = 0.0f;
+		float max_value = 0.0f;
+		float min_previous_value = 0.0f;
+		float max_previous_value = 0.0f;
+
+		// compute min & max value
+		auto CombineChildInputFunc = [&](std::optional<Input1DState> & inout_result, std::optional<Input1DState> const & child_state)
+		{
+			if (child_state->value > 0.0f)
+				max_value = std::max(max_value, child_state->value);
+			else if (child_state->value < 0.0f)
+				min_value = std::min(min_value, child_state->value);
+
+			float child_previous_value = (child_state->update_time == frame_time) ?
+				child_state->previous_value :
+				child_state->value;
+
+			if (child_previous_value > 0.0f)
+				max_previous_value = std::max(max_value, child_previous_value);
+			else if (child_previous_value < 0.0f)
+				min_previous_value = std::min(min_value, child_previous_value);
+		};
+
+		CombineAllChildInputs(result, CombineChildInputFunc);
+
+		if (result.has_value())
+		{
+			// if at least one child input is POS and one is NEG, let the value be 0
+			if (max_value > 0.0f && min_value == 0.0f)
+				result->value = max_value;
+			else if (max_value == 0.0f && min_value < 0.0f)
+				result->value = min_value;
+			// if at least one child input is POS and one is NEG, let the previous value be 0
+			if (max_previous_value > 0.0f && min_previous_value == 0.0f)
+				result->previous_value = max_previous_value;
+			else if (max_previous_value == 0.0f && min_previous_value < 0.0f)
+				result->previous_value = min_previous_value;
+		}
+
+		return result;
 	}
+	// INPUT2D
 	else if constexpr (std::is_same_v<input_value_type, glm::vec2>)
 	{
 		std::apply([&](auto const & ... child_input)

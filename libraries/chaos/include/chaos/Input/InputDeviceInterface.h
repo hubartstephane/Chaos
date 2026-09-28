@@ -135,6 +135,26 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 		}, input.child_inputs);
 	};
 
+	// if there is a POS and a NEG value, result is 0
+	// elsewhere returns the direction which is not null
+	auto MergeAxisValues = [](float min_value, float max_value)
+	{
+		if (max_value == 0.0f && min_value < 0.0f)
+			return min_value;
+		if (max_value > 0.0f && min_value == 0.0f)
+			return max_value;
+		return 0.0f;
+	};
+
+	// update MIN & MAX value according to VALUE sign
+	auto UpdateMinAndMaxAxisValue = [](float value, float & min_value, float & max_value)
+	{
+		if (value > 0.0f)
+			max_value = std::max(max_value, value);
+		else if (value < 0.0f)
+			min_value = std::min(min_value, value);
+	};
+
 	// KEY
 	if constexpr (std::is_same_v<input_value_type, bool>)
 	{
@@ -142,11 +162,11 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 
 		auto CombineChildInputFunc = [&](std::optional<KeyState> & inout_result, std::optional<KeyState> const & child_state)
 		{
-			inout_result->value |= child_state->value;
-
-			bool child_previous_value = (child_state->update_time == frame_time)?
-				child_state->previous_value:
+			bool child_previous_value = (child_state->update_time == frame_time) ?
+				child_state->previous_value :
 				child_state->value;
+
+			inout_result->value |= child_state->value;
 			inout_result->previous_value |= child_previous_value; // final combined input result is TRUE if at least one child input is TRUE
 		};
 
@@ -167,35 +187,20 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 		// compute min & max value
 		auto CombineChildInputFunc = [&](std::optional<Input1DState> & inout_result, std::optional<Input1DState> const & child_state)
 		{
-			if (child_state->value > 0.0f)
-				max_value = std::max(max_value, child_state->value);
-			else if (child_state->value < 0.0f)
-				min_value = std::min(min_value, child_state->value);
-
 			float child_previous_value = (child_state->update_time == frame_time) ?
 				child_state->previous_value :
 				child_state->value;
 
-			if (child_previous_value > 0.0f)
-				max_previous_value = std::max(max_value, child_previous_value);
-			else if (child_previous_value < 0.0f)
-				min_previous_value = std::min(min_value, child_previous_value);
+			UpdateMinAndMaxAxisValue(child_state->value, min_value, max_value);
+			UpdateMinAndMaxAxisValue(child_previous_value, min_previous_value, max_previous_value);
 		};
 
 		CombineAllChildInputs(result, CombineChildInputFunc);
 
 		if (result.has_value())
 		{
-			// if at least one child input is POS and one is NEG, let the value be 0
-			if (max_value > 0.0f && min_value == 0.0f)
-				result->value = max_value;
-			else if (max_value == 0.0f && min_value < 0.0f)
-				result->value = min_value;
-			// if at least one child input is POS and one is NEG, let the previous value be 0
-			if (max_previous_value > 0.0f && min_previous_value == 0.0f)
-				result->previous_value = max_previous_value;
-			else if (max_previous_value == 0.0f && min_previous_value < 0.0f)
-				result->previous_value = min_previous_value;
+			result->value = MergeAxisValues(min_value, max_value);
+			result->previous_value = MergeAxisValues(min_previous_value, max_previous_value);
 		}
 
 		return result;
@@ -203,12 +208,39 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 	// INPUT2D
 	else if constexpr (std::is_same_v<input_value_type, glm::vec2>)
 	{
-		std::apply([&](auto const & ... child_input)
-			{
-				int i = 0;
-				++i;
+		std::optional<Input2DState> result;
 
-			}, input.child_inputs);
+		glm::vec2 min_value = { 0.0f, 0.0f };
+		glm::vec2 max_value = { 0.0f, 0.0f };
+		glm::vec2 min_previous_value = { 0.0f, 0.0f };
+		glm::vec2 max_previous_value = { 0.0f, 0.0f };
+
+		// compute min & max value
+		auto CombineChildInputFunc = [&](std::optional<Input2DState>& inout_result, std::optional<Input2DState> const& child_state)
+		{
+			glm::vec2 const & child_previous_value = (child_state->update_time == frame_time)?
+				child_state->previous_value :
+				child_state->value;
+
+			for (size_t axis : {0, 1})
+			{
+				UpdateMinAndMaxAxisValue(child_state->value[axis], min_value[axis], max_value[axis]);
+				UpdateMinAndMaxAxisValue(child_previous_value[axis], min_previous_value[axis], max_previous_value[axis]);
+			}
+		};
+
+		CombineAllChildInputs(result, CombineChildInputFunc);
+
+		if (result.has_value())
+		{
+			for (size_t axis : {0, 1})
+			{
+				result->value[axis] = MergeAxisValues(min_value[axis], max_value[axis]);
+				result->previous_value[axis] = MergeAxisValues(min_previous_value[axis], max_previous_value[axis]);
+			}
+		}
+
+		return result;
 	}
 }
 

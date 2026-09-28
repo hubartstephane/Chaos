@@ -10,17 +10,17 @@ concept SameInputType =
 
 template<typename... PARAMS>
 requires SameInputType<PARAMS...>
-class CompositeInput;
+class CombinedInput;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	* CompositeInput: an object to aggregate some input by a OR operation
+	* CombinedInput: an object to aggregate some input by a OR operation
 	*/
 
 template<typename... PARAMS>
 requires SameInputType<PARAMS...>
-class CompositeInput
+class CombinedInput
 {
 public:
 
@@ -28,7 +28,7 @@ public:
 	using input_state_type = InputState_t<std::tuple_element_t<0, std::tuple<PARAMS...>>>;
 
 	/** constructor */
-	CompositeInput(PARAMS... params) :
+	CombinedInput(PARAMS... params) :
 		child_inputs(std::forward<PARAMS>(params)...) {}
 
 public:

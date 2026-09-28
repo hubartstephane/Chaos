@@ -40,6 +40,10 @@ namespace chaos
 		std::optional<Input1DState> GetInputState(MappedInput1D const & input) const;
 		/** gets any Mappedinput2D state */
 		std::optional<Input2DState> GetInputState(MappedInput2D const & input) const;
+		/** gets any CompositeInput state */
+		template<typename... PARAMS>
+		requires SameInputType<PARAMS...>
+		auto GetInputState(CombinedInput<PARAMS...> const & input) const;
 
 		/** enumerate keys */
 		bool ForAllKeys(ForAllKeysFunction func) const;
@@ -98,6 +102,74 @@ namespace chaos
 		/** enumerate input2D */
 		virtual bool DoForAllInput2D(ForAllInput2DFunction func) const;
 	};
+
+#else
+
+template<typename... PARAMS>
+requires SameInputType<PARAMS...>
+auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) const
+{
+	using input_value_type = CombinedInput<PARAMS...>::input_value_type;
+
+	double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
+
+	auto CheckChildStateAndPrepareResult = [&](auto & inout_result, auto const & in_state)
+	{
+		if (!in_state.has_value())
+			return false;
+		if (!inout_result.has_value())
+		{
+			inout_result.emplace();
+			inout_result->update_time = frame_time;
+		}
+		return true;
+	};
+
+	if constexpr (std::is_same_v<input_value_type, bool>)
+	{
+		std::optional<KeyState> result;
+
+		std::apply([&](auto const & ... child_input)
+		{
+			auto CombineChildInput = [&](auto const & child_input)
+			{
+				std::optional<KeyState> child_state = GetInputState(child_input);
+				if (!CheckChildStateAndPrepareResult(result, child_state))
+					return;
+
+				result->value |= child_state->value;
+
+				if (child_state->update_time == frame_time)
+					result->previous_value |= child_state->previous_value;
+				else
+					result->previous_value |= child_state->value;
+			};
+
+			(CombineChildInput(child_input), ...);
+
+		}, input.child_inputs);
+
+		return result;
+	}
+	else if constexpr (std::is_same_v<input_value_type, float>)
+	{
+		std::apply([&](auto const & ... child_input)
+			{
+				int i = 0;
+				++i;
+
+			}, input.child_inputs);
+	}
+	else if constexpr (std::is_same_v<input_value_type, glm::vec2>)
+	{
+		std::apply([&](auto const & ... child_input)
+			{
+				int i = 0;
+				++i;
+
+			}, input.child_inputs);
+	}
+}
 
 #endif
 

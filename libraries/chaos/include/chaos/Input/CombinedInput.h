@@ -24,8 +24,11 @@ class CombinedInput
 {
 public:
 
-	using input_value_type = InputValue_t<std::tuple_element_t<0, std::tuple<PARAMS...>>>;
-	using input_state_type = InputState_t<std::tuple_element_t<0, std::tuple<PARAMS...>>>;
+	using tuple_type = std::tuple<PARAMS...>;
+	using first_tuple_element = std::tuple_element_t<0, tuple_type>;
+
+	using input_value_type = InputValue_t<first_tuple_element>;
+	using input_state_type = InputState_t<first_tuple_element>;
 
 	/** constructor */
 	CombinedInput(PARAMS... params) :
@@ -34,7 +37,7 @@ public:
 public:
 
 	/** the input requests in the composition */
-	std::tuple<PARAMS...> child_inputs;
+	tuple_type child_inputs;
 };
 
 #endif

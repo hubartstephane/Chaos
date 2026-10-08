@@ -8,12 +8,15 @@ namespace chaos
 	template<typename T>
 	class InputStateType;
 
-	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputTypeToStateType, AnyInputType)
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, Key, InputStateType<bool>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, Input1D, InputStateType<float>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, Input2D, InputStateType<glm::vec2>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, MappedInput1D, InputStateType<float>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, MappedInput2D, InputStateType<glm::vec2>);
+	template<AnyInputType T>
+	struct InputTypeToStateType : public boost::mpl::identity<
+		InputStateType<
+			InputTypeToValueType_t<T>
+		>
+	> {};
+
+	template<AnyInputType T>
+	using InputTypeToStateType_t = InputTypeToStateType<T>::type;
 
 	using KeyState     = InputTypeToStateType_t<Key>;
 	using Input1DState = InputTypeToStateType_t<Input1D>;

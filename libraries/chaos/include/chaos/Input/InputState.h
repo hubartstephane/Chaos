@@ -5,19 +5,19 @@ namespace chaos
 	enum class InputStatus;
 	enum class InputStatusCheckType;
 
-	template<BasicInputType BASIC_INPUT_TYPE>
+	template<typename T>
 	class InputStateType;
 
-	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputState, AnyInputType)
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputState, Key, InputStateType<Key>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputState, Input1D, InputStateType<Input1D>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputState, Input2D, InputStateType<Input2D>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputState, MappedInput1D, InputStateType<Input1D>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputState, MappedInput2D, InputStateType<Input2D>);
+	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputTypeToStateType, AnyInputType)
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, Key, InputStateType<bool>);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, Input1D, InputStateType<float>);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, Input2D, InputStateType<glm::vec2>);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, MappedInput1D, InputStateType<float>);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToStateType, MappedInput2D, InputStateType<glm::vec2>);
 
-	using KeyState     = InputState_t<Key>;
-	using Input1DState = InputState_t<Input1D>;
-	using Input2DState = InputState_t<Input2D>;
+	using KeyState     = InputTypeToStateType_t<Key>;
+	using Input1DState = InputTypeToStateType_t<Input1D>;
+	using Input2DState = InputTypeToStateType_t<Input2D>;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -56,14 +56,14 @@ namespace chaos
 	* InputStateType: base class for key/axis/stick state
 	*/
 
-	template<BasicInputType BASIC_INPUT_TYPE>
+	template<typename T>
 	class InputStateType
 	{
 		friend class InputDeviceInterface;
 
 	public:
 
-		using type = InputValue_t<BASIC_INPUT_TYPE>;
+		using type = T;
 
 		/** get the value */
 		type GetValue() const
@@ -222,84 +222,84 @@ namespace chaos
 	 * Standalone functions
 	 */
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputActive(InputStateType<BASIC_INPUT_TYPE> const& state)
+	template<typename T>
+	bool IsInputActive(InputStateType<T> const& state)
 	{
 		return state.IsActive();
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputInactive(InputStateType<BASIC_INPUT_TYPE> const& state)
+	template<typename T>
+	bool IsInputInactive(InputStateType<T> const& state)
 	{
 		return state.IsInactive();
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputJustActivated(InputStateType<BASIC_INPUT_TYPE> const& state)
+	template<typename T>
+	bool IsInputJustActivated(InputStateType<T> const& state)
 	{
 		return state.IsJustActivated();
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputJustDeactivated(InputStateType<BASIC_INPUT_TYPE> const& state)
+	template<typename T>
+	bool IsInputJustDeactivated(InputStateType<T> const& state)
 	{
 		return state.IsJustDeactivated();
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputActiveRepeated(InputStateType<BASIC_INPUT_TYPE> const& state)
+	template<typename T>
+	bool IsInputActiveRepeated(InputStateType<T> const& state)
 	{
 		return state.IsActiveRepeated();
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputInactiveRepeated(InputStateType<BASIC_INPUT_TYPE> const& state)
+	template<typename T>
+	bool IsInputInactiveRepeated(InputStateType<T> const& state)
 	{
 		return state.IsInactiveRepeated();
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputActive(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
+	template<typename T>
+	bool IsInputActive(std::optional<InputStateType<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputActive(state.value());
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputInactive(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
+	template<typename T>
+	bool IsInputInactive(std::optional<InputStateType<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputInactive(state.value());
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputJustActivated(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
+	template<typename T>
+	bool IsInputJustActivated(std::optional<InputStateType<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputJustActivated(state.value());
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputJustDeactivated(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
+	template<typename T>
+	bool IsInputJustDeactivated(std::optional<InputStateType<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputJustDeactivated(state.value());
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputActiveRepeated(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
+	template<typename T>
+	bool IsInputActiveRepeated(std::optional<InputStateType<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputActiveRepeated(state.value());
 	}
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	bool IsInputInactiveRepeated(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
+	template<typename T>
+	bool IsInputInactiveRepeated(std::optional<InputStateType<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;

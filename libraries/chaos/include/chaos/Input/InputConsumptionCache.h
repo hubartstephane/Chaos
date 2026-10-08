@@ -68,7 +68,7 @@ namespace chaos
 	public:
 
 		/** the state of the input */
-		std::optional<InputState_t<BASIC_INPUT_TYPE>> input_state;
+		std::optional<InputTypeToStateType_t<BASIC_INPUT_TYPE>> input_state;
 		/** indicates whether the response is a success or not */
 		InputStateResponseStatus response_status = InputStateResponseStatus::Failure;
 		/** the bitfield of what happened during request */

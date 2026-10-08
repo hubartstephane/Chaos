@@ -54,7 +54,7 @@ namespace chaos
 
 		/** get state value for any input */
 		template<AnyInputType ANY_INPUT_TYPE>
-		InputValue_t<ANY_INPUT_TYPE> GetInputValue(ANY_INPUT_TYPE in_input) const
+		InputTypeToValueType_t<ANY_INPUT_TYPE> GetInputValue(ANY_INPUT_TYPE in_input) const
 		{
 			if (auto input_state = GetInputState(in_input))
 				return input_state->GetValue();
@@ -86,7 +86,7 @@ namespace chaos
 
 		/** utility method to get a state */
 		template<BasicInputType BASIC_INPUT_TYPE>
-		std::optional<InputState_t<BASIC_INPUT_TYPE>> GetInputStateHelper(BASIC_INPUT_TYPE in_input) const;
+		std::optional<InputTypeToStateType_t<BASIC_INPUT_TYPE>> GetInputStateHelper(BASIC_INPUT_TYPE in_input) const;
 
 		/** gets one key state */
 		virtual std::optional<KeyState> DoGetInputState(Key input) const;

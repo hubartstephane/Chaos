@@ -5,7 +5,7 @@ namespace chaos
 template<typename FIRST, typename... PARAMS>
 concept SameInputType =
 (
-	std::same_as<InputValue_t<FIRST>, InputValue_t<PARAMS>> && ...
+	std::same_as<InputTypeToValueType_t<FIRST>, InputTypeToValueType_t<PARAMS>> && ...
 );
 
 template<typename... PARAMS>
@@ -27,8 +27,8 @@ public:
 	using tuple_type = std::tuple<PARAMS...>;
 	using first_tuple_element = std::tuple_element_t<0, tuple_type>;
 
-	using input_value_type = InputValue_t<first_tuple_element>;
-	using input_state_type = InputState_t<first_tuple_element>;
+	using input_value_type = InputTypeToValueType_t<first_tuple_element>;
+	using input_state_type = InputTypeToStateType_t<first_tuple_element>;
 
 	/** constructor */
 	CombinedInput(PARAMS... params) :

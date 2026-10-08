@@ -17,8 +17,8 @@ namespace chaos
 	public:
 
 		using input_type = ANY_INPUT_TYPE;
-		using state_type = InputState_t<input_type>;
-		using value_type = InputValue_t<input_type>;
+		using state_type = InputTypeToStateType_t<input_type>;
+		using value_type = InputTypeToValueType_t<input_type>;
 
 		/** constructor */
 		InspectInputCondition(input_type in_input, state_type* in_out_state, value_type* in_out_value, InputStatusCheckType in_check_type):
@@ -154,13 +154,13 @@ namespace chaos
 	}
 
 	template<AnyInputType ANY_INPUT_TYPE>
-	InspectInputCondition<ANY_INPUT_TYPE> QueryInput(ANY_INPUT_TYPE in_input, InputValue_t<ANY_INPUT_TYPE> *out_value, InputStatusCheckType in_check_type = InputStatusCheckType::None)
+	InspectInputCondition<ANY_INPUT_TYPE> QueryInput(ANY_INPUT_TYPE in_input, InputTypeToValueType_t<ANY_INPUT_TYPE> *out_value, InputStatusCheckType in_check_type = InputStatusCheckType::None)
 	{
 		return InspectInputCondition<ANY_INPUT_TYPE>(in_input, nullptr, out_value, in_check_type);
 	}
 
 	template<AnyInputType ANY_INPUT_TYPE>
-	InspectInputCondition<ANY_INPUT_TYPE> QueryInput(ANY_INPUT_TYPE in_input, InputState_t<ANY_INPUT_TYPE>* out_state, InputStatusCheckType in_check_type = InputStatusCheckType::None)
+	InspectInputCondition<ANY_INPUT_TYPE> QueryInput(ANY_INPUT_TYPE in_input, InputTypeToStateType_t<ANY_INPUT_TYPE>* out_state, InputStatusCheckType in_check_type = InputStatusCheckType::None)
 	{
 		return InspectInputCondition<ANY_INPUT_TYPE>(in_input, out_state, nullptr, in_check_type);
 	}

@@ -4,18 +4,15 @@ namespace chaos
 
 	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(BasicInputType, Key, Input1D, Input2D);
 	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(MappedInputType, MappedInput1D, MappedInput2D);
+	template<typename T>
+	concept AnyInputType = BasicInputType<T> || MappedInputType<T>;
 
-
-
-	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(AnyInputType, Key, Input1D, Input2D, MappedInput1D, MappedInput2D);
-	
-
-	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputValue, AnyInputType);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValue, Key, bool);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValue, Input1D, float);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValue, Input2D, glm::vec2);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValue, MappedInput1D, float);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValue, MappedInput2D, glm::vec2);
+	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputTypeToValueType, AnyInputType);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToValueType, Key, bool);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToValueType, Input1D, float);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToValueType, Input2D, glm::vec2);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToValueType, MappedInput1D, float);
+	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputTypeToValueType, MappedInput2D, glm::vec2);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 

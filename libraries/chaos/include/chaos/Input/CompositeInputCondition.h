@@ -155,8 +155,8 @@ namespace chaos
 
 
 		/** helper function to find whether the InputRequest is related to input */
-		template<InputType INPUT_TYPE>
-		bool IsRequestRelatedToImpl(INPUT_TYPE in_input) const
+		template<BasicInputType BASIC_INPUT_TYPE>
+		bool IsRequestRelatedToImpl(BASIC_INPUT_TYPE in_input) const
 		{
 			return std::apply([&](auto const & ... child_request) -> bool
 			{

@@ -8,13 +8,13 @@ namespace chaos
 		return func(this);
 	}
 
-	template<InputType INPUT_TYPE> 
-	std::optional<InputState_t<INPUT_TYPE>> InputDeviceInterface::GetInputStateHelper(INPUT_TYPE input) const
+	template<BasicInputType BASIC_INPUT_TYPE> 
+	std::optional<InputState_t<BASIC_INPUT_TYPE>> InputDeviceInterface::GetInputStateHelper(BASIC_INPUT_TYPE input) const
 	{
-		if (input == INPUT_TYPE::Unknown)
+		if (input == BASIC_INPUT_TYPE::Unknown)
 			return {};
 
-		std::optional<InputState_t<INPUT_TYPE>> result;
+		std::optional<InputState_t<BASIC_INPUT_TYPE>> result;
 		EnumerateDeviceHierarchy([this, &result, input](InputDeviceInterface const * in_input_device)
 		{
 			result = in_input_device->DoGetInputState(input);

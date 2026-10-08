@@ -53,8 +53,8 @@ namespace chaos
 		bool ForAllInput2D(ForAllInput2DFunction func) const;
 
 		/** get state value for any input */
-		template<InputTypeExt INPUT_TYPE_EXT>
-		InputValue_t<INPUT_TYPE_EXT> GetInputValue(INPUT_TYPE_EXT in_input) const
+		template<AnyInputType ANY_INPUT_TYPE>
+		InputValue_t<ANY_INPUT_TYPE> GetInputValue(ANY_INPUT_TYPE in_input) const
 		{
 			if (auto input_state = GetInputState(in_input))
 				return input_state->GetValue();
@@ -62,8 +62,8 @@ namespace chaos
 		}
 
 		/** get state status for any input */
-		template<InputTypeExt INPUT_TYPE_EXT>
-		InputStatus GetInputStatus(INPUT_TYPE_EXT in_input) const
+		template<AnyInputType ANY_INPUT_TYPE>
+		InputStatus GetInputStatus(ANY_INPUT_TYPE in_input) const
 		{
 			if (auto input_state = GetInputState(in_input))
 				return input_state->GetStatus();
@@ -85,8 +85,8 @@ namespace chaos
 	protected:
 
 		/** utility method to get a state */
-		template<InputType INPUT_TYPE>
-		std::optional<InputState_t<INPUT_TYPE>> GetInputStateHelper(INPUT_TYPE in_input) const;
+		template<BasicInputType BASIC_INPUT_TYPE>
+		std::optional<InputState_t<BASIC_INPUT_TYPE>> GetInputStateHelper(BASIC_INPUT_TYPE in_input) const;
 
 		/** gets one key state */
 		virtual std::optional<KeyState> DoGetInputState(Key input) const;

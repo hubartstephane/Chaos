@@ -5,10 +5,10 @@ namespace chaos
 	enum class InputStatus;
 	enum class InputStatusCheckType;
 
-	template<InputType INPUT_TYPE>
+	template<BasicInputType BASIC_INPUT_TYPE>
 	class InputStateType;
 
-	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputState, InputTypeExt)
+	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputState, AnyInputType)
 	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputState, Key, InputStateType<Key>);
 	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputState, Input1D, InputStateType<Input1D>);
 	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputState, Input2D, InputStateType<Input2D>);
@@ -56,14 +56,14 @@ namespace chaos
 	* InputStateType: base class for key/axis/stick state
 	*/
 
-	template<InputType INPUT_TYPE>
+	template<BasicInputType BASIC_INPUT_TYPE>
 	class InputStateType
 	{
 		friend class InputDeviceInterface;
 
 	public:
 
-		using type = InputValue_t<INPUT_TYPE>;
+		using type = InputValue_t<BASIC_INPUT_TYPE>;
 
 		/** get the value */
 		type GetValue() const
@@ -222,84 +222,84 @@ namespace chaos
 	 * Standalone functions
 	 */
 
-	template<InputType INPUT_TYPE>
-	bool IsInputActive(InputStateType<INPUT_TYPE> const& state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputActive(InputStateType<BASIC_INPUT_TYPE> const& state)
 	{
 		return state.IsActive();
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputInactive(InputStateType<INPUT_TYPE> const& state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputInactive(InputStateType<BASIC_INPUT_TYPE> const& state)
 	{
 		return state.IsInactive();
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputJustActivated(InputStateType<INPUT_TYPE> const& state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputJustActivated(InputStateType<BASIC_INPUT_TYPE> const& state)
 	{
 		return state.IsJustActivated();
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputJustDeactivated(InputStateType<INPUT_TYPE> const& state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputJustDeactivated(InputStateType<BASIC_INPUT_TYPE> const& state)
 	{
 		return state.IsJustDeactivated();
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputActiveRepeated(InputStateType<INPUT_TYPE> const& state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputActiveRepeated(InputStateType<BASIC_INPUT_TYPE> const& state)
 	{
 		return state.IsActiveRepeated();
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputInactiveRepeated(InputStateType<INPUT_TYPE> const& state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputInactiveRepeated(InputStateType<BASIC_INPUT_TYPE> const& state)
 	{
 		return state.IsInactiveRepeated();
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputActive(std::optional<InputStateType<INPUT_TYPE>> const & state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputActive(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputActive(state.value());
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputInactive(std::optional<InputStateType<INPUT_TYPE>> const & state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputInactive(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputInactive(state.value());
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputJustActivated(std::optional<InputStateType<INPUT_TYPE>> const & state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputJustActivated(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputJustActivated(state.value());
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputJustDeactivated(std::optional<InputStateType<INPUT_TYPE>> const & state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputJustDeactivated(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputJustDeactivated(state.value());
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputActiveRepeated(std::optional<InputStateType<INPUT_TYPE>> const & state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputActiveRepeated(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
 	{
 		if (!state.has_value())
 			return false;
 		return IsInputActiveRepeated(state.value());
 	}
 
-	template<InputType INPUT_TYPE>
-	bool IsInputInactiveRepeated(std::optional<InputStateType<INPUT_TYPE>> const & state)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool IsInputInactiveRepeated(std::optional<InputStateType<BASIC_INPUT_TYPE>> const & state)
 	{
 		if (!state.has_value())
 			return false;

@@ -2,11 +2,15 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(InputType, Key, Input1D, Input2D);
-	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(InputTypeExt, Key, Input1D, Input2D, MappedInput1D, MappedInput2D);
+	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(BasicInputType, Key, Input1D, Input2D);
 	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(MappedInputType, MappedInput1D, MappedInput2D);
 
-	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputValue, InputTypeExt);
+
+
+	CHAOS_GENERATE_IS_ANY_OF_CONCEPT(AnyInputType, Key, Input1D, Input2D, MappedInput1D, MappedInput2D);
+	
+
+	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputValue, AnyInputType);
 	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValue, Key, bool);
 	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValue, Input1D, float);
 	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputValue, Input2D, glm::vec2);
@@ -15,8 +19,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	template<InputType INPUT_TYPE>
-	InputDeviceType GetDeviceForInput(INPUT_TYPE in_input)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	InputDeviceType GetDeviceForInput(BASIC_INPUT_TYPE in_input)
 	{
 		if (IsKeyboardInput(in_input))
 			return InputDeviceType::Keyboard;
@@ -27,8 +31,8 @@ namespace chaos
 		return InputDeviceType::Unknown;
 	}
 
-	template<InputType INPUT_TYPE>
-	char const* GetInputName(INPUT_TYPE in_input)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	char const* GetInputName(BASIC_INPUT_TYPE in_input)
 	{
 		if (char const* result = EnumToString(in_input))
 			return result;

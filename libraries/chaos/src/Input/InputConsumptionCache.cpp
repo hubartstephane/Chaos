@@ -11,11 +11,11 @@ namespace chaos
 	// -first, we require authorization from InputConsumptionCache
 	// -then,  we require the InputDevice for the state
 
-	template<typename CONTAINER_TYPE, InputType INPUT_TYPE>
-	InputStateResponseStatus DoTryConsumeInputHelper(INPUT_TYPE in_input, CONTAINER_TYPE& inout_consumed_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags& out_response_flags)
+	template<typename CONTAINER_TYPE, BasicInputType BASIC_INPUT_TYPE>
+	InputStateResponseStatus DoTryConsumeInputHelper(BASIC_INPUT_TYPE in_input, CONTAINER_TYPE& inout_consumed_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags& out_response_flags)
 	{
 		// check wether the input is known
-		if (in_input == INPUT_TYPE::Unknown)
+		if (in_input == BASIC_INPUT_TYPE::Unknown)
 		{
 			out_response_flags |= InputStateResponseFlags::UnknownInput;
 			return InputStateResponseStatus::Success; // this is not an error
@@ -58,9 +58,9 @@ namespace chaos
 		return DoTryConsumeInputHelper(in_input, consumed_input2D, in_input_receiver, in_query_flags, out_response_flags);
 	}
 
-	template<InputType INPUT_TYPE>
+	template<BasicInputType BASIC_INPUT_TYPE>
 	InputStateResponseStatus InputConsumptionCache::TryConsumeInputAndRelated(
-		INPUT_TYPE in_input, 
+		BASIC_INPUT_TYPE in_input, 
 		InputReceiverInterface const* in_input_receiver, 
 		InputStateQueryFlags in_query_flags,
 		InputStateResponseFlags& out_response_flags,
@@ -73,13 +73,13 @@ namespace chaos
 		
 		if (response_status == InputStateResponseStatus::Failure)
 			return InputStateResponseStatus::Failure;
-		if constexpr (std::is_same_v<Key, INPUT_TYPE>)
+		if constexpr (std::is_same_v<Key, BASIC_INPUT_TYPE>)
 			if (all_key_consumer.has_value() && all_key_consumer.value() != in_input_receiver)
 				return InputStateResponseStatus::Failure;
-		if constexpr (std::is_same_v<Input1D, INPUT_TYPE>)
+		if constexpr (std::is_same_v<Input1D, BASIC_INPUT_TYPE>)
 			if (all_input1D_consumer.has_value() && all_input1D_consumer.value() != in_input_receiver)
 				return InputStateResponseStatus::Failure;
-		if constexpr (std::is_same_v<Input2D, INPUT_TYPE>)
+		if constexpr (std::is_same_v<Input2D, BASIC_INPUT_TYPE>)
 			if (all_input2D_consumer.has_value() && all_input2D_consumer.value() != in_input_receiver)
 				return InputStateResponseStatus::Failure;
 		return response_status;

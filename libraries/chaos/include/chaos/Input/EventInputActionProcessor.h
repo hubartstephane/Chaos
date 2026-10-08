@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<InputType INPUT_TYPE>
+	template<BasicInputType BASIC_INPUT_TYPE>
 	class EventInputActionProcessor;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -11,7 +11,7 @@ namespace chaos
 	 * EventInputActionProcessor: a specialization of InputActionProcessor dedicated to window's events handling
 	 */
 
-	template<InputType INPUT_TYPE>
+	template<BasicInputType BASIC_INPUT_TYPE>
 	class EventInputActionProcessor : public InputActionProcessor
 	{
 	public:
@@ -21,7 +21,7 @@ namespace chaos
 			InputReceiverInterface const* in_input_receiver,
 			InputDeviceInterface const* in_input_device,
 			InputConsumptionCache* in_consumption_cache,
-			INPUT_TYPE const& in_input
+			BASIC_INPUT_TYPE const& in_input
 		):
 			InputActionProcessor(in_input_receiver, in_input_device, in_consumption_cache),
 			input(in_input)
@@ -34,13 +34,13 @@ namespace chaos
 	protected:
 
 		/** the input being processed */
-		INPUT_TYPE input;
+		BASIC_INPUT_TYPE input;
 	};
 
 #else
 
-	template<InputType INPUT_TYPE>
-	bool EventInputActionProcessor<INPUT_TYPE>::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const& in_action)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool EventInputActionProcessor<BASIC_INPUT_TYPE>::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const& in_action)
 	{
 		// always consum input even if not related because, later on, maybe some composite request with the related key 
 		// and some consumed input will be checked

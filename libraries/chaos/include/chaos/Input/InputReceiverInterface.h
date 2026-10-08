@@ -85,12 +85,12 @@ namespace chaos
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode);
 
 		/** handle some event action */
-		template<InputType INPUT_TYPE>
-		bool ProcessInputEvent(INPUT_TYPE in_input);
+		template<BasicInputType BASIC_INPUT_TYPE>
+		bool ProcessInputEvent(BASIC_INPUT_TYPE in_input);
 
 		/** mark the input as consumed inside the WindowApplication ConsumCache */
-		template<InputType INPUT_TYPE>
-		static void MarkInputConsumedInApplicationCache(INPUT_TYPE in_input, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
+		template<BasicInputType BASIC_INPUT_TYPE>
+		static void MarkInputConsumedInApplicationCache(BASIC_INPUT_TYPE in_input, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
 
 		/** internal method to check whether a button is pressed */
 		virtual bool DoCheckKeyDown(Key key) const;
@@ -103,8 +103,8 @@ namespace chaos
 
 #else // defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	template<InputType INPUT_TYPE>
-	bool InputReceiverInterface::ProcessInputEvent(INPUT_TYPE in_input)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	bool InputReceiverInterface::ProcessInputEvent(BASIC_INPUT_TYPE in_input)
 	{
 		KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 
@@ -120,7 +120,7 @@ namespace chaos
 
 			InputConsumptionCache consumption_cache;
 
-			EventInputActionProcessor<INPUT_TYPE> action_processor(this, in_input_device, &consumption_cache, in_input);
+			EventInputActionProcessor<BASIC_INPUT_TYPE> action_processor(this, in_input_device, &consumption_cache, in_input);
 			if (EnumerateInputActions(action_processor, EnumerateInputActionContext::OnEvent))
 			{
 				MarkInputConsumedInApplicationCache(in_input, in_input_device);
@@ -130,8 +130,8 @@ namespace chaos
 		});
 	}
 
-	template<InputType INPUT_TYPE>
-	void InputReceiverInterface::MarkInputConsumedInApplicationCache(INPUT_TYPE in_input, InputDeviceInterface const* in_input_device)
+	template<BasicInputType BASIC_INPUT_TYPE>
+	void InputReceiverInterface::MarkInputConsumedInApplicationCache(BASIC_INPUT_TYPE in_input, InputDeviceInterface const* in_input_device)
 	{
 		if (in_input_device != nullptr)
 			if (WindowApplication* window_application = Application::GetInstance())

@@ -21,8 +21,8 @@ namespace chaos
 		virtual bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action = {});
 
 		/** utility method to process Inputs directly without any explicit request */
-		template<InputTypeExt INPUT_TYPE_EXT>
-		bool CheckAndProcess(INPUT_TYPE_EXT in_input, char const* in_title, InputAction const& in_action)
+		template<AnyInputType ANY_INPUT_TYPE>
+		bool CheckAndProcess(ANY_INPUT_TYPE in_input, char const* in_title, InputAction const& in_action)
 		{
 			return CheckAndProcess(JustActivated(in_input), in_title, in_action);
 		}

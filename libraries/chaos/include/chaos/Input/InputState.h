@@ -6,11 +6,11 @@ namespace chaos
 	enum class InputStatusCheckType;
 
 	template<typename T>
-	class InputStateType;
+	class InputState;
 
 	template<AnyInputType T>
 	struct InputTypeToStateType : public boost::mpl::identity<
-		InputStateType<
+		InputState<
 			InputTypeToValueType_t<T>
 		>
 	> {};
@@ -56,11 +56,11 @@ namespace chaos
 
 
 	/**
-	* InputStateType: base class for key/axis/stick state
+	* InputState: base class for key/axis/stick state
 	*/
 
 	template<typename T>
-	class InputStateType
+	class InputState
 	{
 		friend class InputDeviceInterface;
 
@@ -226,43 +226,43 @@ namespace chaos
 	 */
 
 	template<typename T>
-	bool IsInputActive(InputStateType<T> const& state)
+	bool IsInputActive(InputState<T> const& state)
 	{
 		return state.IsActive();
 	}
 
 	template<typename T>
-	bool IsInputInactive(InputStateType<T> const& state)
+	bool IsInputInactive(InputState<T> const& state)
 	{
 		return state.IsInactive();
 	}
 
 	template<typename T>
-	bool IsInputJustActivated(InputStateType<T> const& state)
+	bool IsInputJustActivated(InputState<T> const& state)
 	{
 		return state.IsJustActivated();
 	}
 
 	template<typename T>
-	bool IsInputJustDeactivated(InputStateType<T> const& state)
+	bool IsInputJustDeactivated(InputState<T> const& state)
 	{
 		return state.IsJustDeactivated();
 	}
 
 	template<typename T>
-	bool IsInputActiveRepeated(InputStateType<T> const& state)
+	bool IsInputActiveRepeated(InputState<T> const& state)
 	{
 		return state.IsActiveRepeated();
 	}
 
 	template<typename T>
-	bool IsInputInactiveRepeated(InputStateType<T> const& state)
+	bool IsInputInactiveRepeated(InputState<T> const& state)
 	{
 		return state.IsInactiveRepeated();
 	}
 
 	template<typename T>
-	bool IsInputActive(std::optional<InputStateType<T>> const & state)
+	bool IsInputActive(std::optional<InputState<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
@@ -270,7 +270,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputInactive(std::optional<InputStateType<T>> const & state)
+	bool IsInputInactive(std::optional<InputState<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
@@ -278,7 +278,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputJustActivated(std::optional<InputStateType<T>> const & state)
+	bool IsInputJustActivated(std::optional<InputState<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
@@ -286,7 +286,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputJustDeactivated(std::optional<InputStateType<T>> const & state)
+	bool IsInputJustDeactivated(std::optional<InputState<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
@@ -294,7 +294,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputActiveRepeated(std::optional<InputStateType<T>> const & state)
+	bool IsInputActiveRepeated(std::optional<InputState<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;
@@ -302,7 +302,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputInactiveRepeated(std::optional<InputStateType<T>> const & state)
+	bool IsInputInactiveRepeated(std::optional<InputState<T>> const & state)
 	{
 		if (!state.has_value())
 			return false;

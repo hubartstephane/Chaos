@@ -42,7 +42,7 @@ namespace chaos
 		std::optional<Input2DState> GetInputState(MappedInput2D const & input) const;
 		/** gets any CompositeInput state */
 		template<typename... PARAMS>
-		requires SameInputValueType<PARAMS...>
+		requires HaveSameInputValueType<PARAMS...>
 		auto GetInputState(CombinedInput<PARAMS...> const & input) const;
 
 		/** enumerate keys */
@@ -106,7 +106,7 @@ namespace chaos
 #else
 
 template<typename... PARAMS>
-requires SameInputValueType<PARAMS...>
+requires HaveSameInputValueType<PARAMS...>
 auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) const
 {
 	using input_value_type = CombinedInput<PARAMS...>::input_value_type;

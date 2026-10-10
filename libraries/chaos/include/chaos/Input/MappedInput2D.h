@@ -14,6 +14,9 @@ namespace chaos
 	{
 	public:
 
+		/** the kind of data this input produces */
+		using input_value_type = glm::vec2;
+
 		/** the default mapping with keyboard */
 		static MappedInput2D const keyboard_arrows;
 		/** the default mapping with dpad */

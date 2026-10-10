@@ -14,6 +14,9 @@ namespace chaos
 	{
 	public:
 
+		/** the kind of data this input produces */
+		using input_value_type = float;
+
 		/** the default mapping with keyboard */
 		static MappedInput1D const keyboard_horizontal_arrows;
 		/** the default mapping with keyboard */

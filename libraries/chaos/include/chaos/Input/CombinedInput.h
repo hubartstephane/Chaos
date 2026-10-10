@@ -3,13 +3,13 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 template<typename FIRST, typename... PARAMS>
-concept SameInputValueType =
+concept HaveSameInputValueType =
 (
 	std::same_as<InputTypeToValueType_t<FIRST>, InputTypeToValueType_t<PARAMS>> && ...
 );
 
 template<typename... PARAMS>
-requires SameInputValueType<PARAMS...>
+requires HaveSameInputValueType<PARAMS...>
 class CombinedInput;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -19,7 +19,7 @@ class CombinedInput;
 	*/
 
 template<typename... PARAMS>
-requires SameInputValueType<PARAMS...>
+requires HaveSameInputValueType<PARAMS...>
 class CombinedInput
 {
 public:

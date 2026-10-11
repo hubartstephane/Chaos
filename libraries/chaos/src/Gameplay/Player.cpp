@@ -380,8 +380,12 @@ namespace chaos
 
 	bool Player::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)
 	{
-		auto composed_device = MakeComposedInputDevices(in_input_device, gamepad.get());
-		return in_func(&composed_device);
+		if (gamepad != nullptr)
+		{
+			auto composed_device = MakeComposedInputDevices(in_input_device, gamepad.get());
+			return in_func(&composed_device);
+		}
+		return InputReceiverInterface::InvokeWithUpgradedInputDevice(in_input_device, in_func);
 	}
 
 	bool Player::TraverseInputReceiver(InputReceiverTraverser & in_traverser)

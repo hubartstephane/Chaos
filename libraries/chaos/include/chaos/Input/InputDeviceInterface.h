@@ -137,22 +137,22 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 
 	// if there is a POS and a NEG value, result is 0
 	// elsewhere returns the direction which is not null
-	auto MergeAxisValues = [](float min_value, float max_value)
+	auto MergeAxisValues = [](float min_neg_value, float max_pos_value)
 	{
-		if (max_value == 0.0f && min_value < 0.0f)
-			return min_value;
-		if (max_value > 0.0f && min_value == 0.0f)
-			return max_value;
+		if (max_pos_value == 0.0f && min_neg_value < 0.0f)
+			return min_neg_value;
+		if (max_pos_value > 0.0f && min_neg_value == 0.0f)
+			return max_pos_value;
 		return 0.0f;
 	};
 
 	// update MIN & MAX value according to VALUE sign
-	auto UpdateMinAndMaxAxisValue = [](float value, float & min_value, float & max_value)
+	auto UpdateMinAndMaxAxisValue = [](float value, float & min_neg_value, float & max_pos_value)
 	{
 		if (value > 0.0f)
-			max_value = std::max(max_value, value);
+			max_pos_value = std::max(max_pos_value, value);
 		else if (value < 0.0f)
-			min_value = std::min(min_value, value);
+			min_neg_value = std::min(min_neg_value, value);
 	};
 
 	// KEY
@@ -179,10 +179,10 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 	{
 		std::optional<Input1DState> result;
 
-		float min_value = 0.0f;
-		float max_value = 0.0f;
-		float min_previous_value = 0.0f;
-		float max_previous_value = 0.0f;
+		float min_neg_value = 0.0f;
+		float max_pos_value = 0.0f;
+		float previous_min_neg_value = 0.0f;
+		float previous_max_pos_value = 0.0f;
 
 		// compute min & max value
 		auto CombineChildInputFunc = [&](std::optional<Input1DState> & inout_result, std::optional<Input1DState> const & child_state)
@@ -191,16 +191,16 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 				child_state->previous_value :
 				child_state->value;
 
-			UpdateMinAndMaxAxisValue(child_state->value, min_value, max_value);
-			UpdateMinAndMaxAxisValue(child_previous_value, min_previous_value, max_previous_value);
+			UpdateMinAndMaxAxisValue(child_state->value, min_neg_value, max_pos_value);
+			UpdateMinAndMaxAxisValue(child_previous_value, previous_min_neg_value, previous_max_pos_value);
 		};
 
 		CombineAllChildInputs(result, CombineChildInputFunc);
 
 		if (result.has_value())
 		{
-			result->value = MergeAxisValues(min_value, max_value);
-			result->previous_value = MergeAxisValues(min_previous_value, max_previous_value);
+			result->value = MergeAxisValues(min_neg_value, max_pos_value);
+			result->previous_value = MergeAxisValues(previous_min_neg_value, previous_max_pos_value);
 		}
 
 		return result;
@@ -210,10 +210,10 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 	{
 		std::optional<Input2DState> result;
 
-		glm::vec2 min_value = { 0.0f, 0.0f };
-		glm::vec2 max_value = { 0.0f, 0.0f };
-		glm::vec2 min_previous_value = { 0.0f, 0.0f };
-		glm::vec2 max_previous_value = { 0.0f, 0.0f };
+		glm::vec2 min_neg_value = { 0.0f, 0.0f };
+		glm::vec2 max_pos_value = { 0.0f, 0.0f };
+		glm::vec2 previous_min_neg_value = { 0.0f, 0.0f };
+		glm::vec2 previous_max_pos_value = { 0.0f, 0.0f };
 
 		// compute min & max value
 		auto CombineChildInputFunc = [&](std::optional<Input2DState>& inout_result, std::optional<Input2DState> const& child_state)
@@ -224,8 +224,8 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 
 			for (size_t axis : {0, 1})
 			{
-				UpdateMinAndMaxAxisValue(child_state->value[axis], min_value[axis], max_value[axis]);
-				UpdateMinAndMaxAxisValue(child_previous_value[axis], min_previous_value[axis], max_previous_value[axis]);
+				UpdateMinAndMaxAxisValue(child_state->value[axis], min_neg_value[axis], max_pos_value[axis]);
+				UpdateMinAndMaxAxisValue(child_previous_value[axis], previous_min_neg_value[axis], previous_max_pos_value[axis]);
 			}
 		};
 
@@ -235,8 +235,8 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 		{
 			for (size_t axis : {0, 1})
 			{
-				result->value[axis] = MergeAxisValues(min_value[axis], max_value[axis]);
-				result->previous_value[axis] = MergeAxisValues(min_previous_value[axis], max_previous_value[axis]);
+				result->value[axis] = MergeAxisValues(min_neg_value[axis], max_pos_value[axis]);
+				result->previous_value[axis] = MergeAxisValues(previous_min_neg_value[axis], previous_max_pos_value[axis]);
 			}
 		}
 

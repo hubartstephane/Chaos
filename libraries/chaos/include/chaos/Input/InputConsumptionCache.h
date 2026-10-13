@@ -35,7 +35,6 @@ namespace chaos
 		ConsultOnly = 1 // consult cache (so call can fail) but do not lock resource for further calls
 	};
 
-
 	/**
 	 * InputStateResponseStatus: indicate whether the query is sucessful or not
 	 */
@@ -45,18 +44,6 @@ namespace chaos
 		Failure = 0,
 		Success = 1
 	};
-
-
-
-
-
-
-
-
-
-
-
-
 
 	/**
 	 * InputStateResponseFlags: bitfield used to describe what kind of event happened during a input query
@@ -71,13 +58,6 @@ namespace chaos
 		SuccessfulInput  = 8  // the request involved an input that was succesfully 
 	};
 
-
-
-
-
-
-
-
 	/**
 	 * InputStateResponseType: result coming from request to consumption cache
 	 */
@@ -91,12 +71,6 @@ namespace chaos
 		std::optional<InputTypeToStateType_t<BASIC_INPUT_TYPE>> input_state;
 		/** indicates whether the response is a success or not */
 		InputStateResponseStatus response_status = InputStateResponseStatus::Failure;
-
-
-
-
-
-
 		/** the bitfield of what happened during request */
 		InputStateResponseFlags response_flags = InputStateResponseFlags::None;
 	};
@@ -115,33 +89,13 @@ namespace chaos
 	public:
 
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		template<BasicInputType BASIC_INPUT_TYPE>
-		InputStateResponse_t<BASIC_INPUT_TYPE> QueryInputState(
-			BASIC_INPUT_TYPE in_input,
+		template<AnyInputType ANY_INPUT_TYPE>
+		InputStateResponse_t<ANY_INPUT_TYPE> QueryInputState(
+			ANY_INPUT_TYPE const & in_input,
 			InputReceiverInterface const* in_input_receiver,
 			InputDeviceInterface const* in_input_device,
 			InputStateQueryFlags in_query_flags = InputStateQueryFlags::None
 		);
-
-		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		InputStateResponse_t<MappedInput1D> QueryInputState(
-			MappedInput1D const & in_input, 
-			InputReceiverInterface const* in_input_receiver, 
-			InputDeviceInterface const* in_input_device, 
-			InputStateQueryFlags in_query_flags = InputStateQueryFlags::None);
-
-		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		InputStateResponse_t<MappedInput2D> QueryInputState(
-			MappedInput2D const & in_input, 
-			InputReceiverInterface const* in_input_receiver, 
-			InputDeviceInterface const* in_input_device, 
-			InputStateQueryFlags in_query_flags = InputStateQueryFlags::None);
-
-
-
-
-
-
 
 		/** all incomming input requests will be considered as consumed */
 		bool SetAllInputConsumer(InputReceiverInterface const* in_input_receiver);
@@ -175,15 +129,28 @@ namespace chaos
 			InputReceiverInterface const* in_input_receiver, 
 			InputStateQueryFlags in_query_flags, 
 			InputStateResponseFlags & out_response_flags);
+		/** internal method that check whether an input or related inputs has already been consumed yet. Mark it as consumed */
+		InputStateResponseStatus TryConsumeInput(
+			MappedInput1D const in_input,
+			InputReceiverInterface const* in_input_receiver,
+			InputStateQueryFlags in_query_flags,
+			InputStateResponseFlags& out_response_flags);
+		/** internal method that check whether an input or related inputs has already been consumed yet. Mark it as consumed */
+		InputStateResponseStatus TryConsumeInput(
+			MappedInput2D const in_input,
+			InputReceiverInterface const* in_input_receiver,
+			InputStateQueryFlags in_query_flags,
+			InputStateResponseFlags& out_response_flags);
+		/** internal method that check whether an input or related inputs has already been consumed yet. Mark it as consumed */
+		template<typename... PARAMS>
+		requires HaveSameInputValueType<PARAMS...>
+		InputStateResponseStatus TryConsumeInput(
+			CombinedInput<PARAMS...> const& in_input,
+			InputReceiverInterface const* in_input_receiver,
+			InputStateQueryFlags in_query_flags,
+			InputStateResponseFlags& out_response_flags);
 
-
-
-
-
-
-
-
-		
+		/** internal method to consume a basic input */
 		template<BasicInputType BASIC_INPUT_TYPE>
 		InputStateResponseStatus DoTryConsumeInput(
 			BASIC_INPUT_TYPE in_input,
@@ -191,24 +158,7 @@ namespace chaos
 			InputStateQueryFlags in_query_flags,
 			InputStateResponseFlags& out_response_flags);
 
-
-
-
-
-
-
-		/** utility function to query for all keys from mapped input */
-		template<MappedInputType MAPPED_INPUT_TYPE>
-		InputStateResponse_t<MAPPED_INPUT_TYPE> QueryMappedInputState(
-			MAPPED_INPUT_TYPE const& in_input,
-			std::initializer_list<Key> const& keys,
-			InputReceiverInterface const* in_input_receiver,
-			InputDeviceInterface const* in_input_device,
-			InputStateQueryFlags in_query_flags
-		);
-
 		/** consomme all inputs (with relations) for a given one */
-
 		using ConsumeRelatedInputFunc = LightweightFunction<InputStateResponseStatus(InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags& out_response_flags)>;
 
 		template<BasicInputType BASIC_INPUT_TYPE>
@@ -218,15 +168,6 @@ namespace chaos
 			InputStateQueryFlags in_query_flags,
 			InputStateResponseFlags& out_response_flags,
 			ConsumeRelatedInputFunc consume_related_input_func
-		);
-
-		/** finalize query result */
-		template<AnyInputType ANY_INPUT_TYPE>
-		InputStateResponse_t<ANY_INPUT_TYPE> FinalizeResponse(
-			ANY_INPUT_TYPE const & in_input,
-			InputDeviceInterface const* in_input_device, 
-			InputStateResponseFlags reponse_flags,
-			InputStateResponseStatus response_status
 		);
 
 	protected:
@@ -248,27 +189,12 @@ namespace chaos
 
 #else
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	InputStateResponse_t<BASIC_INPUT_TYPE> InputConsumptionCache::QueryInputState(BASIC_INPUT_TYPE in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
+	template<AnyInputType ANY_INPUT_TYPE>
+	InputStateResponse_t<ANY_INPUT_TYPE> InputConsumptionCache::QueryInputState(ANY_INPUT_TYPE const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
 	{
 		InputStateResponseFlags  response_flags  = InputStateResponseFlags::None;
 		InputStateResponseStatus response_status = TryConsumeInput(in_input, in_input_receiver, in_query_flags, response_flags);
-		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
-	}
 
-	template<MappedInputType MAPPED_INPUT_TYPE>
-	InputStateResponse_t<MAPPED_INPUT_TYPE> InputConsumptionCache::QueryMappedInputState(MAPPED_INPUT_TYPE const& in_input, std::initializer_list<Key> const& keys, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
-	{
-		InputStateResponseFlags  response_flags = InputStateResponseFlags::None;
-		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
-		for (Key key : keys)
-			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
-		return FinalizeResponse(in_input, in_input_device, response_flags, response_status);
-	}
-
-	template<AnyInputType ANY_INPUT_TYPE>
- 	InputStateResponse_t<ANY_INPUT_TYPE> InputConsumptionCache::FinalizeResponse(ANY_INPUT_TYPE const & in_input, InputDeviceInterface const* in_input_device, InputStateResponseFlags response_flags, InputStateResponseStatus response_status)
-	{
 		if (response_status == InputStateResponseStatus::Failure)
 			return { {}, InputStateResponseStatus::Failure, InputStateResponseFlags::None }; // in case of FAILURE, ignore additionnal flags info. They are incomplete anyway (missing UNHANDLED_INPUT)
 

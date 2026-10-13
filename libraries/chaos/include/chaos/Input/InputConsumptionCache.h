@@ -35,6 +35,7 @@ namespace chaos
 		ConsultOnly = 1 // consult cache (so call can fail) but do not lock resource for further calls
 	};
 
+
 	/**
 	 * InputStateResponseStatus: indicate whether the query is sucessful or not
 	 */
@@ -44,6 +45,18 @@ namespace chaos
 		Failure = 0,
 		Success = 1
 	};
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * InputStateResponseFlags: bitfield used to describe what kind of event happened during a input query
@@ -58,6 +71,13 @@ namespace chaos
 		SuccessfulInput  = 8  // the request involved an input that was succesfully 
 	};
 
+
+
+
+
+
+
+
 	/**
 	 * InputStateResponseType: result coming from request to consumption cache
 	 */
@@ -71,6 +91,12 @@ namespace chaos
 		std::optional<InputTypeToStateType_t<BASIC_INPUT_TYPE>> input_state;
 		/** indicates whether the response is a success or not */
 		InputStateResponseStatus response_status = InputStateResponseStatus::Failure;
+
+
+
+
+
+
 		/** the bitfield of what happened during request */
 		InputStateResponseFlags response_flags = InputStateResponseFlags::None;
 	};
@@ -98,9 +124,24 @@ namespace chaos
 		);
 
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		InputStateResponse_t<MappedInput1D> QueryInputState(MappedInput1D const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags = InputStateQueryFlags::None);
+		InputStateResponse_t<MappedInput1D> QueryInputState(
+			MappedInput1D const & in_input, 
+			InputReceiverInterface const* in_input_receiver, 
+			InputDeviceInterface const* in_input_device, 
+			InputStateQueryFlags in_query_flags = InputStateQueryFlags::None);
+
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
-		InputStateResponse_t<MappedInput2D> QueryInputState(MappedInput2D const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags = InputStateQueryFlags::None);
+		InputStateResponse_t<MappedInput2D> QueryInputState(
+			MappedInput2D const & in_input, 
+			InputReceiverInterface const* in_input_receiver, 
+			InputDeviceInterface const* in_input_device, 
+			InputStateQueryFlags in_query_flags = InputStateQueryFlags::None);
+
+
+
+
+
+
 
 		/** all incomming input requests will be considered as consumed */
 		bool SetAllInputConsumer(InputReceiverInterface const* in_input_receiver);
@@ -117,18 +158,44 @@ namespace chaos
 	protected:
 
 		/** internal method that check whether an input or related inputs has already been consumed yet. Mark it as consumed */
-		InputStateResponseStatus TryConsumeInput(Key in_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags & out_response_flags);
+		InputStateResponseStatus TryConsumeInput(
+			Key in_input, 
+			InputReceiverInterface const* in_input_receiver, 
+			InputStateQueryFlags in_query_flags, 
+			InputStateResponseFlags & out_response_flags);
 		/** internal method that check whether an input or related inputs has already been consumed yet. Mark it as consumed */
-		InputStateResponseStatus TryConsumeInput(Input1D in_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags & out_response_flags);
+		InputStateResponseStatus TryConsumeInput(
+			Input1D in_input, 
+			InputReceiverInterface const* in_input_receiver, 
+			InputStateQueryFlags in_query_flags, 
+			InputStateResponseFlags & out_response_flags);
 		/** internal method that check whether an input or related inputs has already been consumed yet. Mark it as consumed */
-		InputStateResponseStatus TryConsumeInput(Input2D in_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags & out_response_flags);
+		InputStateResponseStatus TryConsumeInput(
+			Input2D in_input, 
+			InputReceiverInterface const* in_input_receiver, 
+			InputStateQueryFlags in_query_flags, 
+			InputStateResponseFlags & out_response_flags);
 
-		/** internal method that check whether an input has already been consumed yet. Mark it as consumed */
-		InputStateResponseStatus DoTryConsumeInput(Key in_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags & out_response_flags);
-		/** internal method that check whether an input has already been consumed yet. Mark it as consumed */
-		InputStateResponseStatus DoTryConsumeInput(Input1D in_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags & out_response_flags);
-		/** internal method that check whether an input has already been consumed yet. Mark it as consumed */
-		InputStateResponseStatus DoTryConsumeInput(Input2D in_input, InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags & out_response_flags);
+
+
+
+
+
+
+
+		
+		template<BasicInputType BASIC_INPUT_TYPE>
+		InputStateResponseStatus DoTryConsumeInput(
+			BASIC_INPUT_TYPE in_input,
+			InputReceiverInterface const* in_input_receiver,
+			InputStateQueryFlags in_query_flags,
+			InputStateResponseFlags& out_response_flags);
+
+
+
+
+
+
 
 		/** utility function to query for all keys from mapped input */
 		template<MappedInputType MAPPED_INPUT_TYPE>
@@ -141,13 +208,16 @@ namespace chaos
 		);
 
 		/** consomme all inputs (with relations) for a given one */
+
+		using ConsumeRelatedInputFunc = LightweightFunction<InputStateResponseStatus(InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags& out_response_flags)>;
+
 		template<BasicInputType BASIC_INPUT_TYPE>
 		InputStateResponseStatus TryConsumeInputAndRelated(
 			BASIC_INPUT_TYPE in_input, 
 			InputReceiverInterface const* in_input_receiver, 
 			InputStateQueryFlags in_query_flags,
 			InputStateResponseFlags& out_response_flags,
-			LightweightFunction<InputStateResponseStatus()> consume_related_input_func
+			ConsumeRelatedInputFunc consume_related_input_func
 		);
 
 		/** finalize query result */

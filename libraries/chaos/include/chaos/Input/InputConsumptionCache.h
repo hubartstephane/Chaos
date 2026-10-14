@@ -13,15 +13,8 @@ namespace chaos
 	enum class InputStateQueryFlags;
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(InputStateQueryFlags, CHAOS_API);
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	class InputStateResponseType;
-
-	CHAOS_GENERATE_CLASS_MAPPING_DECLARATION(InputStateResponse, AnyInputType);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputStateResponse, Key, InputStateResponseType<Key>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputStateResponse, Input1D, InputStateResponseType<Input1D>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputStateResponse, Input2D, InputStateResponseType<Input2D>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputStateResponse, MappedInput1D, InputStateResponseType<Input1D>);
-	CHAOS_GENERATE_CLASS_MAPPING_SPECIALIZATION(InputStateResponse, MappedInput2D, InputStateResponseType<Input2D>);
+	template<AnyInputType ANY_INPUT_TYPE>
+	class InputStateResponse;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -59,16 +52,16 @@ namespace chaos
 	};
 
 	/**
-	 * InputStateResponseType: result coming from request to consumption cache
+	 * InputStateResponse: result coming from request to consumption cache
 	 */
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	class InputStateResponseType
+	template<AnyInputType ANY_INPUT_TYPE>
+	class InputStateResponse
 	{
 	public:
 
 		/** the state of the input */
-		std::optional<InputTypeToStateType_t<BASIC_INPUT_TYPE>> input_state;
+		std::optional<InputTypeToStateType_t<ANY_INPUT_TYPE>> input_state;
 		/** indicates whether the response is a success or not */
 		InputStateResponseStatus response_status = InputStateResponseStatus::Failure;
 		/** the bitfield of what happened during request */
@@ -90,7 +83,7 @@ namespace chaos
 
 		/** check whether the input is still available and lock it for further requests (do the same for related inputs) */
 		template<AnyInputType ANY_INPUT_TYPE>
-		InputStateResponse_t<ANY_INPUT_TYPE> QueryInputState(
+		InputStateResponse<ANY_INPUT_TYPE> QueryInputState(
 			ANY_INPUT_TYPE const & in_input,
 			InputReceiverInterface const* in_input_receiver,
 			InputDeviceInterface const* in_input_device,
@@ -190,7 +183,7 @@ namespace chaos
 #else
 
 	template<AnyInputType ANY_INPUT_TYPE>
-	InputStateResponse_t<ANY_INPUT_TYPE> InputConsumptionCache::QueryInputState(ANY_INPUT_TYPE const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
+	InputStateResponse<ANY_INPUT_TYPE> InputConsumptionCache::QueryInputState(ANY_INPUT_TYPE const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)
 	{
 		InputStateResponseFlags  response_flags  = InputStateResponseFlags::None;
 		InputStateResponseStatus response_status = TryConsumeInput(in_input, in_input_receiver, in_query_flags, response_flags);
@@ -208,6 +201,30 @@ namespace chaos
 
 		return { input_state, InputStateResponseStatus::Success, response_flags };
 	}
+
+	template<typename... PARAMS>
+	requires HaveSameInputValueType<PARAMS...>
+	InputStateResponseStatus InputConsumptionCache::TryConsumeInput(
+		CombinedInput<PARAMS...> const & in_input,
+		InputReceiverInterface const* in_input_receiver,
+		InputStateQueryFlags in_query_flags,
+		InputStateResponseFlags& out_response_flags)
+	{
+		InputStateResponseFlags  response_flags = InputStateResponseFlags::None;
+		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
+
+		std::apply([&](auto const & ... child_request)
+		{
+			auto TryConsumeInputChild = [&](auto const& child_request)
+			{
+				response_status &= TryConsumeInput(child_request, in_input_receiver, in_query_flags, response_flags);
+			};
+			(TryConsumeInputChild(child_request), ...);
+
+		}, in_input.child_inputs);
+
+		return response_status;
+	};
 
 #endif
 

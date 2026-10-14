@@ -182,30 +182,6 @@ namespace chaos
 		return response_status;		
 	}
 
-	template<typename... PARAMS>
-	requires HaveSameInputValueType<PARAMS...>
-	InputStateResponseStatus TryConsumeInput(
-		CombinedInput<PARAMS...> const & in_input,
-		InputReceiverInterface const* in_input_receiver,
-		InputStateQueryFlags in_query_flags,
-		InputStateResponseFlags& out_response_flags)
-	{
-		InputStateResponseFlags  response_flags = InputStateResponseFlags::None;
-		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
-
-		std::apply([&](auto const & ... child_request)
-		{
-			auto TryConsumeInputChild = [&](auto const& child_request)
-			{
-				response_status &= TryConsumeInput(child_request, in_input_receiver, in_query_flags, response_flags);
-			};
-			(TryConsumeInputChild(child_request), ...);
-
-		}, in_input.child_inputs);
-
-		return response_status;
-	};
-
 	bool InputConsumptionCache::SetAllKeyConsumer(InputReceiverInterface const* in_input_receiver)
 	{
 		if (!all_key_consumer.has_value() || all_key_consumer.value() == in_input_receiver)

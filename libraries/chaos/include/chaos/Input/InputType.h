@@ -32,28 +32,6 @@ namespace chaos
 		typename T::input_value_type
 	>{};
 	
-#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-	template<BasicInputType BASIC_INPUT_TYPE>
-	InputDeviceType GetDeviceForInput(BASIC_INPUT_TYPE in_input)
-	{
-		if (IsKeyboardInput(in_input))
-			return InputDeviceType::Keyboard;
-		if (IsMouseInput(in_input))
-			return InputDeviceType::Mouse;
-		if (IsGamepadInput(in_input))
-			return InputDeviceType::Gamepad;
-		return InputDeviceType::Unknown;
-	}
-
-	template<BasicInputType BASIC_INPUT_TYPE>
-	char const* GetInputName(BASIC_INPUT_TYPE in_input)
-	{
-		if (char const* result = EnumToString(in_input))
-			return result;
-		return "Unknown";
-	}
-
 #endif
 
 }; // namespace chaos

@@ -6,6 +6,7 @@
 #include "chaos/Input/MappedInput2D.h"
 #include "chaos/Input/InputType.h"
 #include "chaos/Input/CombinedInput.h"
+#include "chaos/Input/InputTools.h"
 #include "chaos/Input/KeyboardLayout.h"
 #include "chaos/Input/KeyboardLayoutConversion.h"
 #include "chaos/Input/InputDeviceInterface.h"
@@ -36,4 +37,3 @@
 #include "chaos/Input/DelegateInputReceiverTraverser.h"
 #include "chaos/Input/GamepadState.h"
 #include "chaos/Input/GamepadManager.h"
-#include "chaos/Input/InputTools.h"

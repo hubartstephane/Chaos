@@ -51,6 +51,73 @@ namespace chaos
 		/** enumerate all relations involving some Input2D */
 		bool CHAOS_API EnumerateRelatedInputsDefinition(Input2D in_input, VirtualInput2DDefinitionEnumerationFunction func);
 
+		template<BasicInputType BASIC_INPUT_TYPE>
+		InputDeviceType GetDeviceForInput(BASIC_INPUT_TYPE in_input)
+		{
+			if (IsKeyboardInput(in_input))
+				return InputDeviceType::Keyboard;
+			if (IsMouseInput(in_input))
+				return InputDeviceType::Mouse;
+			if (IsGamepadInput(in_input))
+				return InputDeviceType::Gamepad;
+			return InputDeviceType::Unknown;
+		}
+
+		template<BasicInputType BASIC_INPUT_TYPE>
+		char const* GetInputName(BASIC_INPUT_TYPE in_input)
+		{
+			if (char const* result = EnumToString(in_input))
+				return result;
+			return "Unknown";
+		}
+
+		template<BasicInputType BASIC_INPUT_TYPE1, BasicInputType BASIC_INPUT_TYPE2>
+		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE1 in_input1, BASIC_INPUT_TYPE2 in_input2)
+		{
+			if constexpr (std::is_same_v<BASIC_INPUT_TYPE1, BASIC_INPUT_TYPE2>)
+			{
+				return (in_input1 == in_input2);
+			}
+			return false;
+		}
+
+		template<BasicInputType BASIC_INPUT_TYPE>
+		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE in_input1, MappedInput1D const & in_input2)
+		{
+			if constexpr (std::is_same_v<BASIC_INPUT_TYPE, Key>)
+			{
+				return 
+					IsBasicInputRelatedTo(in_input1, in_input2.neg_key) ||
+					IsBasicInputRelatedTo(in_input1, in_input2.neg_key);
+			}
+			return false;
+		}
+
+		template<BasicInputType BASIC_INPUT_TYPE>
+		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE in_input1, MappedInput2D const& in_input2)
+		{
+			if constexpr (std::is_same_v<BASIC_INPUT_TYPE, Key>)
+			{
+				return
+					IsBasicInputRelatedTo(in_input1, in_input2.left_key)  ||
+					IsBasicInputRelatedTo(in_input1, in_input2.right_key) ||
+					IsBasicInputRelatedTo(in_input1, in_input2.up_key)    ||
+					IsBasicInputRelatedTo(in_input1, in_input2.down_key);
+			}
+			return false;
+		}
+
+		template<BasicInputType BASIC_INPUT_TYPE, typename... PARAMS>
+		requires HaveSameInputValueType<PARAMS...>
+		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE in_input, CombinedInput<PARAMS...> const& in_combined_input)
+		{
+			return std::apply([&](const auto & ... in_child_input)
+			{
+				return (IsBasicInputRelatedTo(in_input, in_child_input) || ...);
+
+			}, in_combined_input.child_inputs);
+		}
+
 	}; // namespace InputTools
 
 #endif

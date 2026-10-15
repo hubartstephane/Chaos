@@ -88,36 +88,18 @@ namespace chaos
 		virtual char const * GetDebugInfo(InputConditionDebugInfoStorage & debug_info_storage) const override
 		{
 			char input_buffer[256];
-
-			if constexpr (std::is_same_v<input_type, MappedInput1D>)
-			{
-				std::snprintf(input_buffer, sizeof(input_buffer), "%s/%s",
-					EnumToString(input.neg_key),
-					EnumToString(input.pos_key));
-			}
-			else if constexpr (std::is_same_v<input_type, MappedInput2D>)
-			{
-				std::snprintf(input_buffer, sizeof(input_buffer), "%s/%s/%s/%s",
-					EnumToString(input.left_key),
-					EnumToString(input.right_key),
-					EnumToString(input.up_key),
-					EnumToString(input.down_key));
-			}
-			else if constexpr (BasicInputType<input_type>) // ignore mapped inputs
-			{
-				strcpy_s(input_buffer, sizeof(input_buffer), EnumToString(input));
-			}
+			InputTools::GetInputString(input, input_buffer, sizeof(input_buffer));
 
 			if (check_type == InputStatusCheckType::None)
 			{
 				if (out_state != nullptr || out_value != nullptr)
-					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query[%s]", input_buffer);
+					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Query(%s)", input_buffer);
 				else
-					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Misformed Query[%s]", input_buffer);
+					std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Misformed Query(%s)", input_buffer);
 			}
 			else
 			{
-				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s[%s]", EnumToString(check_type), input_buffer);
+				std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "%s(%s)", EnumToString(check_type), input_buffer);
 			}
 			return debug_info_storage.buffer;
 		}

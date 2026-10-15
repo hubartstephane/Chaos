@@ -20,9 +20,9 @@ namespace chaos
 		char buffer[256];
 		char const * modifiers_string = EnumToString(modifiers, buffer, sizeof(buffer));
 		if (wanted_value)
-			std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Mod+[%s]", modifiers_string);
+			std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Mod+(%s)", modifiers_string);
 		else
-			std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Mod-[%s]", modifiers_string);
+			std::snprintf(debug_info_storage.buffer, debug_info_storage.buffer_size, "Mod-(%s)", modifiers_string);
 		return debug_info_storage.buffer;
 	}
 

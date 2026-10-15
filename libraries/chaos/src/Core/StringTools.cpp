@@ -359,6 +359,36 @@ namespace chaos
 		{
 			return Strnicmp(src1.c_str(), src2.c_str(), count);
 		}
+
+		//
+		// Copy function
+		//
+
+		size_t Strncpy(char* dst, size_t dstlen, char const* src)
+		{
+			assert(dst != nullptr);
+			assert(src != nullptr);
+			assert(dstlen != 0); // require at least one byte for terminal zero
+
+			size_t i = 0;
+			while (i < dstlen - 1 && src[i] != 0)
+			{
+				dst[i] = src[i];
+				++i;
+			}
+			dst[i] = 0;
+
+			return i;
+		}
+
+		bool AppendToBufferAndAdvance(char* & dst, size_t & dstlen, char const* src)
+		{
+			size_t len = StringTools::Strncpy(dst, dstlen, src);
+			dst += len;
+			dstlen -= len;
+			return dstlen > 1; // if dstlen == 1 there is only room for the last zero (and it should already be there)
+		};
+
 		//
 		// IsEmpty
 		//

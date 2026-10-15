@@ -154,6 +154,12 @@ namespace chaos
 		CHAOS_API int Strnicmp(std::string const & src1, char const * src2, size_t count);
 		/** some comparaison short cuts */
 		CHAOS_API int Strnicmp(std::string const & src1, std::string const & src2, size_t count);
+		
+		/* copy function. this one force a zero terminal if buffer is too small. returns number of characters excluding the zero */
+		CHAOS_API size_t Strncpy(char * dst, size_t dstlen, char const * src);
+
+		/** copy string and move the buffer location for next copy. returns true if there is stil enough room in the buffer */
+		CHAOS_API bool AppendToBufferAndAdvance(char* & dst, size_t& dstlen, char const* src);
 
 		/** returns true whether the string is null or as 0 length */
 		CHAOS_API bool IsEmpty(char const * src);

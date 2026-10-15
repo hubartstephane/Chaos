@@ -40,8 +40,8 @@ public:
 						ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f }:
 						ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f };
 
-					char const* src_name = chaos::InputTools::GetInputName(src);
-					char const* dst_name = chaos::InputTools::GetInputName(dst);
+					char const* src_name = chaos::InputTools::GetBasicInputName(src);
+					char const* dst_name = chaos::InputTools::GetBasicInputName(dst);
 
 					ImGui::TextColored(color, "%s (%s) -> %s (current)", src_name, src_layout_name, dst_name);
 				}

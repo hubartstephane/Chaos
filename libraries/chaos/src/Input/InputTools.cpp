@@ -73,23 +73,35 @@ namespace chaos
 			});
 		}
 
-		void GetInputString(MappedInput1D const & in_input, char * in_buffer, size_t in_bufsize)
+		size_t GetInputString(MappedInput1D const & in_input, char * in_buffer, size_t in_bufsize)
 		{
-			std::snprintf(in_buffer, in_bufsize, "[%s - %s]",
-				GetInputName(in_input.neg_key),
-				GetInputName(in_input.pos_key));
+			size_t initial_bufsize = in_bufsize;
+
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, "MappedInput1D(") &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, GetBasicInputName(in_input.neg_key)) &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, " / ") && 
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, GetBasicInputName(in_input.pos_key)) &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, ")");
+
+			return size_t(initial_bufsize - in_bufsize);
 		}
 
-		void GetInputString(MappedInput2D const & in_input, char * in_buffer, size_t in_bufsize)
+		size_t GetInputString(MappedInput2D const & in_input, char * in_buffer, size_t in_bufsize)
 		{
-			std::snprintf(in_buffer, in_bufsize, "[%s - %s - %s - %s]",
-				GetInputName(in_input.left_key),
-				GetInputName(in_input.right_key),
-				GetInputName(in_input.up_key),
-				GetInputName(in_input.down_key));
+			size_t initial_bufsize = in_bufsize;
+
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, "MappedInput2D(") &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, GetBasicInputName(in_input.left_key)) &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, " / ") && 
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, GetBasicInputName(in_input.right_key)) &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, " / ") &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, GetBasicInputName(in_input.up_key)) &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, " / ") &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, GetBasicInputName(in_input.down_key)) &&
+			StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, ")");
+
+			return size_t(initial_bufsize - in_bufsize);
 		}
-
-
 
 	}; // namespace InputTools
 

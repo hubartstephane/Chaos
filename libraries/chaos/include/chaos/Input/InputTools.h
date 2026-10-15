@@ -66,7 +66,7 @@ namespace chaos
 
 		/** get the name from a basic input */
 		template<BasicInputType BASIC_INPUT_TYPE>
-		char const* GetInputName(BASIC_INPUT_TYPE in_input)
+		char const* GetBasicInputName(BASIC_INPUT_TYPE in_input)
 		{
 			if (char const* result = EnumToString(in_input))
 				return result;
@@ -115,29 +115,65 @@ namespace chaos
 		/** returns whether a coimbined input is related to one MappedInput1D */
 		template<BasicInputType BASIC_INPUT_TYPE, typename... PARAMS>
 		requires HaveSameInputValueType<PARAMS...>
-		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE in_input, CombinedInput<PARAMS...> const& in_combined_input)
+		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE in_input1, CombinedInput<PARAMS...> const& in_input2)
 		{
-			return std::apply([&](const auto & ... in_child_input)
+			return std::apply([&](auto const & ... in_child_input)
 			{
-				return (IsBasicInputRelatedTo(in_input, in_child_input) || ...);
+				return (IsBasicInputRelatedTo(in_input1, in_child_input) || ...);
 
-			}, in_combined_input.child_inputs);
+			}, in_input2.child_inputs);
 		}
 
 		/** get the formated string for a basic input */
 		template<BasicInputType BASIC_INPUT_TYPE>
-		void GetInputString(BASIC_INPUT_TYPE in_input, char * in_buffer, size_t in_bufsize)
+		size_t GetInputString(BASIC_INPUT_TYPE in_input, char * in_buffer, size_t in_bufsize)
 		{
-			strcpy_s(in_buffer, in_bufsize, GetInputName(in_input));
+			return StringTools::Strncpy(in_buffer, in_bufsize, GetBasicInputName(in_input));
 		}
 
 		/** get the formated string for a MappedInput1D */
-		void CHAOS_API GetInputString(MappedInput1D const & in_input, char * in_buffer, size_t in_bufsize);
+		size_t CHAOS_API GetInputString(MappedInput1D const & in_input, char * in_buffer, size_t in_bufsize);
 
 		/** get the formated string for a MappedInput2D */
-		void CHAOS_API GetInputString(MappedInput2D const & in_input, char * in_buffer, size_t in_bufsize);
+		size_t CHAOS_API GetInputString(MappedInput2D const & in_input, char * in_buffer, size_t in_bufsize);
 
+		/** get the formated string for a CombinedInput */
+		template<typename... PARAMS>
+		requires HaveSameInputValueType<PARAMS...>
+		size_t GetInputString(CombinedInput<PARAMS...> const& in_input, char* in_buffer, size_t in_bufsize)
+		{
+			return std::apply([&](auto const & ... in_child_input)
+			{
+				size_t initial_bufsize = in_bufsize;
 
+				auto AppendToBufferAndAdvance = [&](char const * src) mutable
+				{
+					return StringTools::AppendToBufferAndAdvance(in_buffer, in_bufsize, src);
+				};
+
+				size_t child_count = 0;
+
+				auto AppendChildInputNameAndAdvance = [&](auto const & in_input) mutable
+				{
+					if (child_count > 0)
+						if (!AppendToBufferAndAdvance(" / "))
+							return false;
+
+					size_t len = GetInputString(in_input, in_buffer, in_bufsize);
+					in_buffer  += len;
+					in_bufsize -= len;
+					++child_count;
+					return in_bufsize > 1;
+				};
+
+				AppendToBufferAndAdvance("Combined(") &&
+				(AppendChildInputNameAndAdvance(in_child_input) && ...) && // stop has soon as there are no room in buffer anymore
+				AppendToBufferAndAdvance(")");
+
+				return size_t(initial_bufsize - in_bufsize);
+
+			}, in_input.child_inputs);
+		}
 
 
 

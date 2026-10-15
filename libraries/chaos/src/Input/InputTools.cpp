@@ -73,6 +73,24 @@ namespace chaos
 			});
 		}
 
+		void GetInputString(MappedInput1D const & in_input, char * in_buffer, size_t in_bufsize)
+		{
+			std::snprintf(in_buffer, in_bufsize, "[%s - %s]",
+				GetInputName(in_input.neg_key),
+				GetInputName(in_input.pos_key));
+		}
+
+		void GetInputString(MappedInput2D const & in_input, char * in_buffer, size_t in_bufsize)
+		{
+			std::snprintf(in_buffer, in_bufsize, "[%s - %s - %s - %s]",
+				GetInputName(in_input.left_key),
+				GetInputName(in_input.right_key),
+				GetInputName(in_input.up_key),
+				GetInputName(in_input.down_key));
+		}
+
+
+
 	}; // namespace InputTools
 
 }; // namespace chaos

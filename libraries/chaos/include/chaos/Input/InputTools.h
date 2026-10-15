@@ -51,6 +51,7 @@ namespace chaos
 		/** enumerate all relations involving some Input2D */
 		bool CHAOS_API EnumerateRelatedInputsDefinition(Input2D in_input, VirtualInput2DDefinitionEnumerationFunction func);
 
+		/** get the device corresponding to a basic input */
 		template<BasicInputType BASIC_INPUT_TYPE>
 		InputDeviceType GetDeviceForInput(BASIC_INPUT_TYPE in_input)
 		{
@@ -63,6 +64,7 @@ namespace chaos
 			return InputDeviceType::Unknown;
 		}
 
+		/** get the name from a basic input */
 		template<BasicInputType BASIC_INPUT_TYPE>
 		char const* GetInputName(BASIC_INPUT_TYPE in_input)
 		{
@@ -71,6 +73,7 @@ namespace chaos
 			return "Unknown";
 		}
 
+		/** returns whether two basic inputs are related one to the other */
 		template<BasicInputType BASIC_INPUT_TYPE1, BasicInputType BASIC_INPUT_TYPE2>
 		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE1 in_input1, BASIC_INPUT_TYPE2 in_input2)
 		{
@@ -81,6 +84,7 @@ namespace chaos
 			return false;
 		}
 
+		/** returns whether a basic input is related to one MappedInput1D */
 		template<BasicInputType BASIC_INPUT_TYPE>
 		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE in_input1, MappedInput1D const & in_input2)
 		{
@@ -93,6 +97,7 @@ namespace chaos
 			return false;
 		}
 
+		/** returns whether a basic input is related to one MappedInput2D */
 		template<BasicInputType BASIC_INPUT_TYPE>
 		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE in_input1, MappedInput2D const& in_input2)
 		{
@@ -107,6 +112,7 @@ namespace chaos
 			return false;
 		}
 
+		/** returns whether a coimbined input is related to one MappedInput1D */
 		template<BasicInputType BASIC_INPUT_TYPE, typename... PARAMS>
 		requires HaveSameInputValueType<PARAMS...>
 		bool IsBasicInputRelatedTo(BASIC_INPUT_TYPE in_input, CombinedInput<PARAMS...> const& in_combined_input)
@@ -117,6 +123,34 @@ namespace chaos
 
 			}, in_combined_input.child_inputs);
 		}
+
+		/** get the formated string for a basic input */
+		template<BasicInputType BASIC_INPUT_TYPE>
+		void GetInputString(BASIC_INPUT_TYPE in_input, char * in_buffer, size_t in_bufsize)
+		{
+			strcpy_s(in_buffer, in_bufsize, GetInputName(in_input));
+		}
+
+		/** get the formated string for a MappedInput1D */
+		void CHAOS_API GetInputString(MappedInput1D const & in_input, char * in_buffer, size_t in_bufsize);
+
+		/** get the formated string for a MappedInput2D */
+		void CHAOS_API GetInputString(MappedInput2D const & in_input, char * in_buffer, size_t in_bufsize);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	}; // namespace InputTools
 

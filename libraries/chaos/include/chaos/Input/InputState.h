@@ -144,13 +144,17 @@ namespace chaos
 		/** change the value of the input */
 		void SetValue(type in_value)
 		{
-			double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
-			if (frame_time == update_time)
-				return;
+			// Some code (like handling mouse_move & mouse_wheel) events
+			// require to temporary accumulate value in this state then
+			// reset to 0 during the same state
 
-			previous_value = value;
-			value          = in_value;
-			update_time    = frame_time;
+			double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
+			if (frame_time != update_time)
+			{
+				update_time = frame_time;
+				previous_value = value;
+			}
+			value = in_value;
 		}
 
 		/** a generic check function */

@@ -107,16 +107,14 @@ namespace chaos
 			ImGui::TextColored(color, "%+f", value.x);
 			ImGui::TextColored(color, "%+f", value.y);
 
-			ImGui::TableNextColumn();
-			ImGui::TextColored(color, "%f", glm::length(state.value));
-
 			ImGui::PopID();
 		}
 	}
 
 	void ImGuiInputStateObjectBase::DisplayAllInput2DInfo(InputDeviceInterface const* in_input_device, char const* table_title, char const * title, ForAllInput2DFunction filter_func) const
 	{
-		ImGuiTools::DrawImGuiTable(table_title, {}, title, "Value", "Length")([&]()
+		//ImGuiTools::DrawImGuiTable(table_title, {}, title, "Value", "Length")([&]()
+		ImGuiTools::DrawImGuiTable(table_title, {}, title, "Value")([&]()
 		{
 			in_input_device->ForAllInput2D([&](Input2D input, Input2DState const & state)
 			{

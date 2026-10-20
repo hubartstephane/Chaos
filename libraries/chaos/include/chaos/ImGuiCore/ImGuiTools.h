@@ -39,7 +39,7 @@ namespace chaos
 
 			/** constructor (that opens a ImGui table) */
 			template<typename... COLUMN_NAME>
-			DrawImGuiTable(char const* title, std::optional<int> table_flags, COLUMN_NAME... column_name)
+			DrawImGuiTable(char const* title, std::optional<int> table_flags, COLUMN_NAME... column_names)
 			{
 				static_assert((std::is_convertible_v<COLUMN_NAME, const char*> && ...)); // accept only char const * for column names
 
@@ -48,7 +48,24 @@ namespace chaos
 				int column_count = sizeof...(COLUMN_NAME);
 				if (ImGui::BeginTable(title, column_count, flags))
 				{
-					(ImGui::TableSetupColumn(column_name), ...);
+					(ImGui::TableSetupColumn(column_names), ...);
+					ImGui::TableHeadersRow();
+
+					table_opened = true;
+				}
+			}
+			/** constructor (that opens a ImGui table) */
+			DrawImGuiTable(char const* title, std::optional<int> table_flags, std::span<std::string_view> column_names)
+			{
+				if (column_names.size() == 0)
+					return;
+
+				int flags = table_flags.value_or(ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg);
+
+				if (ImGui::BeginTable(title, (int)column_names.size(), flags))
+				{
+					for (std::string_view column_name : column_names)
+						ImGui::TableSetupColumn(column_name.data());
 					ImGui::TableHeadersRow();
 
 					table_opened = true;

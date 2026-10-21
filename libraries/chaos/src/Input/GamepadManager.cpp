@@ -344,7 +344,7 @@ namespace chaos
 		}
 #endif
 		// initialize all physical gamepads
-		for (size_t i = 0; i < MAX_SUPPORTED_GAMEPAD_COUNT; ++i)
+		for (size_t i = 0; i < CHAOS_SUPPORTED_GAMEPAD_COUNT; ++i)
 		{
 			PhysicalGamepad& physical_gamepad = physical_gamepads[i];
 			physical_gamepad.gamepad_index   = i;
@@ -410,9 +410,17 @@ namespace chaos
 		return true;
 	}
 
-	size_t GamepadManager::GetPhysicalGamepadCount() const
+	size_t GamepadManager::GetPresentPhysicalGamepadCount() const
 	{
 		return size_t(BitTools::popcount(present_physical_gamepads));
+	}
+
+	bool GamepadManager::ForEachPresentPhysicalGamepad(LightweightFunction<bool(PhysicalGamepad const &)> in_func) const
+	{	
+		return BitTools::ForEachBitForward(present_physical_gamepads, [&](uint32_t index)
+		{
+			return in_func(GetPhysicalGamepad(index));
+		});
 	}
 
 	void GamepadManager::TickForceFeedbackEffects(float delta_time)

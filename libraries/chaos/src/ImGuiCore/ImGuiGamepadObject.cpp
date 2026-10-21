@@ -13,24 +13,44 @@ namespace chaos
 		if (gamepad_manager == nullptr)
 			return;
 
-		size_t gamepad_count = gamepad_manager->GetPhysicalGamepadCount();
+		size_t gamepad_count = gamepad_manager->GetPresentPhysicalGamepadCount();
 		if (gamepad_count == 0)
 			return;
+
+		// the names of all physical present gamepads: "Gamepad 0", "Gamepad 1" ...
+#define CHAOS_GENERATE_GAMEPAD_TITLE(z, n, data) "Gamepad " #n,
+		std::string_view gamepad_names[] =
+		{
+			BOOST_PP_REPEAT(GLFW_JOYSTICK_LAST, CHAOS_GENERATE_GAMEPAD_TITLE, ~)
+		};
+#undef CHAOS_GENERATE_GAMEPAD_TITLE
+
+		// the name of all future columns including an extra room at the very begining
+#define CHAOS_GENERATE_GAMEPAD_TITLE(z, n, data) "",
+		std::string_view column_names[] =
+		{
+			"uninitialized yet",
+			BOOST_PP_REPEAT(GLFW_JOYSTICK_LAST, CHAOS_GENERATE_GAMEPAD_TITLE, ~)
+		};
+#undef CHAOS_GENERATE_GAMEPAD_TITLE
+
+		size_t column_index = 1; // start at 1 to skip the extra column
+		gamepad_manager->ForEachPresentPhysicalGamepad([&](PhysicalGamepad const& gamepad)
+		{
+			column_names[column_index++] = gamepad_names[gamepad.GetGamepadIndex()];
+			return false; // continue iteration
+		});
 
 		// generate a table with a header lambda, calling delegate to fill the content
 		auto DisplayTable = [&](char const * column0_title, auto const & fill_content_func)
 		{
-#define CHAOS_GENERATE_GAMEPAD_TITLE(z, n, data) "Gamepad " #n,
-			std::string_view titles[] =
-			{
-				column0_title,
-				BOOST_PP_REPEAT(GLFW_JOYSTICK_LAST, CHAOS_GENERATE_GAMEPAD_TITLE, ~)
-			};
-#undef CHAOS_GENERATE_GAMEPAD_TITLE
+			column_names[0] = column0_title; // override the very first column with extra title
 
-			std::span<std::string_view> column_titles = { &titles[0], gamepad_count + 1 };
+			std::span<std::string_view> column_titles = { &column_names[0], gamepad_count + 1 };
 
-			ImGuiTools::DrawImGuiTable(column0_title, {}, column_titles)([&]()
+			int table_flags =  ImGuiTableFlags_RowBg | ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_WidthFixed;
+
+			ImGuiTools::DrawImGuiTable(column0_title, { table_flags }, column_titles)([&]()
 			{
 				fill_content_func();
 			});
@@ -48,10 +68,8 @@ namespace chaos
 					ImGui::TableNextColumn();
 					ImGui::Text("%s", InputTools::GetBasicInputName(input));
 
-					for (size_t i = 0; i < gamepad_count ; ++i)
+					gamepad_manager->ForEachPresentPhysicalGamepad([&](PhysicalGamepad const& gamepad)
 					{
-						PhysicalGamepad const & gamepad = gamepad_manager->GetPhysicalGamepad(i);
-
 						auto input_state = gamepad.GetInputState(input);
 
 						ImGui::TableNextColumn();
@@ -63,7 +81,8 @@ namespace chaos
 							ImVec4 const& color = (input_state->IsActive()) ? red_color : white_color;
 							display_state_func(input_state.value(), color);
 						}
-					}
+						return false; // continue iteration
+					});
 				}
 			});
 		};
@@ -76,13 +95,12 @@ namespace chaos
 				ImGui::TableNextColumn();
 				ImGui::Text("%s", property_name);
 
-				for (size_t i = 0; i < gamepad_count; ++i)
+				gamepad_manager->ForEachPresentPhysicalGamepad([&](PhysicalGamepad const& gamepad)
 				{
-					PhysicalGamepad const& gamepad = gamepad_manager->GetPhysicalGamepad(i);
-
 					ImGui::TableNextColumn();
 					fill_property_func(gamepad);
-				}
+					return false; // continue iteration
+				});
 			};
 
 			DisplayProperty("Allocated", [](PhysicalGamepad const & gamepad)

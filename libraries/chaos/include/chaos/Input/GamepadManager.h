@@ -35,7 +35,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	*/
 
 	/** maximum number of supported physical gamepads */
-	static constexpr size_t MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
+	static constexpr size_t CHAOS_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
 
 	/**
 	* GamepadInputFilterSettings: some configuration describing how to handle gamepad input
@@ -337,9 +337,11 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** returns whether the given gamepad has any input set */
 		static bool HasAnyInputs(size_t in_gamepad_index, float in_dead_zone);
 		/** returns the number of physical devices */
-		size_t GetPhysicalGamepadCount() const;
-		/** gets a physical device */
+		size_t GetPresentPhysicalGamepadCount() const;
+		/** gets a physical device (beware, the gamepad might not be connected) */
 		PhysicalGamepad const & GetPhysicalGamepad(size_t in_index) const { return physical_gamepads[in_index]; }
+		/** iterate over all present physical gamepads */
+		bool ForEachPresentPhysicalGamepad(LightweightFunction<bool(PhysicalGamepad const&)> in_func) const;
 
 		/** return whether the manager is enabled */
 		bool IsEnabled() const;
@@ -388,7 +390,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		std::vector<shared_ptr<Gamepad>> user_gamepads;
 
 		/** the physical gamepads */
-		std::array<PhysicalGamepad, MAX_SUPPORTED_GAMEPAD_COUNT> physical_gamepads;
+		std::array<PhysicalGamepad, CHAOS_SUPPORTED_GAMEPAD_COUNT> physical_gamepads;
 		/** present physical gamepads */
 		uint32_t present_physical_gamepads = 0;
 		/** allocated physical gamepads */

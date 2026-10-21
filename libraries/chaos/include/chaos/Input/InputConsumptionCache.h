@@ -60,8 +60,7 @@ namespace chaos
 	{
 	public:
 
-		/** the state of the input */
-		std::optional<InputTypeToStateType_t<ANY_INPUT_TYPE>> input_state;
+		InputStateQueryResult<ANY_INPUT_TYPE> input_state;
 		/** indicates whether the response is a success or not */
 		InputStateResponseStatus response_status = InputStateResponseStatus::Failure;
 		/** the bitfield of what happened during request */
@@ -181,6 +180,16 @@ namespace chaos
 	};
 
 #else
+
+
+
+
+
+
+
+
+
+
 
 	template<AnyInputType ANY_INPUT_TYPE>
 	InputStateResponse<ANY_INPUT_TYPE> InputConsumptionCache::QueryInputState(ANY_INPUT_TYPE const & in_input, InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputStateQueryFlags in_query_flags)

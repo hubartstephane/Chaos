@@ -6,7 +6,7 @@ namespace chaos
 
 	enum class InputDeviceTypeMask;
 
-	template<BasicInputType BASIC_INPUT_TYPE>
+	template<AnyInputType ANY_INPUT_TYPE>
 	class InputStateQueryResult;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -41,13 +41,13 @@ namespace chaos
 	* InputStateQueryResult: result when querying for an input
 	*/
 
-	template<BasicInputType BASIC_INPUT_TYPE>
-	class InputStateQueryResult : public std::optional<InputTypeToStateType_t<BASIC_INPUT_TYPE>>
+	template<AnyInputType ANY_INPUT_TYPE>
+	class InputStateQueryResult : public std::optional<InputTypeToStateType_t<ANY_INPUT_TYPE>>
 	{
 
 	public:
 
-		using state_type = InputTypeToStateType_t<BASIC_INPUT_TYPE>;
+		using state_type = InputTypeToStateType_t<ANY_INPUT_TYPE>;
 
 		/** default constructor */
 		InputStateQueryResult() = default;

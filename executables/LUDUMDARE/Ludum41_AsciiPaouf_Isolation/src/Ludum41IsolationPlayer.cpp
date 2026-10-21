@@ -17,14 +17,6 @@ bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 	return true;
 }
 
-void LudumPlayer::TickPlayerDisplacement(float delta_time)
-{
-	float value = left_stick_position.x;
-	if (abs(right_stick_position.x) > abs(left_stick_position.x))
-		value = right_stick_position.x;
-	DisplacePlayerRacket(value * GetGame()->GetGamepadSensitivity() * delta_time); // even if 0 because this will ensure player Y is well placed even if no input is pressed
-}
-
 void LudumPlayer::DisplacePlayerRacket(float delta_x)
 {
 	LudumLevelInstance* ludum_level_instance = GetLevelInstance();
@@ -64,9 +56,12 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 	{
 		float value = 0.0f;
 
-		auto MoveRequest = QueryInput(chaos::MappedInput1D::keyboard_horizontal_arrows, &value);
+		auto Input = chaos::CombinedInput(
+			chaos::MappedInput1D::keyboard_horizontal_arrows,
+			chaos::Input1D::GamepadLeftAxisX,
+			chaos::MappedInput1D::gamepad_horizontal_dpad);
 
-		if (in_action_processor.CheckAndProcess(MoveRequest, "Move", [&]()
+		if (in_action_processor.CheckAndProcess(QueryInput(Input, &value), "Move", [&]()
 		{
 			float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
 

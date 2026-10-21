@@ -34,22 +34,10 @@ public:
 
 protected:
 
-#if 0
-	/** override */
-	virtual void TickPlayerDisplacement(float delta_time) override;
-#endif
 	/** override */
 	virtual bool OnMouseMoveImpl(chaos::MouseMoveEvent const & mouse_move_event) override;
 	/** override */
 	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context) override;
-
-#if 0
-	/** override */
-	virtual void HandleInputs(float delta_time, chaos::GamepadState const * gpd) override;
-#endif
-
-
-
 
 	/** override */
 	virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override;

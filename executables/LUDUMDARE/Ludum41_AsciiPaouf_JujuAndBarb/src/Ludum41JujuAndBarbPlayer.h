@@ -34,8 +34,6 @@ public:
 protected:
 
 	/** override */
-	virtual void TickPlayerDisplacement(float delta_time) override;
-	/** override */
 	virtual bool OnMouseMoveImpl(chaos::MouseMoveEvent const& mouse_move_event) override;
 
 	/** override */

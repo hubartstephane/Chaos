@@ -21,25 +21,25 @@ namespace chaos
 		return axes.size();
 	}
 
-	std::optional<KeyState> GamepadState::DoGetInputState(Key input) const
+	InputStateQueryResult<Key> GamepadState::DoGetInputState(Key input) const
 	{
 		if (!IsGamepadInput(input))
 			return {};
-		return buttons[size_t(input) - size_t(Key::GamepadFirst)];
+		return {buttons[size_t(input) - size_t(Key::GamepadFirst)], InputDeviceTypeMask::Gamepad};
 	}
 
-	std::optional<Input1DState> GamepadState::DoGetInputState(Input1D input) const
+	InputStateQueryResult<Input1D> GamepadState::DoGetInputState(Input1D input) const
 	{
 		if (!IsGamepadInput(input))
 			return {};
-		return axes[size_t(input) - size_t(Input1D::GamepadFirst)];
+		return {axes[size_t(input) - size_t(Input1D::GamepadFirst)], InputDeviceTypeMask::Gamepad};
 	}
 
-	std::optional<Input2DState> GamepadState::DoGetInputState(Input2D input) const
+	InputStateQueryResult<Input2D> GamepadState::DoGetInputState(Input2D input) const
 	{	
 		if (!IsGamepadInput(input))
 			return {};
-		return sticks[size_t(input) - size_t(Input2D::GamepadFirst)];
+		return {sticks[size_t(input) - size_t(Input2D::GamepadFirst)], InputDeviceTypeMask::Gamepad};
 	}
 
 	bool GamepadState::DoForAllKeys(ForAllKeysFunction func) const

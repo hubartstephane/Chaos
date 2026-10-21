@@ -12,10 +12,10 @@ namespace chaos
 
 	enum class InputDeviceType : int
 	{
-		Unknown  = -1,
-		Keyboard = 0,
-		Mouse    = 1,
-		Gamepad  = 2
+		Unknown  = 0,
+		Keyboard = 1,
+		Mouse    = 2,
+		Gamepad  = 4
 	};
 
 	CHAOS_DECLARE_ENUM_METHOD(InputDeviceType, CHAOS_API);

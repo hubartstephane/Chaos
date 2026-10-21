@@ -3,37 +3,37 @@
 
 namespace chaos
 {
-	std::optional<KeyState> KeyboardAndMouseDevice::DoGetInputState(Key input) const
+	InputStateQueryResult<Key> KeyboardAndMouseDevice::DoGetInputState(Key input) const
 	{
 		if (IsKeyboardInput(input))
 		{
 			size_t input_index = size_t(input) - size_t(Key::KeyboardFirst);
-			return keyboard_key_state[input_index];
+			return {keyboard_key_state[input_index], InputDeviceTypeMask::Keyboard};
 		}
 		if (IsMouseInput(input))
 		{
 			size_t input_index = size_t(input) - size_t(Key::MouseFirst);
-			return mouse_key_state[input_index];
+			return {mouse_key_state[input_index], InputDeviceTypeMask::Mouse};
 		}
 		return {};
 	}
 
-	std::optional<Input1DState> KeyboardAndMouseDevice::DoGetInputState(Input1D input) const
+	InputStateQueryResult<Input1D> KeyboardAndMouseDevice::DoGetInputState(Input1D input) const
 	{
 		if (IsMouseInput(input))
 		{
 			size_t input_index = size_t(input) - size_t(Input1D::MouseFirst);
-			return mouse_input1D_state[input_index];
+			return {mouse_input1D_state[input_index], InputDeviceTypeMask::Mouse};
 		}
 		return {};
 	}
 	
-	std::optional<Input2DState> KeyboardAndMouseDevice::DoGetInputState(Input2D input) const
+	InputStateQueryResult<Input2D> KeyboardAndMouseDevice::DoGetInputState(Input2D input) const
 	{
 		if (IsMouseInput(input))
 		{
 			size_t input_index = size_t(input) - size_t(Input2D::MouseFirst);
-			return mouse_input2D_state[input_index];
+			return {mouse_input2D_state[input_index], InputDeviceTypeMask::Mouse};
 		}
 		return {};
 	}

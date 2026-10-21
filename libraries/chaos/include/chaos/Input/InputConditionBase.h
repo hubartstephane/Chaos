@@ -6,17 +6,17 @@ namespace chaos
 
 	class InputConditionDebugInfoStorage;
 
-	enum class InputConditionResult;
+	enum class InputConditionResultType;
 
 	CHAOS_GENERATE_INHERIT_FROM_ANY_CONCEPT(InputRequestType, InputConditionBase);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * InputConditionResult: 
+	 * InputConditionResultType: 
 	 */
 
-	enum class InputConditionResult : int
+	enum class InputConditionResultType : int
 	{
 		Invalid,   // the request is not properly initialized
 		Rejected,  // the inputs for this request have already been consumed
@@ -64,7 +64,7 @@ namespace chaos
 	public:
 
 		/** check whether the request matches a given input device state (polling) */
-		virtual InputConditionResult Check(InputConditionCheckParams const & in_params) const;
+		virtual InputConditionResultType Check(InputConditionCheckParams const & in_params) const;
 
 		/** check whether the request is related to some input */
 		virtual bool IsRequestRelatedTo(Key in_input) const;

@@ -23,10 +23,10 @@ namespace chaos
 
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-				InputConditionResult request_result = in_condition.Check({ input_receiver, input_device, consumption_cache });
-				if (request_result == InputConditionResult::Invalid)
+				InputConditionResultType request_result = in_condition.Check({ input_receiver, input_device, consumption_cache });
+				if (request_result == InputConditionResultType::Invalid)
 					color = { 1.0f, 0.0f, 0.0f, 1.0f };
-				else if (request_result == InputConditionResult::Rejected)
+				else if (request_result == InputConditionResultType::Rejected)
 					color = { 0.0f, 1.0f, 1.0f, 1.0f };
 
 				int column_index = 0;
@@ -41,9 +41,9 @@ namespace chaos
 				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", debug_info);
 					
 				ImGui::TableSetColumnIndex(column_index++);
-				if (request_result == InputConditionResult::Invalid)
+				if (request_result == InputConditionResultType::Invalid)
 					ImGui::TextColored(color, "Invalid", in_title);
-				else if (request_result == InputConditionResult::Rejected)
+				else if (request_result == InputConditionResultType::Rejected)
 					ImGui::TextColored(color, "Rejected", in_title);
 
 				ImGui::TableSetColumnIndex(column_index++);

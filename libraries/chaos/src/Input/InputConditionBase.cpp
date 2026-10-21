@@ -4,9 +4,9 @@
 
 namespace chaos
 {
-	InputConditionResult InputConditionBase::Check(InputConditionCheckParams const& in_params) const
+	InputConditionResultType InputConditionBase::Check(InputConditionCheckParams const& in_params) const
 	{
-		return InputConditionResult::Invalid;
+		return InputConditionResultType::Invalid;
 	}
 
 	bool InputConditionBase::IsRequestRelatedTo(Key in_input) const

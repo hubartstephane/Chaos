@@ -52,22 +52,22 @@ namespace chaos
 		}
 
 		/** override */
-		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override
+		virtual InputConditionResultType Check(InputConditionCheckParams const& in_params) const override
 		{
-			std::optional<InputConditionResult> result;
+			std::optional<InputConditionResultType> result;
 
 			std::apply([&](auto const & ... child_request)
 			{
 				auto CheckChildInputRequest = [&](auto const& child_request)
 				{
-					InputConditionResult child_result = child_request.Check(in_params);
+					InputConditionResultType child_result = child_request.Check(in_params);
 					result = AggregateResult(result, child_result);
 				};
 				(CheckChildInputRequest(child_request), ...);
 
 			}, child_input_requests);
 
-			return result.value_or(InputConditionResult::False);
+			return result.value_or(InputConditionResultType::False);
 		}
 
 		// By construction, we concat expressions
@@ -166,12 +166,12 @@ namespace chaos
 		}
 
 		/** combine results altogether */
-		InputConditionResult AggregateResult(std::optional<InputConditionResult> const& result, InputConditionResult child_result) const
+		InputConditionResultType AggregateResult(std::optional<InputConditionResultType> const& result, InputConditionResultType child_result) const
 		{
-			auto ComputeAggregationResult = [&](std::initializer_list<InputConditionResult> const& ordered_values)
+			auto ComputeAggregationResult = [&](std::initializer_list<InputConditionResultType> const& ordered_values)
 			{
 				if (result.has_value())
-					for (InputConditionResult r : ordered_values)
+					for (InputConditionResultType r : ordered_values)
 						if (child_result == r || result.value() == r)
 							return r;
 				return child_result;
@@ -179,11 +179,11 @@ namespace chaos
 
 			if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
 			{
-				return ComputeAggregationResult({ InputConditionResult::Rejected, InputConditionResult::Invalid, InputConditionResult::False, InputConditionResult::True });
+				return ComputeAggregationResult({ InputConditionResultType::Rejected, InputConditionResultType::Invalid, InputConditionResultType::False, InputConditionResultType::True });
 			}
 			else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
 			{
-				return ComputeAggregationResult({ InputConditionResult::True, InputConditionResult::False, InputConditionResult::Invalid, InputConditionResult::Rejected });
+				return ComputeAggregationResult({ InputConditionResultType::True, InputConditionResultType::False, InputConditionResultType::Invalid, InputConditionResultType::Rejected });
 			}
 			else
 			{

@@ -24,13 +24,13 @@ namespace chaos
 		return true;
 	}
 
-	InputConditionResult AnyInputCondition::Check(InputConditionCheckParams const& in_params) const
+	InputConditionResultType AnyInputCondition::Check(InputConditionCheckParams const& in_params) const
 	{
 		in_params.consumption_cache->SetAllInputConsumer(in_params.input_receiver);
 
 		return in_params.input_device->IsAnyInputActive()?
-			InputConditionResult::True:
-			InputConditionResult::False;
+			InputConditionResultType::True:
+			InputConditionResultType::False;
 	}
 
 }; // namespace chaos

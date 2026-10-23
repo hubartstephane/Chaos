@@ -38,32 +38,25 @@ namespace chaos
 				return InputConditionResultType::Invalid;
 
 			auto query_result = in_params.consumption_cache->QueryInputState(input, in_params.input_receiver, in_params.input_device);
-			if (query_result.response_status == InputStateResponseStatus::Failure)
+			if (query_result.response_status == InputConsumptionCacheResultStatus::Failure)
 				return InputConditionResultType::Rejected;
 			if (!query_result.input_state.has_value())
 				return InputConditionResultType::Invalid; // abnormal (request for an input not handled by the receiver)
 
-			return OuputDataAndReturnResult(&query_result.input_state.value());
+			return OuputDataAndReturnResult(query_result.input_state->state);
 		}
 
 		/** output necessary data and get request result from the state and the query */
-		InputConditionResultType OuputDataAndReturnResult(state_type const * in_input_state) const
+		InputConditionResultType OuputDataAndReturnResult(state_type const & in_input_state) const
 		{
-			assert(in_input_state != nullptr);
-
 			// output results
 			if (out_state != nullptr)
-				*out_state = *in_input_state;
+				*out_state = in_input_state;
 			if (out_value != nullptr)
-				*out_value = in_input_state->GetValue();
+				*out_value = in_input_state.value;
 
 			// compute return value
-			auto ConvertResultType = [](bool result)
-			{
-				return result ? InputConditionResultType::True : InputConditionResultType::False;
-			};
-
-			return in_input_state->CheckStatus(check_type)?
+			return in_input_state.CheckStatus(check_type)?
 				InputConditionResultType::True: 
 				InputConditionResultType::False;
 		}

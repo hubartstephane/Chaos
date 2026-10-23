@@ -6,8 +6,8 @@ namespace chaos
 
 	enum class InputDeviceTypeMask;
 
-	template<AnyInputType ANY_INPUT_TYPE>
-	class InputStateQueryResult;
+	template<typename T>
+	class InputDeviceResult;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -38,28 +38,18 @@ namespace chaos
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(InputDeviceTypeMask, CHAOS_API);
 
 	/**
-	* InputStateQueryResult: result when querying for an input
+	* InputDeviceResult: result when querying for an input
 	*/
 
-	template<AnyInputType ANY_INPUT_TYPE>
-	class InputStateQueryResult : public std::optional<InputTypeToStateType_t<ANY_INPUT_TYPE>>
+	template<typename T>
+	class InputDeviceResult
 	{
-
 	public:
 
-		using state_type = InputTypeToStateType_t<ANY_INPUT_TYPE>;
+		using type = T;
 
-		/** default constructor */
-		InputStateQueryResult() = default;
-		/** copy constructor */
-		InputStateQueryResult(InputStateQueryResult const &) = default;
-		/** constructor with initializer */
-		InputStateQueryResult(std::optional<state_type> const& in_input_state, InputDeviceTypeMask in_involved_devices = InputDeviceTypeMask::None):
-			std::optional<state_type>(in_input_state),
-			involved_devices(in_involved_devices){}
-
-	public:
-
+		/** the state of the requested input */
+		InputState<type> state;
 		/** mask of all devices involved in the query */
 		InputDeviceTypeMask involved_devices = InputDeviceTypeMask::None;
 	};
@@ -77,15 +67,15 @@ namespace chaos
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const;
 
 		/** gets any key state */
-		InputStateQueryResult<Key> GetInputState(Key input) const;
+		std::optional<InputDeviceResult<bool>> GetInputState(Key input) const;
 		/** gets any input1D state */
-		InputStateQueryResult<Input1D> GetInputState(Input1D input) const;
+		std::optional<InputDeviceResult<float>> GetInputState(Input1D input) const;
 		/** gets any input2D state */
-		InputStateQueryResult<Input2D> GetInputState(Input2D input) const;
+		std::optional<InputDeviceResult<glm::vec2>> GetInputState(Input2D input) const;
 		/** gets any Mappedinput1D state */
-		InputStateQueryResult<Input1D> GetInputState(MappedInput1D const & input) const;
+		std::optional<InputDeviceResult<float>> GetInputState(MappedInput1D const & input) const;
 		/** gets any Mappedinput2D state */
-		InputStateQueryResult<Input2D> GetInputState(MappedInput2D const & input) const;
+		std::optional<InputDeviceResult<glm::vec2>> GetInputState(MappedInput2D const & input) const;
 		/** gets any CompositeInput state */
 		template<typename... PARAMS>
 		requires HaveSameInputValueType<PARAMS...>
@@ -103,7 +93,8 @@ namespace chaos
 		InputTypeToValueType_t<ANY_INPUT_TYPE> GetInputValue(ANY_INPUT_TYPE in_input) const
 		{
 			if (auto input_state = GetInputState(in_input))
-				return input_state->GetValue();
+				if (input_state.has_value())
+					return input_state->state.GetValue();
 			return {};
 		}
 
@@ -112,7 +103,8 @@ namespace chaos
 		InputStatus GetInputStatus(ANY_INPUT_TYPE in_input) const
 		{
 			if (auto input_state = GetInputState(in_input))
-				return input_state->GetStatus();
+				if (input_state.has_value())
+					return input_state->state.GetStatus();
 			return InputStatus::None;
 		}
 
@@ -132,14 +124,14 @@ namespace chaos
 
 		/** utility method to get a state */
 		template<BasicInputType BASIC_INPUT_TYPE>
-		InputStateQueryResult<BASIC_INPUT_TYPE> GetInputStateHelper(BASIC_INPUT_TYPE in_input) const;
+		std::optional<InputDeviceResult<InputTypeToValueType_t<BASIC_INPUT_TYPE>>> GetInputStateHelper(BASIC_INPUT_TYPE in_input) const;
 
 		/** gets one key state */
-		virtual InputStateQueryResult<Key> DoGetInputState(Key input) const;
+		virtual std::optional<InputDeviceResult<bool>> DoGetInputState(Key input) const;
 		/** gets one input1D state */
-		virtual InputStateQueryResult<Input1D> DoGetInputState(Input1D input) const;
+		virtual std::optional<InputDeviceResult<float>> DoGetInputState(Input1D input) const;
 		/** gets one input2D state */
-		virtual InputStateQueryResult<Input2D> DoGetInputState(Input2D input) const;
+		virtual std::optional<InputDeviceResult<glm::vec2>> DoGetInputState(Input2D input) const;
 
 		/** enumerate keys */
 		virtual bool DoForAllKeys(ForAllKeysFunction func) const;
@@ -155,30 +147,28 @@ template<typename... PARAMS>
 requires HaveSameInputValueType<PARAMS...>
 auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) const
 {
-	using input_value_type = CombinedInput<PARAMS...>::input_value_type;
-
 	double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
 
 	// for all child_input, check find the state, prepare optional parameter if necessary, and call user function
-	auto CombineAllChildInputs = [&](auto & inout_result, auto const & combine_child_input_func)
+	auto CombineAllChildInputs = [&](auto & inout_result, auto const & combine_state_func)
 	{
-		auto CombineInputStates = [&](auto & inout_result, auto const & in_child_state)
+		auto CombineInputStates = [&](auto const & in_child_state)
 		{
 			if (!in_child_state.has_value())
 				return;
 			if (!inout_result.has_value())
 			{
 				inout_result.emplace();
-				inout_result->update_time = frame_time;
-				if (in_child_state->IsActive())
-					inout_result.involved_devices |= in_child_state.involved_devices;
+				inout_result->state.update_time = frame_time;
+				if (in_child_state->state.IsActive())
+					inout_result->involved_devices |= in_child_state->involved_devices;
 			}
-			combine_child_input_func(inout_result, in_child_state);
+			combine_state_func(inout_result->state, in_child_state->state);
 		};
 
 		std::apply([&](auto const & ... child_input)
 		{
-			(CombineInputStates(inout_result, GetInputState(child_input)), ...);
+			(CombineInputStates(GetInputState(child_input)), ...);
 
 		}, input.child_inputs);
 	};
@@ -203,29 +193,29 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 			min_neg_value = std::min(min_neg_value, value);
 	};
 
+	using input_value_type = CombinedInput<PARAMS...>::input_value_type;
+
 	// KEY
 	if constexpr (std::is_same_v<input_value_type, bool>)
 	{
-		InputStateQueryResult<Key> result;
+		std::optional<InputDeviceResult<bool>> result;
 
-		auto CombineChildInputFunc = [&](InputStateQueryResult<Key> & inout_result, InputStateQueryResult<Key> const & child_state)
+		CombineAllChildInputs(result, [&](InputState<bool>& inout_state, InputState<bool> const& child_state)
 		{
-			bool child_previous_value = (child_state->update_time == frame_time) ?
-				child_state->previous_value :
-				child_state->value;
+			bool child_previous_value = (child_state.update_time == frame_time)?
+				child_state.previous_value :
+				child_state.value;
 
-			inout_result->value |= child_state->value;
-			inout_result->previous_value |= child_previous_value; // final combined input result is TRUE if at least one child input is TRUE
-		};
-
-		CombineAllChildInputs(result, CombineChildInputFunc);
+			inout_state.value |= child_state.value;
+			inout_state.previous_value |= child_previous_value; // final combined input result is TRUE if at least one child input is TRUE
+		});
 
 		return result;
 	}
 	// INPUT1D
 	else if constexpr (std::is_same_v<input_value_type, float>)
 	{
-		InputStateQueryResult<Input1D> result;
+		std::optional<InputDeviceResult<float>> result;
 
 		float min_neg_value = 0.0f;
 		float max_pos_value = 0.0f;
@@ -233,22 +223,20 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 		float previous_max_pos_value = 0.0f;
 
 		// compute min & max value
-		auto CombineChildInputFunc = [&](InputStateQueryResult<Input1D> & inout_result, InputStateQueryResult<Input1D> const & child_state)
+		CombineAllChildInputs(result, [&](InputState<float>& inout_state, InputState<float> const& child_state)
 		{
-			float child_previous_value = (child_state->update_time == frame_time) ?
-				child_state->previous_value :
-				child_state->value;
+			float child_previous_value = (child_state.update_time == frame_time)?
+				child_state.previous_value :
+				child_state.value;
 
-			UpdateMinAndMaxAxisValue(child_state->value, min_neg_value, max_pos_value);
+			UpdateMinAndMaxAxisValue(child_state.value, min_neg_value, max_pos_value);
 			UpdateMinAndMaxAxisValue(child_previous_value, previous_min_neg_value, previous_max_pos_value);
-		};
-
-		CombineAllChildInputs(result, CombineChildInputFunc);
+		});
 
 		if (result.has_value())
 		{
-			result->value = MergeAxisValues(min_neg_value, max_pos_value);
-			result->previous_value = MergeAxisValues(previous_min_neg_value, previous_max_pos_value);
+			result->state.value = MergeAxisValues(min_neg_value, max_pos_value);
+			result->state.previous_value = MergeAxisValues(previous_min_neg_value, previous_max_pos_value);
 		}
 
 		return result;
@@ -256,7 +244,7 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 	// INPUT2D
 	else if constexpr (std::is_same_v<input_value_type, glm::vec2>)
 	{
-		InputStateQueryResult<Input2D> result;
+		std::optional<InputDeviceResult<glm::vec2>> result;
 
 		glm::vec2 min_neg_value = { 0.0f, 0.0f };
 		glm::vec2 max_pos_value = { 0.0f, 0.0f };
@@ -264,27 +252,25 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 		glm::vec2 previous_max_pos_value = { 0.0f, 0.0f };
 
 		// compute min & max value
-		auto CombineChildInputFunc = [&](InputStateQueryResult<Input2D>& inout_result, InputStateQueryResult<Input2D> const& child_state)
+		CombineAllChildInputs(result, [&](InputState<glm::vec2>& inout_state, InputState<glm::vec2> const& child_state)
 		{
-			glm::vec2 const & child_previous_value = (child_state->update_time == frame_time)?
-				child_state->previous_value :
-				child_state->value;
+			glm::vec2 const& child_previous_value = (child_state.update_time == frame_time)?
+				child_state.previous_value :
+				child_state.value;
 
 			for (size_t axis : {0, 1})
 			{
-				UpdateMinAndMaxAxisValue(child_state->value[axis], min_neg_value[axis], max_pos_value[axis]);
+				UpdateMinAndMaxAxisValue(child_state.value[axis], min_neg_value[axis], max_pos_value[axis]);
 				UpdateMinAndMaxAxisValue(child_previous_value[axis], previous_min_neg_value[axis], previous_max_pos_value[axis]);
 			}
-		};
-
-		CombineAllChildInputs(result, CombineChildInputFunc);
+		});
 
 		if (result.has_value())
 		{
 			for (size_t axis : {0, 1})
 			{
-				result->value[axis] = MergeAxisValues(min_neg_value[axis], max_pos_value[axis]);
-				result->previous_value[axis] = MergeAxisValues(previous_min_neg_value[axis], previous_max_pos_value[axis]);
+				result->state.value[axis] = MergeAxisValues(min_neg_value[axis], max_pos_value[axis]);
+				result->state.previous_value[axis] = MergeAxisValues(previous_min_neg_value[axis], previous_max_pos_value[axis]);
 			}
 		}
 

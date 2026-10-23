@@ -3,38 +3,38 @@
 
 namespace chaos
 {
-	CHAOS_IMPLEMENT_ENUM_BOOL_METHOD(InputStateResponseStatus, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BOOL_METHOD(InputConsumptionCacheResultStatus, CHAOS_API);
 	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(InputStateQueryFlags, nullptr, CHAOS_API);
-	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(InputStateResponseFlags, nullptr, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(InputConsumptionCacheResultFlags, nullptr, CHAOS_API);
 
 	// requesting for an InputState is a two steps process
 	// -first, we require authorization from InputConsumptionCache
 	// -then,  we require the InputDevice for the state
 
 	template<BasicInputType BASIC_INPUT_TYPE>
-	InputStateResponseStatus InputConsumptionCache::DoTryConsumeInput(
+	InputConsumptionCacheResultStatus InputConsumptionCache::DoTryConsumeInput(
 		BASIC_INPUT_TYPE in_input, 
 		InputReceiverInterface const* in_input_receiver, 
 		InputStateQueryFlags in_query_flags, 
-		InputStateResponseFlags& out_response_flags)
+		InputConsumptionCacheResultFlags& out_response_flags)
 	{
 		// check wether the input is known
 		if (in_input == BASIC_INPUT_TYPE::Unknown)
 		{
-			out_response_flags |= InputStateResponseFlags::UnknownInput;
-			return InputStateResponseStatus::Success; // this is not an error
+			out_response_flags |= InputConsumptionCacheResultFlags::UnknownInput;
+			return InputConsumptionCacheResultStatus::Success; // this is not an error
 		}
 
 		// check whether someone queried for all inputs
 		if constexpr (std::is_same_v<Key, BASIC_INPUT_TYPE>)
 			if (all_key_consumer.has_value() && all_key_consumer.value() != in_input_receiver)
-				return InputStateResponseStatus::Failure;
+				return InputConsumptionCacheResultStatus::Failure;
 		if constexpr (std::is_same_v<Input1D, BASIC_INPUT_TYPE>)
 			if (all_input1D_consumer.has_value() && all_input1D_consumer.value() != in_input_receiver)
-				return InputStateResponseStatus::Failure;
+				return InputConsumptionCacheResultStatus::Failure;
 		if constexpr (std::is_same_v<Input2D, BASIC_INPUT_TYPE>)
 			if (all_input2D_consumer.has_value() && all_input2D_consumer.value() != in_input_receiver)
-				return InputStateResponseStatus::Failure;
+				return InputConsumptionCacheResultStatus::Failure;
 
 		auto consume_input_func = [&](auto & consumed_input_map)
 		{
@@ -45,19 +45,19 @@ namespace chaos
 			{
 				if (!HasAnyFlags(in_query_flags, InputStateQueryFlags::ConsultOnly))
 					consumed_input_map.emplace(in_input, in_input_receiver);
-				out_response_flags |= InputStateResponseFlags::SuccessfulInput | InputStateResponseFlags::KnownInput;
-				return InputStateResponseStatus::Success;
+				out_response_flags |= InputConsumptionCacheResultFlags::SuccessfulInput | InputConsumptionCacheResultFlags::KnownInput;
+				return InputConsumptionCacheResultStatus::Success;
 			}
 
 			// the same input receiver requires for the input. that's ok
 			if (it->second == in_input_receiver)
 			{
-				out_response_flags |= InputStateResponseFlags::SuccessfulInput | InputStateResponseFlags::KnownInput;
-				return InputStateResponseStatus::Success;
+				out_response_flags |= InputConsumptionCacheResultFlags::SuccessfulInput | InputConsumptionCacheResultFlags::KnownInput;
+				return InputConsumptionCacheResultStatus::Success;
 			}
 
 			// another receiver requires the input. that's a rejection
-			return InputStateResponseStatus::Failure;
+			return InputConsumptionCacheResultStatus::Failure;
 		};
 
 		// dispatch request to appropriate input map
@@ -70,33 +70,33 @@ namespace chaos
 
 		// should never happen
 		assert(0);
-		return InputStateResponseStatus::Failure;
+		return InputConsumptionCacheResultStatus::Failure;
 	}
 
 	template<BasicInputType BASIC_INPUT_TYPE>
-	InputStateResponseStatus InputConsumptionCache::TryConsumeInputAndRelated(
+	InputConsumptionCacheResultStatus InputConsumptionCache::TryConsumeInputAndRelated(
 		BASIC_INPUT_TYPE in_input, 
 		InputReceiverInterface const* in_input_receiver, 
 		InputStateQueryFlags in_query_flags,
-		InputStateResponseFlags& out_response_flags,
+		InputConsumptionCacheResultFlags& out_response_flags,
 		ConsumeRelatedInputFunc consume_related_input_func
 	)
 	{
-		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
+		InputConsumptionCacheResultStatus response_status = InputConsumptionCacheResultStatus::Success;
 		response_status &= DoTryConsumeInput(in_input, in_input_receiver, in_query_flags, out_response_flags);
 		response_status &= consume_related_input_func(in_input_receiver, in_query_flags, out_response_flags);
 		return response_status;
 	}
 
-	InputStateResponseStatus InputConsumptionCache::TryConsumeInput(
+	InputConsumptionCacheResultStatus InputConsumptionCache::TryConsumeInput(
 		Key in_input, 
 		InputReceiverInterface const* in_input_receiver, 
 		InputStateQueryFlags in_query_flags, 
-		InputStateResponseFlags& out_response_flags)
+		InputConsumptionCacheResultFlags& out_response_flags)
 	{
-		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags& out_response_flags)
+		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputConsumptionCacheResultFlags& out_response_flags)
 		{
-			InputStateResponseStatus response_status = InputStateResponseStatus::Success;
+			InputConsumptionCacheResultStatus response_status = InputConsumptionCacheResultStatus::Success;
 
 			InputTools::EnumerateRelatedInputsDefinition(in_input, [&](VirtualKeyDefinition const& def)
 			{
@@ -108,15 +108,15 @@ namespace chaos
 		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_query_flags, out_response_flags, consume_related_func);
 	}
 
-	InputStateResponseStatus InputConsumptionCache::TryConsumeInput(
+	InputConsumptionCacheResultStatus InputConsumptionCache::TryConsumeInput(
 		Input1D in_input, 
 		InputReceiverInterface const* in_input_receiver, 
 		InputStateQueryFlags in_query_flags, 
-		InputStateResponseFlags& out_response_flags)
+		InputConsumptionCacheResultFlags& out_response_flags)
 	{
-		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags& out_response_flags)
+		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputConsumptionCacheResultFlags& out_response_flags)
 		{
-			InputStateResponseStatus response_status = InputStateResponseStatus::Success;
+			InputConsumptionCacheResultStatus response_status = InputConsumptionCacheResultStatus::Success;
 
 			InputTools::EnumerateRelatedInputsDefinition(in_input,
 				[&](VirtualKeyDefinition const& def)
@@ -135,15 +135,15 @@ namespace chaos
 		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_query_flags, out_response_flags, consume_related_func);
 	}
 
-	InputStateResponseStatus InputConsumptionCache::TryConsumeInput(
+	InputConsumptionCacheResultStatus InputConsumptionCache::TryConsumeInput(
 		Input2D in_input, 
 		InputReceiverInterface const* in_input_receiver, 
 		InputStateQueryFlags in_query_flags, 
-		InputStateResponseFlags& out_response_flags)
+		InputConsumptionCacheResultFlags& out_response_flags)
 	{	
-		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputStateResponseFlags& out_response_flags)
+		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputStateQueryFlags in_query_flags, InputConsumptionCacheResultFlags& out_response_flags)
 		{
-			InputStateResponseStatus response_status = InputStateResponseStatus::Success;
+			InputConsumptionCacheResultStatus response_status = InputConsumptionCacheResultStatus::Success;
 
 			InputTools::EnumerateRelatedInputsDefinition(in_input, [&](VirtualInput2DDefinition const& def)
 			{
@@ -156,27 +156,27 @@ namespace chaos
 		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_query_flags, out_response_flags, consume_related_func);
 	}
 
-	InputStateResponseStatus InputConsumptionCache::TryConsumeInput(
+	InputConsumptionCacheResultStatus InputConsumptionCache::TryConsumeInput(
 		MappedInput1D const in_input,
 		InputReceiverInterface const* in_input_receiver,
 		InputStateQueryFlags in_query_flags,
-		InputStateResponseFlags& out_response_flags)
+		InputConsumptionCacheResultFlags& out_response_flags)
 	{
-		InputStateResponseFlags  response_flags = InputStateResponseFlags::None;
-		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
+		InputConsumptionCacheResultFlags  response_flags = InputConsumptionCacheResultFlags::None;
+		InputConsumptionCacheResultStatus response_status = InputConsumptionCacheResultStatus::Success;
 		for (Key key : { in_input.neg_key, in_input.pos_key })
 			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
 		return response_status;
 	}
 
-	InputStateResponseStatus InputConsumptionCache::TryConsumeInput(
+	InputConsumptionCacheResultStatus InputConsumptionCache::TryConsumeInput(
 		MappedInput2D const in_input,
 		InputReceiverInterface const* in_input_receiver,
 		InputStateQueryFlags in_query_flags,
-		InputStateResponseFlags& out_response_flags)
+		InputConsumptionCacheResultFlags& out_response_flags)
 	{
-		InputStateResponseFlags  response_flags = InputStateResponseFlags::None;
-		InputStateResponseStatus response_status = InputStateResponseStatus::Success;
+		InputConsumptionCacheResultFlags  response_flags = InputConsumptionCacheResultFlags::None;
+		InputConsumptionCacheResultStatus response_status = InputConsumptionCacheResultStatus::Success;
 		for (Key key : { in_input.left_key, in_input.right_key, in_input.down_key, in_input.up_key })
 			response_status &= TryConsumeInput(key, in_input_receiver, in_query_flags, response_flags);
 		return response_status;		

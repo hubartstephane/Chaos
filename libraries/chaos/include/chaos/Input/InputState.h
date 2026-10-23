@@ -266,51 +266,51 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputActive(std::optional<InputState<T>> const & state)
+	bool IsInputActive(std::optional<InputDeviceResult<T>> const & result)
 	{
-		if (!state.has_value())
+		if (!result.has_value())
 			return false;
-		return IsInputActive(state.value());
+		return IsInputActive(result->state);
 	}
 
 	template<typename T>
-	bool IsInputInactive(std::optional<InputState<T>> const & state)
+	bool IsInputInactive(std::optional<InputDeviceResult<T>> const& result)
 	{
-		if (!state.has_value())
+		if (!result.has_value())
 			return false;
-		return IsInputInactive(state.value());
+		return IsInputInactive(result->state);
 	}
 
 	template<typename T>
-	bool IsInputJustActivated(std::optional<InputState<T>> const & state)
+	bool IsInputJustActivated(std::optional<InputDeviceResult<T>> const& result)
 	{
-		if (!state.has_value())
+		if (!result.has_value())
 			return false;
-		return IsInputJustActivated(state.value());
+		return IsInputJustActivated(result->state);
 	}
 
 	template<typename T>
-	bool IsInputJustDeactivated(std::optional<InputState<T>> const & state)
+	bool IsInputJustDeactivated(std::optional<InputDeviceResult<T>> const& result)
 	{
-		if (!state.has_value())
+		if (!result.has_value())
 			return false;
-		return IsInputJustDeactivated(state.value());
+		return IsInputJustDeactivated(result->state);
 	}
 
 	template<typename T>
-	bool IsInputActiveRepeated(std::optional<InputState<T>> const & state)
+	bool IsInputActiveRepeated(std::optional<InputDeviceResult<T>> const& result)
 	{
-		if (!state.has_value())
+		if (!result.has_value())
 			return false;
-		return IsInputActiveRepeated(state.value());
+		return IsInputActiveRepeated(result->state);
 	}
 
 	template<typename T>
-	bool IsInputInactiveRepeated(std::optional<InputState<T>> const & state)
+	bool IsInputInactiveRepeated(std::optional<InputDeviceResult<T>> const& result)
 	{
-		if (!state.has_value())
+		if (!result.has_value())
 			return false;
-		return IsInputInactiveRepeated(state.value());
+		return IsInputInactiveRepeated(result->state);
 	}
 
 #endif

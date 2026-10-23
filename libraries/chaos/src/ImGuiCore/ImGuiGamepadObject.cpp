@@ -78,8 +78,8 @@ namespace chaos
 							ImVec4 white_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 							ImVec4 red_color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 
-							ImVec4 const& color = (input_state->IsActive()) ? red_color : white_color;
-							display_state_func(input_state.value(), color);
+							ImVec4 const& color = (input_state->state.IsActive()) ? red_color : white_color;
+							display_state_func(input_state->state, color);
 						}
 						return false; // continue iteration
 					});

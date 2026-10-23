@@ -21,25 +21,25 @@ namespace chaos
 		return axes.size();
 	}
 
-	InputStateQueryResult<Key> GamepadState::DoGetInputState(Key input) const
+	std::optional<InputDeviceResult<bool>> GamepadState::DoGetInputState(Key input) const
 	{
 		if (!IsGamepadInput(input))
 			return {};
-		return {buttons[size_t(input) - size_t(Key::GamepadFirst)], InputDeviceTypeMask::Gamepad};
+		return {{buttons[size_t(input) - size_t(Key::GamepadFirst)], InputDeviceTypeMask::Gamepad}};
 	}
 
-	InputStateQueryResult<Input1D> GamepadState::DoGetInputState(Input1D input) const
+	std::optional<InputDeviceResult<float>> GamepadState::DoGetInputState(Input1D input) const
 	{
 		if (!IsGamepadInput(input))
 			return {};
-		return {axes[size_t(input) - size_t(Input1D::GamepadFirst)], InputDeviceTypeMask::Gamepad};
+		return {{axes[size_t(input) - size_t(Input1D::GamepadFirst)], InputDeviceTypeMask::Gamepad}};
 	}
 
-	InputStateQueryResult<Input2D> GamepadState::DoGetInputState(Input2D input) const
+	std::optional<InputDeviceResult<glm::vec2>> GamepadState::DoGetInputState(Input2D input) const
 	{	
 		if (!IsGamepadInput(input))
 			return {};
-		return {sticks[size_t(input) - size_t(Input2D::GamepadFirst)], InputDeviceTypeMask::Gamepad};
+		return {{sticks[size_t(input) - size_t(Input2D::GamepadFirst)], InputDeviceTypeMask::Gamepad}};
 	}
 
 	bool GamepadState::DoForAllKeys(ForAllKeysFunction func) const
@@ -169,9 +169,9 @@ namespace chaos
 		// update virtual buttons
 		auto UpdateVirtualButton = [this](Key dst_button, Input1D src_axis)
 		{
-			if (std::optional<Input1DState> axis_state = GetInputState(src_axis))
+			if (std::optional<InputDeviceResult<float>> axis_state = GetInputState(src_axis))
 			{
-				bool value = (axis_state->value != 0.0f);
+				bool value = (axis_state->state.value != 0.0f);
 				buttons[size_t(dst_button) - size_t(Key::GamepadFirst)].SetValue(value);
 			}
 		};

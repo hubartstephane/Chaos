@@ -28,11 +28,11 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual std::optional<InputDeviceResult<bool>> DoGetInputState(Key input) const override;
+		virtual InputDeviceResult<bool> DoGetInputState(Key input) const override;
 		/** override */
-		virtual std::optional<InputDeviceResult<float>> DoGetInputState(Input1D input) const override;
+		virtual InputDeviceResult<float> DoGetInputState(Input1D input) const override;
 		/** override */
-		virtual std::optional<InputDeviceResult<glm::vec2>> DoGetInputState(Input2D input) const override;
+		virtual InputDeviceResult<glm::vec2> DoGetInputState(Input2D input) const override;
 		/** override */
 		virtual bool DoForAllKeys(ForAllKeysFunction func) const override;
 		/** override */

@@ -40,10 +40,10 @@ namespace chaos
 			auto query_result = in_params.consumption_cache->QueryInputState(input, in_params.input_receiver, in_params.input_device);
 			if (query_result.response_status == InputConsumptionCacheResultStatus::Failure)
 				return InputConditionResultType::Rejected;
-			if (!query_result.input_state.has_value())
+			if (!query_result.input_state.state.has_value())
 				return InputConditionResultType::Invalid; // abnormal (request for an input not handled by the receiver)
 
-			return OuputDataAndReturnResult(query_result.input_state->state);
+			return OuputDataAndReturnResult(query_result.input_state.state.value());
 		}
 
 		/** output necessary data and get request result from the state and the query */

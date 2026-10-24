@@ -60,7 +60,7 @@ namespace chaos
 	{
 	public:
 
-		std::optional<InputDeviceResult<InputTypeToValueType_t<ANY_INPUT_TYPE>>> input_state;
+		InputDeviceResult<InputTypeToValueType_t<ANY_INPUT_TYPE>> input_state;
 		/** indicates whether the response is a success or not */
 		InputConsumptionCacheResultStatus response_status = InputConsumptionCacheResultStatus::Failure;
 		/** the bitfield of what happened during request */
@@ -205,7 +205,7 @@ namespace chaos
 		// an unhandled event happens whenver neg_key or pos_key is defined but not handled by the event
 		// in that case, the state returned is empty
 		if (HasAnyFlags(response_flags, InputConsumptionCacheResultFlags::KnownInput))
-			if (!input_state.has_value())
+			if (!input_state.state.has_value())
 				response_flags |= InputConsumptionCacheResultFlags::UnhandledInput;
 
 		return { input_state, InputConsumptionCacheResultStatus::Success, response_flags };

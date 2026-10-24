@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	InputDeviceResult<bool> KeyboardAndMouseDevice::DoGetInputState(Key input) const
+	InputDeviceQueryResult<bool> KeyboardAndMouseDevice::DoGetInputState(Key input) const
 	{
 		if (IsKeyboardInput(input))
 		{
@@ -18,7 +18,7 @@ namespace chaos
 		return {};
 	}
 
-	InputDeviceResult<float> KeyboardAndMouseDevice::DoGetInputState(Input1D input) const
+	InputDeviceQueryResult<float> KeyboardAndMouseDevice::DoGetInputState(Input1D input) const
 	{
 		if (IsMouseInput(input))
 		{
@@ -28,7 +28,7 @@ namespace chaos
 		return {};
 	}
 	
-	InputDeviceResult<glm::vec2> KeyboardAndMouseDevice::DoGetInputState(Input2D input) const
+	InputDeviceQueryResult<glm::vec2> KeyboardAndMouseDevice::DoGetInputState(Input2D input) const
 	{
 		if (IsMouseInput(input))
 		{

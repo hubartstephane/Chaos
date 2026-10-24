@@ -522,24 +522,24 @@ namespace chaos
 		{
 		public:
 
-			PollInputReceiverTraverser(InputDeviceInterface const* in_input_device, InputConsumptionCache& in_consumption_cache) :
-				InputReceiverTraverser(in_input_device), consumption_cache(in_consumption_cache){}
+			PollInputReceiverTraverser(InputDeviceInterface const* in_input_device, InputConsumptionSystem& in_consumption_system) :
+				InputReceiverTraverser(in_input_device), consumption_system(in_consumption_system){}
 
 		protected:
 
 			virtual bool Process(InputReceiverInterface* in_input_receiver) override
 			{
-				PollInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_cache);
+				PollInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_system);
 				return in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnPolling);
 			}
 
 		protected:
 
-			InputConsumptionCache & consumption_cache;
+			InputConsumptionSystem & consumption_system;
 		};
 
 		KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
-		PollInputReceiverTraverser traverser(keyboard_and_mouse_device, consumption_cache);
+		PollInputReceiverTraverser traverser(keyboard_and_mouse_device, consumption_system);
 
 		if (Window* focused_window = GetFocusedWindow())
 		{
@@ -557,7 +557,7 @@ namespace chaos
 		if (keyboard_and_mouse_device != nullptr)
 			keyboard_and_mouse_device->ResetCumulatedInputs();
 
-		consumption_cache.Clear(); 
+		consumption_system.Clear(); 
 	}
 
 	void WindowApplication::OnGLFWError(int code, const char* msg)

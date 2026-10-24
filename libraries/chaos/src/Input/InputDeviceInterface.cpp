@@ -11,12 +11,12 @@ namespace chaos
 	}
 
 	template<BasicInputType BASIC_INPUT_TYPE> 
-	InputDeviceResult<InputTypeToValueType_t<BASIC_INPUT_TYPE>> InputDeviceInterface::GetInputStateHelper(BASIC_INPUT_TYPE input) const
+	InputDeviceQueryResult<InputTypeToValueType_t<BASIC_INPUT_TYPE>> InputDeviceInterface::GetInputStateHelper(BASIC_INPUT_TYPE input) const
 	{
 		if (input == BASIC_INPUT_TYPE::Unknown)
 			return {};
 
-		InputDeviceResult<InputTypeToValueType_t<BASIC_INPUT_TYPE>> result;
+		InputDeviceQueryResult<InputTypeToValueType_t<BASIC_INPUT_TYPE>> result;
 		EnumerateDeviceHierarchy([this, &result, input](InputDeviceInterface const * in_input_device)
 		{
 			result = in_input_device->DoGetInputState(input);
@@ -25,34 +25,34 @@ namespace chaos
 		return result;
 	}
 
-	InputDeviceResult<bool> InputDeviceInterface::GetInputState(Key input) const
+	InputDeviceQueryResult<bool> InputDeviceInterface::GetInputState(Key input) const
 	{
 		return GetInputStateHelper(input);
 	}
 
-	InputDeviceResult<float> InputDeviceInterface::GetInputState(Input1D input) const
+	InputDeviceQueryResult<float> InputDeviceInterface::GetInputState(Input1D input) const
 	{
 		return GetInputStateHelper(input);
 	}
 
-	InputDeviceResult<glm::vec2> InputDeviceInterface::GetInputState(Input2D input) const
+	InputDeviceQueryResult<glm::vec2> InputDeviceInterface::GetInputState(Input2D input) const
 	{	
 		return GetInputStateHelper(input);
 	}
 
-	InputDeviceResult<float> InputDeviceInterface::GetInputState(MappedInput1D const & input) const
+	InputDeviceQueryResult<float> InputDeviceInterface::GetInputState(MappedInput1D const & input) const
 	{
-		InputDeviceResult<bool> neg_state = GetInputState(input.neg_key);
-		InputDeviceResult<bool> pos_state = GetInputState(input.pos_key);
+		InputDeviceQueryResult<bool> neg_input_result = GetInputState(input.neg_key);
+		InputDeviceQueryResult<bool> pos_input_result = GetInputState(input.pos_key);
 
-		if (!neg_state.state.has_value() && !pos_state.state.has_value())
+		if (!neg_input_result.state.has_value() && !pos_input_result.state.has_value())
 			return {};
 
 		Input1DState result;
 		InputDeviceTypeMask involved_devices = InputDeviceTypeMask::None;
 
 		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();		
-		auto AccumulateKeyState = [&](InputDeviceResult<bool> const & in_state, float in_delta_value)
+		auto AccumulateKeyState = [&](InputDeviceQueryResult<bool> const & in_state, float in_delta_value)
 		{
 			if (!in_state.state.has_value())
 				return;
@@ -75,26 +75,26 @@ namespace chaos
 			}
 		};
 
-		AccumulateKeyState(neg_state, -1.0f);
-		AccumulateKeyState(pos_state, +1.0f);
+		AccumulateKeyState(neg_input_result, -1.0f);
+		AccumulateKeyState(pos_input_result, +1.0f);
 		result.update_time = frame_time; // value & previous_value computation are fresh from current frame
 
 		return {result, involved_devices};
 	}
 
-	InputDeviceResult<glm::vec2> InputDeviceInterface::GetInputState(MappedInput2D const & input) const
+	InputDeviceQueryResult<glm::vec2> InputDeviceInterface::GetInputState(MappedInput2D const & input) const
 	{
-		InputDeviceResult<float> horizontal_state = GetInputState(MappedInput1D(input.left_key, input.right_key));
-		InputDeviceResult<float> vertical_state = GetInputState(MappedInput1D(input.down_key, input.up_key));
+		InputDeviceQueryResult<float> horizontal_input_result = GetInputState(MappedInput1D(input.left_key, input.right_key));
+		InputDeviceQueryResult<float> vertical_input_result = GetInputState(MappedInput1D(input.down_key, input.up_key));
 
-		if (!horizontal_state.state.has_value() && !vertical_state.state.has_value())
+		if (!horizontal_input_result.state.has_value() && !vertical_input_result.state.has_value())
 			return {};
 
 		Input2DState result;
 		InputDeviceTypeMask involved_devices = InputDeviceTypeMask::None;
 
 		double frame_time = FrameTimeManager::GetInstance()->GetCurrentFrameTime();
-		auto AccumulateKeyState = [&](InputDeviceResult<float> const& in_state, size_t in_axis)
+		auto AccumulateKeyState = [&](InputDeviceQueryResult<float> const& in_state, size_t in_axis)
 		{
 			if (!in_state.state.has_value())
 				return;
@@ -113,8 +113,8 @@ namespace chaos
 			}
 		};
 
-		AccumulateKeyState(horizontal_state, 0);
-		AccumulateKeyState(vertical_state, 1);
+		AccumulateKeyState(horizontal_input_result, 0);
+		AccumulateKeyState(vertical_input_result, 1);
 		result.update_time = frame_time; // value & previous_value are fresh from current frame
 
 		return {result, involved_devices};
@@ -144,17 +144,17 @@ namespace chaos
 		});
 	}
 
-	InputDeviceResult<bool> InputDeviceInterface::DoGetInputState(Key input) const
+	InputDeviceQueryResult<bool> InputDeviceInterface::DoGetInputState(Key input) const
 	{
 		return {};
 	}
 
-	InputDeviceResult<float> InputDeviceInterface::DoGetInputState(Input1D input) const
+	InputDeviceQueryResult<float> InputDeviceInterface::DoGetInputState(Input1D input) const
 	{
 		return {};
 	}
 
-	InputDeviceResult<glm::vec2> InputDeviceInterface::DoGetInputState(Input2D input) const
+	InputDeviceQueryResult<glm::vec2> InputDeviceInterface::DoGetInputState(Input2D input) const
 	{	
 		return {};
 	}

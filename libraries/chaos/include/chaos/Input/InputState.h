@@ -266,7 +266,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputActive(InputDeviceResult<T> const & result)
+	bool IsInputActive(InputDeviceQueryResult<T> const & result)
 	{
 		if (!result.state.has_value())
 			return false;
@@ -274,7 +274,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputInactive(InputDeviceResult<T> const& result)
+	bool IsInputInactive(InputDeviceQueryResult<T> const& result)
 	{
 		if (!result.state.has_value())
 			return false;
@@ -282,7 +282,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputJustActivated(InputDeviceResult<T> const& result)
+	bool IsInputJustActivated(InputDeviceQueryResult<T> const& result)
 	{
 		if (!result.state.has_value())
 			return false;
@@ -290,7 +290,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputJustDeactivated(InputDeviceResult<T> const& result)
+	bool IsInputJustDeactivated(InputDeviceQueryResult<T> const& result)
 	{
 		if (!result.state.has_value())
 			return false;
@@ -298,7 +298,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputActiveRepeated(InputDeviceResult<T> const& result)
+	bool IsInputActiveRepeated(InputDeviceQueryResult<T> const& result)
 	{
 		if (!result.state.has_value())
 			return false;
@@ -306,7 +306,7 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool IsInputInactiveRepeated(InputDeviceResult<T> const& result)
+	bool IsInputInactiveRepeated(InputDeviceQueryResult<T> const& result)
 	{
 		if (!result.state.has_value())
 			return false;

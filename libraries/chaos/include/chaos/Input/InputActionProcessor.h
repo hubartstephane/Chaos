@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		InputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionCache* in_consumption_cache);
+		InputActionProcessor(InputReceiverInterface const* in_input_receiver, InputDeviceInterface const* in_input_device, InputConsumptionSystem* in_consumption_system);
 
 		/** check for condition then process rquested action */
 		virtual bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action = {});
@@ -34,7 +34,7 @@ namespace chaos
 		/** the input device considered */
 		InputDeviceInterface const* input_device = nullptr;
 		/** the consumption cache */
-		InputConsumptionCache* consumption_cache = nullptr;
+		InputConsumptionSystem* consumption_system = nullptr;
 	};
 
 #endif

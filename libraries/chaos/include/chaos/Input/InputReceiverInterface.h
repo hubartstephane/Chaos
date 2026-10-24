@@ -110,17 +110,17 @@ namespace chaos
 
 		return InvokeWithUpgradedInputDevice(keyboard_and_mouse_device, [this, in_input](InputDeviceInterface const* in_input_device)
 		{
-			// XXX: do not use WindowApplication::consumption_cache on purpose
+			// XXX: do not use WindowApplication::consumption_system on purpose
 			//
-			//      the traversal with InputConsumptionCache consumes a lot of inputs and we only want to consume the ones relative with incomming event
+			//      the traversal with InputConsumptionSystem consumes a lot of inputs and we only want to consume the ones relative with incomming event
 			//      elsewhere we would end up locking inputs for the Poll step to come later in the timeline
 			//
-			//      that's why we are using a temporary InputConsumptionCache and manually lock inputs in application InputConsumptionCache
+			//      that's why we are using a temporary InputConsumptionSystem and manually lock inputs in application InputConsumptionSystem
 			//      only if the inputs are consummed for real
 
-			InputConsumptionCache consumption_cache;
+			InputConsumptionSystem consumption_system;
 
-			EventInputActionProcessor<BASIC_INPUT_TYPE> action_processor(this, in_input_device, &consumption_cache, in_input);
+			EventInputActionProcessor<BASIC_INPUT_TYPE> action_processor(this, in_input_device, &consumption_system, in_input);
 			if (EnumerateInputActions(action_processor, EnumerateInputActionContext::OnEvent))
 			{
 				MarkInputConsumedInApplicationCache(in_input, in_input_device);
@@ -135,7 +135,7 @@ namespace chaos
 	{
 		if (in_input_device != nullptr)
 			if (WindowApplication* window_application = Application::GetInstance())
-				window_application->GetInputConsumptionCache().QueryInputState(in_input, nullptr, in_input_device); // this consume the input until next frame
+				window_application->GetInputConsumptionSystem().ClaimInput(in_input, nullptr, in_input_device); // this consume the input until next frame
 	}
 
 #endif

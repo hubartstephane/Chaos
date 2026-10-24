@@ -23,7 +23,7 @@ namespace chaos
 
 				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-				InputConditionResultType request_result = in_condition.Check({ input_receiver, input_device, consumption_cache });
+				InputConditionResultType request_result = in_condition.Check({ input_receiver, input_device, consumption_system });
 				if (request_result == InputConditionResultType::Invalid)
 					color = { 1.0f, 0.0f, 0.0f, 1.0f };
 				else if (request_result == InputConditionResultType::Rejected)
@@ -66,14 +66,14 @@ namespace chaos
 
 			virtual bool Process(InputReceiverInterface* in_input_receiver) override
 			{
-				ImGuiQueryInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_cache);
+				ImGuiQueryInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_system);
 				in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnQuery);
 				return false; // pass through all receivers			
 			}
 
 		protected:
 
-			InputConsumptionCache consumption_cache;
+			InputConsumptionSystem consumption_system;
 		};
 
 		ImGuiTools::DrawImGuiTable("objects", {}, "Description", "Object", "Input", "Request Status", "Enabled")([&]()

@@ -11,7 +11,7 @@
 #include "chaos/Input/KeyboardLayoutConversion.h"
 #include "chaos/Input/InputDeviceInterface.h"
 #include "chaos/Input/ComposedInputDevice.h"
-#include "chaos/Input/InputConsumptionCache.h"
+#include "chaos/Input/InputConsumptionSystem.h"
 #include "chaos/Input/InputMode.h"
 #include "chaos/Input/InputState.h"
 #include "chaos/Input/KeyboardAndMouseDevice.h"

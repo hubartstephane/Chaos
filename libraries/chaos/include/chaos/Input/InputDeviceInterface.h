@@ -7,7 +7,7 @@ namespace chaos
 	enum class InputDeviceTypeMask;
 
 	template<typename T>
-	class InputDeviceResult;
+	class InputDeviceQueryResult;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -38,11 +38,11 @@ namespace chaos
 	CHAOS_DECLARE_ENUM_BITMASK_METHOD(InputDeviceTypeMask, CHAOS_API);
 
 	/**
-	* InputDeviceResult: result when querying for an input
+	* InputDeviceQueryResult: result when querying for an input
 	*/
 
 	template<typename T>
-	class InputDeviceResult
+	class InputDeviceQueryResult
 	{
 	public:
 
@@ -67,15 +67,15 @@ namespace chaos
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const;
 
 		/** gets any key state */
-		InputDeviceResult<bool> GetInputState(Key input) const;
+		InputDeviceQueryResult<bool> GetInputState(Key input) const;
 		/** gets any input1D state */
-		InputDeviceResult<float> GetInputState(Input1D input) const;
+		InputDeviceQueryResult<float> GetInputState(Input1D input) const;
 		/** gets any input2D state */
-		InputDeviceResult<glm::vec2> GetInputState(Input2D input) const;
+		InputDeviceQueryResult<glm::vec2> GetInputState(Input2D input) const;
 		/** gets any Mappedinput1D state */
-		InputDeviceResult<float> GetInputState(MappedInput1D const & input) const;
+		InputDeviceQueryResult<float> GetInputState(MappedInput1D const & input) const;
 		/** gets any Mappedinput2D state */
-		InputDeviceResult<glm::vec2> GetInputState(MappedInput2D const & input) const;
+		InputDeviceQueryResult<glm::vec2> GetInputState(MappedInput2D const & input) const;
 		/** gets any CompositeInput state */
 		template<typename... PARAMS>
 		requires HaveSameInputValueType<PARAMS...>
@@ -92,9 +92,9 @@ namespace chaos
 		template<AnyInputType ANY_INPUT_TYPE>
 		InputTypeToValueType_t<ANY_INPUT_TYPE> GetInputValue(ANY_INPUT_TYPE in_input) const
 		{
-			auto input_state = GetInputState(in_input);
-			if (input_state.state.has_value())
-				return input_state.state->GetValue();
+			auto input_result = GetInputState(in_input);
+			if (input_result.state.has_value())
+				return input_result.state->GetValue();
 			return {};
 		}
 
@@ -102,9 +102,9 @@ namespace chaos
 		template<AnyInputType ANY_INPUT_TYPE>
 		InputStatus GetInputStatus(ANY_INPUT_TYPE in_input) const
 		{
-			auto input_state = GetInputState(in_input);
-			if (input_state.state.has_value())
-				return input_state.state->GetStatus();
+			auto input_result = GetInputState(in_input);
+			if (input_result.state.has_value())
+				return input_result.state->GetStatus();
 			return InputStatus::None;
 		}
 
@@ -124,14 +124,14 @@ namespace chaos
 
 		/** utility method to get a state */
 		template<BasicInputType BASIC_INPUT_TYPE>
-		InputDeviceResult<InputTypeToValueType_t<BASIC_INPUT_TYPE>> GetInputStateHelper(BASIC_INPUT_TYPE in_input) const;
+		InputDeviceQueryResult<InputTypeToValueType_t<BASIC_INPUT_TYPE>> GetInputStateHelper(BASIC_INPUT_TYPE in_input) const;
 
 		/** gets one key state */
-		virtual InputDeviceResult<bool> DoGetInputState(Key input) const;
+		virtual InputDeviceQueryResult<bool> DoGetInputState(Key input) const;
 		/** gets one input1D state */
-		virtual InputDeviceResult<float> DoGetInputState(Input1D input) const;
+		virtual InputDeviceQueryResult<float> DoGetInputState(Input1D input) const;
 		/** gets one input2D state */
-		virtual InputDeviceResult<glm::vec2> DoGetInputState(Input2D input) const;
+		virtual InputDeviceQueryResult<glm::vec2> DoGetInputState(Input2D input) const;
 
 		/** enumerate keys */
 		virtual bool DoForAllKeys(ForAllKeysFunction func) const;
@@ -198,7 +198,7 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 	// KEY
 	if constexpr (std::is_same_v<input_value_type, bool>)
 	{
-		InputDeviceResult<bool> result;
+		InputDeviceQueryResult<bool> result;
 
 		CombineAllChildInputs(result, [&](InputState<bool>& inout_state, InputState<bool> const& child_state)
 		{
@@ -215,7 +215,7 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 	// INPUT1D
 	else if constexpr (std::is_same_v<input_value_type, float>)
 	{
-		InputDeviceResult<float> result;
+		InputDeviceQueryResult<float> result;
 
 		float min_neg_value = 0.0f;
 		float max_pos_value = 0.0f;
@@ -244,7 +244,7 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 	// INPUT2D
 	else if constexpr (std::is_same_v<input_value_type, glm::vec2>)
 	{
-		InputDeviceResult<glm::vec2> result;
+		InputDeviceQueryResult<glm::vec2> result;
 
 		glm::vec2 min_neg_value = { 0.0f, 0.0f };
 		glm::vec2 max_pos_value = { 0.0f, 0.0f };

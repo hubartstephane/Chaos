@@ -70,16 +70,16 @@ namespace chaos
 
 					gamepad_manager->ForEachPresentPhysicalGamepad([&](PhysicalGamepad const& gamepad)
 					{
-						auto input_state = gamepad.GetInputState(input);
+						auto input_result = gamepad.GetInputState(input);
 
 						ImGui::TableNextColumn();
-						if (input_state.state.has_value())
+						if (input_result.state.has_value())
 						{
 							ImVec4 white_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 							ImVec4 red_color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 
-							ImVec4 const& color = (input_state.state->IsActive()) ? red_color : white_color;
-							display_state_func(input_state.state.value(), color);
+							ImVec4 const& color = (input_result.state->IsActive()) ? red_color : white_color;
+							display_state_func(input_result.state.value(), color);
 						}
 						return false; // continue iteration
 					});

@@ -264,7 +264,7 @@ namespace chaos
 		static void SetApplicationInputMode(InputMode new_mode);
 
 		/** returns the consumption cache */
-		InputConsumptionCache& GetInputConsumptionCache() { return consumption_cache; }
+		InputConsumptionSystem& GetInputConsumptionSystem() { return consumption_system; }
 
 	protected:
 
@@ -446,7 +446,7 @@ namespace chaos
 		bool is_quitting = false;
 
 		/** the input consumption cache. To avoid input events to be handled in both event callback and polling code */
-		InputConsumptionCache consumption_cache;
+		InputConsumptionSystem consumption_system;
 	};
 
 #endif

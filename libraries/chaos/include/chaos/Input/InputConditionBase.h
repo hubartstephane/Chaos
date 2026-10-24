@@ -52,7 +52,7 @@ namespace chaos
 		/** the input device that provides all inputs */
 		InputDeviceInterface const * input_device = nullptr;
 		/** the consumption cache to use */
-		InputConsumptionCache * consumption_cache = nullptr;
+		InputConsumptionSystem * consumption_system = nullptr;
 	};
 
 	/**

@@ -80,7 +80,7 @@ public:
 	virtual bool DoProcessAction(chaos::GPUProgramProviderExecutionData const& execution_data) const override;
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
-	void SendGamepadButtonToChallenge(chaos::GamepadState const * in_gamepad_state);
+	void SendGamepadButtonToChallenge(chaos::Key key);
 	/** called whenever a challenge is completed */
 	void OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size);
 

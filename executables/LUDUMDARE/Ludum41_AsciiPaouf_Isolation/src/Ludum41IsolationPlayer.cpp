@@ -70,26 +70,22 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 		{
 			return true;
 		}
+
+		for (chaos::Key key : {chaos::Key::GamepadA, chaos::Key::GamepadB, chaos::Key::GamepadX, chaos::Key::GamepadY})
+		{
+			if (in_action_processor.CheckAndProcess(JustActivated(key), "QTE", [&]()
+				{
+					LudumGameInstance* ludum_game_instance = GetGameInstance();
+					ludum_game_instance->SendGamepadButtonToChallenge(key);
+				}))
+			{
+				return true;
+			}
+		}
 	}
 
 	return chaos::Player::EnumerateInputActions(in_action_processor, in_context);
 }
-
-#if 0
-void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const * gpd)
-{
-	chaos::Player::HandleInputs(delta_time, gpd);
-	if (gpd != nullptr)
-	{
-		LudumGameInstance* ludum_game_instance = GetGameInstance();
-		ludum_game_instance->SendGamepadButtonToChallenge(gpd);
-	}
-}
-#endif
-
-
-
-
 
 void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 {

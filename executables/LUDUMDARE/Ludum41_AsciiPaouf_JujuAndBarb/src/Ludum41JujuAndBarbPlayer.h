@@ -39,14 +39,6 @@ protected:
 	/** override */
 	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context);
 
-#if 0
-	/** override */
-	virtual void HandleInputs(float delta_time, chaos::GamepadState const * gpd) override;
-#endif
-
-
-
-
 	/** override */
 	virtual bool OnReadConfigurableProperties(chaos::JSONReadConfiguration config, chaos::ReadConfigurablePropertiesContext context) override;
 	/** override */

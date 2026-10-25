@@ -32,9 +32,9 @@ void LudumChallenge::Show(bool visible)
 		particle_range->Show(visible);
 }
 
-void LudumChallenge::OnGamepadButtonReceived(chaos::GamepadState const * in_gamepad_state)
+void LudumChallenge::OnGamepadButtonReceived(chaos::Key key)
 {
-	LudumGame * game = game_instance->GetGame();
+	LudumGame* game = game_instance->GetGame();
 	if (game->IsFreeCameraMode())
 		return;
 
@@ -44,24 +44,13 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::GamepadState const * in_game
 
 	int expected_key = gamepad_challenge[gamepad_challenge_position];
 
-	if (IsInputJustActivated(in_gamepad_state->GetInputState((chaos::Key)expected_key)))
+	if (key == (chaos::Key)expected_key)
 	{
 		AdvanceChallenge();
 	}
 	else
 	{
-		// search if a bad button is pressed
-		for (auto it = window_application->GetGamepadButtonMap().begin() ; it != window_application->GetGamepadButtonMap().end() ; ++it)
-		{
-			if (it->first == (chaos::Key)expected_key)
-				continue;
-
-			if (IsInputJustActivated(in_gamepad_state->GetInputState(it->first)))
-			{
-				OnChallengeError(false);
-				return;
-			}
-		}
+		OnChallengeError(false);
 	}
 }
 

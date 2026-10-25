@@ -13,7 +13,7 @@ public:
 	virtual ~LudumChallenge();
 
 	/** try to catch button input */
-	void OnGamepadButtonReceived(chaos::GamepadState const * in_gamepad_state);
+	void OnGamepadButtonReceived(chaos::Key key);
 	/** override */
 	virtual bool OnCharEventImpl(chaos::CharEvent const& char_event) override;
 

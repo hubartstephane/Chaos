@@ -94,15 +94,6 @@ namespace chaos
 		Game* game = GetGame();
 		if (game != nullptr && !game->IsFreeCameraMode() && game->IsPlaying())
 		{
-
-#if 0
-			// tick the inputs
-			GamepadState const* gamepad_state = (gamepad != nullptr)? gamepad->GetGamepadState() : nullptr;
-			HandleInputs(delta_time, gamepad_state);
-#endif
-
-
-
 			// tick other player objects
 			TickInternal(delta_time);
 
@@ -205,11 +196,6 @@ namespace chaos
 		// cache the TRIGGERS
 		left_trigger  = gamepad_state->GetInputValue(Input1D::GamepadLeftTrigger);
 		right_trigger = gamepad_state->GetInputValue(Input1D::GamepadRightTrigger);
-	}
-
-	void Player::HandleInputs(float delta_time, GamepadState const* gamepad_state)
-	{
-
 	}
 
 	void Player::ResetCachedInputs()

@@ -122,12 +122,12 @@ void LudumGameInstance::TickBrickOffset(float delta_time)
 	}
 }
 
-void LudumGameInstance::SendGamepadButtonToChallenge(chaos::GamepadState const * in_gamepad_state)
+void LudumGameInstance::SendGamepadButtonToChallenge(chaos::Key key)
 {
 	if (!game->IsPlaying())
 		return;
 	if (sequence_challenge != nullptr)
-		sequence_challenge->OnGamepadButtonReceived(in_gamepad_state);
+		sequence_challenge->OnGamepadButtonReceived(key);
 }
 
 void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size)

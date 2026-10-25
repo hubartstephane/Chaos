@@ -135,7 +135,7 @@ namespace chaos
 	{
 		if (in_input_device != nullptr)
 			if (WindowApplication* window_application = Application::GetInstance())
-				window_application->GetInputConsumptionSystem().ClaimInput(in_input, nullptr, in_input_device); // this consume the input until next frame
+				window_application->GetInputConsumptionSystem().ConsumeInput(in_input, nullptr, in_input_device); // this consume the input until next frame
 	}
 
 #endif

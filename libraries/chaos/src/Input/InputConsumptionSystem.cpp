@@ -3,38 +3,38 @@
 
 namespace chaos
 {
-	CHAOS_IMPLEMENT_ENUM_BOOL_METHOD(InputClaimResultStatus, CHAOS_API);
-	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(InputClaimFlags, nullptr, CHAOS_API);
-	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(InputClaimResultFlags, nullptr, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BOOL_METHOD(InputConsumeResultStatus, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(InputConsumeFlags, nullptr, CHAOS_API);
+	CHAOS_IMPLEMENT_ENUM_BITMASK_METHOD(InputConsumeResultFlags, nullptr, CHAOS_API);
 
 	// requesting for an InputState is a two steps process
 	// -first, we require authorization from InputConsumptionSystem
 	// -then,  we require the InputDevice for the state
 
 	template<BasicInputType BASIC_INPUT_TYPE>
-	InputClaimResultStatus InputConsumptionSystem::DoTryConsumeInput(
+	InputConsumeResultStatus InputConsumptionSystem::DoTryConsumeInput(
 		BASIC_INPUT_TYPE in_input, 
 		InputReceiverInterface const* in_input_receiver, 
-		InputClaimFlags in_claim_flags, 
-		InputClaimResultFlags& out_response_flags)
+		InputConsumeFlags in_consume_flags, 
+		InputConsumeResultFlags& out_response_flags)
 	{
 		// check wether the input is known
 		if (in_input == BASIC_INPUT_TYPE::Unknown)
 		{
-			out_response_flags |= InputClaimResultFlags::UnknownInput;
-			return InputClaimResultStatus::Success; // this is not an error
+			out_response_flags |= InputConsumeResultFlags::UnknownInput;
+			return InputConsumeResultStatus::Success; // this is not an error
 		}
 
 		// check whether someone queried for all inputs
 		if constexpr (std::is_same_v<Key, BASIC_INPUT_TYPE>)
 			if (all_key_consumer.has_value() && all_key_consumer.value() != in_input_receiver)
-				return InputClaimResultStatus::Failure;
+				return InputConsumeResultStatus::Failure;
 		if constexpr (std::is_same_v<Input1D, BASIC_INPUT_TYPE>)
 			if (all_input1D_consumer.has_value() && all_input1D_consumer.value() != in_input_receiver)
-				return InputClaimResultStatus::Failure;
+				return InputConsumeResultStatus::Failure;
 		if constexpr (std::is_same_v<Input2D, BASIC_INPUT_TYPE>)
 			if (all_input2D_consumer.has_value() && all_input2D_consumer.value() != in_input_receiver)
-				return InputClaimResultStatus::Failure;
+				return InputConsumeResultStatus::Failure;
 
 		auto consume_input_func = [&](auto & consumed_input_map)
 		{
@@ -43,21 +43,21 @@ namespace chaos
 
 			if (it == consumed_input_map.end())
 			{
-				if (!HasAnyFlags(in_claim_flags, InputClaimFlags::ConsultOnly))
+				if (!HasAnyFlags(in_consume_flags, InputConsumeFlags::ConsultOnly))
 					consumed_input_map.emplace(in_input, in_input_receiver);
-				out_response_flags |= InputClaimResultFlags::SuccessfulInput | InputClaimResultFlags::KnownInput;
-				return InputClaimResultStatus::Success;
+				out_response_flags |= InputConsumeResultFlags::SuccessfulInput | InputConsumeResultFlags::KnownInput;
+				return InputConsumeResultStatus::Success;
 			}
 
 			// the same input receiver requires for the input. that's ok
 			if (it->second == in_input_receiver)
 			{
-				out_response_flags |= InputClaimResultFlags::SuccessfulInput | InputClaimResultFlags::KnownInput;
-				return InputClaimResultStatus::Success;
+				out_response_flags |= InputConsumeResultFlags::SuccessfulInput | InputConsumeResultFlags::KnownInput;
+				return InputConsumeResultStatus::Success;
 			}
 
 			// another receiver requires the input. that's a rejection
-			return InputClaimResultStatus::Failure;
+			return InputConsumeResultStatus::Failure;
 		};
 
 		// dispatch request to appropriate input map
@@ -70,115 +70,115 @@ namespace chaos
 
 		// should never happen
 		assert(0);
-		return InputClaimResultStatus::Failure;
+		return InputConsumeResultStatus::Failure;
 	}
 
 	template<BasicInputType BASIC_INPUT_TYPE>
-	InputClaimResultStatus InputConsumptionSystem::TryConsumeInputAndRelated(
+	InputConsumeResultStatus InputConsumptionSystem::TryConsumeInputAndRelated(
 		BASIC_INPUT_TYPE in_input, 
 		InputReceiverInterface const* in_input_receiver, 
-		InputClaimFlags in_claim_flags,
-		InputClaimResultFlags& out_response_flags,
+		InputConsumeFlags in_consume_flags,
+		InputConsumeResultFlags& out_response_flags,
 		ConsumeRelatedInputFunc consume_related_input_func
 	)
 	{
-		InputClaimResultStatus response_status = InputClaimResultStatus::Success;
-		response_status &= DoTryConsumeInput(in_input, in_input_receiver, in_claim_flags, out_response_flags);
-		response_status &= consume_related_input_func(in_input_receiver, in_claim_flags, out_response_flags);
+		InputConsumeResultStatus response_status = InputConsumeResultStatus::Success;
+		response_status &= DoTryConsumeInput(in_input, in_input_receiver, in_consume_flags, out_response_flags);
+		response_status &= consume_related_input_func(in_input_receiver, in_consume_flags, out_response_flags);
 		return response_status;
 	}
 
-	InputClaimResultStatus InputConsumptionSystem::TryConsumeInput(
+	InputConsumeResultStatus InputConsumptionSystem::TryConsumeInput(
 		Key in_input, 
 		InputReceiverInterface const* in_input_receiver, 
-		InputClaimFlags in_claim_flags, 
-		InputClaimResultFlags& out_response_flags)
+		InputConsumeFlags in_consume_flags, 
+		InputConsumeResultFlags& out_response_flags)
 	{
-		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputClaimFlags in_claim_flags, InputClaimResultFlags& out_response_flags)
+		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputConsumeFlags in_consume_flags, InputConsumeResultFlags& out_response_flags)
 		{
-			InputClaimResultStatus response_status = InputClaimResultStatus::Success;
+			InputConsumeResultStatus response_status = InputConsumeResultStatus::Success;
 
 			InputTools::EnumerateRelatedInputsDefinition(in_input, [&](VirtualKeyDefinition const& def)
 			{
-				response_status &= DoTryConsumeInput(def.input1D, in_input_receiver, in_claim_flags, out_response_flags);
+				response_status &= DoTryConsumeInput(def.input1D, in_input_receiver, in_consume_flags, out_response_flags);
 				return false; // don't stop and process next
 			});
 			return response_status;
 		};
-		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_claim_flags, out_response_flags, consume_related_func);
+		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_consume_flags, out_response_flags, consume_related_func);
 	}
 
-	InputClaimResultStatus InputConsumptionSystem::TryConsumeInput(
+	InputConsumeResultStatus InputConsumptionSystem::TryConsumeInput(
 		Input1D in_input, 
 		InputReceiverInterface const* in_input_receiver, 
-		InputClaimFlags in_claim_flags, 
-		InputClaimResultFlags& out_response_flags)
+		InputConsumeFlags in_consume_flags, 
+		InputConsumeResultFlags& out_response_flags)
 	{
-		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputClaimFlags in_claim_flags, InputClaimResultFlags& out_response_flags)
+		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputConsumeFlags in_consume_flags, InputConsumeResultFlags& out_response_flags)
 		{
-			InputClaimResultStatus response_status = InputClaimResultStatus::Success;
+			InputConsumeResultStatus response_status = InputConsumeResultStatus::Success;
 
 			InputTools::EnumerateRelatedInputsDefinition(in_input,
 				[&](VirtualKeyDefinition const& def)
 				{
-					response_status &= DoTryConsumeInput(def.key, in_input_receiver, in_claim_flags, out_response_flags);
+					response_status &= DoTryConsumeInput(def.key, in_input_receiver, in_consume_flags, out_response_flags);
 					return false; // don't stop and process next
 				},
 				[&](VirtualInput2DDefinition const& def)
 				{
-					response_status &= DoTryConsumeInput(def.input2D, in_input_receiver, in_claim_flags, out_response_flags);
+					response_status &= DoTryConsumeInput(def.input2D, in_input_receiver, in_consume_flags, out_response_flags);
 					return false; // don't stop and process next			
 				}
 			);
 			return response_status;
 		};
-		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_claim_flags, out_response_flags, consume_related_func);
+		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_consume_flags, out_response_flags, consume_related_func);
 	}
 
-	InputClaimResultStatus InputConsumptionSystem::TryConsumeInput(
+	InputConsumeResultStatus InputConsumptionSystem::TryConsumeInput(
 		Input2D in_input, 
 		InputReceiverInterface const* in_input_receiver, 
-		InputClaimFlags in_claim_flags, 
-		InputClaimResultFlags& out_response_flags)
+		InputConsumeFlags in_consume_flags, 
+		InputConsumeResultFlags& out_response_flags)
 	{	
-		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputClaimFlags in_claim_flags, InputClaimResultFlags& out_response_flags)
+		auto consume_related_func = [this, in_input](InputReceiverInterface const* in_input_receiver, InputConsumeFlags in_consume_flags, InputConsumeResultFlags& out_response_flags)
 		{
-			InputClaimResultStatus response_status = InputClaimResultStatus::Success;
+			InputConsumeResultStatus response_status = InputConsumeResultStatus::Success;
 
 			InputTools::EnumerateRelatedInputsDefinition(in_input, [&](VirtualInput2DDefinition const& def)
 			{
-				response_status &= DoTryConsumeInput(def.input1D_x, in_input_receiver, in_claim_flags, out_response_flags);
-				response_status &= DoTryConsumeInput(def.input1D_y, in_input_receiver, in_claim_flags, out_response_flags);
+				response_status &= DoTryConsumeInput(def.input1D_x, in_input_receiver, in_consume_flags, out_response_flags);
+				response_status &= DoTryConsumeInput(def.input1D_y, in_input_receiver, in_consume_flags, out_response_flags);
 				return false; // don't stop and process next			
 			});
 			return response_status;
 		};
-		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_claim_flags, out_response_flags, consume_related_func);
+		return TryConsumeInputAndRelated(in_input, in_input_receiver, in_consume_flags, out_response_flags, consume_related_func);
 	}
 
-	InputClaimResultStatus InputConsumptionSystem::TryConsumeInput(
+	InputConsumeResultStatus InputConsumptionSystem::TryConsumeInput(
 		MappedInput1D const in_input,
 		InputReceiverInterface const* in_input_receiver,
-		InputClaimFlags in_claim_flags,
-		InputClaimResultFlags& out_response_flags)
+		InputConsumeFlags in_consume_flags,
+		InputConsumeResultFlags& out_response_flags)
 	{
-		InputClaimResultFlags  response_flags = InputClaimResultFlags::None;
-		InputClaimResultStatus response_status = InputClaimResultStatus::Success;
+		InputConsumeResultFlags  response_flags = InputConsumeResultFlags::None;
+		InputConsumeResultStatus response_status = InputConsumeResultStatus::Success;
 		for (Key key : { in_input.neg_key, in_input.pos_key })
-			response_status &= TryConsumeInput(key, in_input_receiver, in_claim_flags, response_flags);
+			response_status &= TryConsumeInput(key, in_input_receiver, in_consume_flags, response_flags);
 		return response_status;
 	}
 
-	InputClaimResultStatus InputConsumptionSystem::TryConsumeInput(
+	InputConsumeResultStatus InputConsumptionSystem::TryConsumeInput(
 		MappedInput2D const in_input,
 		InputReceiverInterface const* in_input_receiver,
-		InputClaimFlags in_claim_flags,
-		InputClaimResultFlags& out_response_flags)
+		InputConsumeFlags in_consume_flags,
+		InputConsumeResultFlags& out_response_flags)
 	{
-		InputClaimResultFlags  response_flags = InputClaimResultFlags::None;
-		InputClaimResultStatus response_status = InputClaimResultStatus::Success;
+		InputConsumeResultFlags  response_flags = InputConsumeResultFlags::None;
+		InputConsumeResultStatus response_status = InputConsumeResultStatus::Success;
 		for (Key key : { in_input.left_key, in_input.right_key, in_input.down_key, in_input.up_key })
-			response_status &= TryConsumeInput(key, in_input_receiver, in_claim_flags, response_flags);
+			response_status &= TryConsumeInput(key, in_input_receiver, in_consume_flags, response_flags);
 		return response_status;		
 	}
 

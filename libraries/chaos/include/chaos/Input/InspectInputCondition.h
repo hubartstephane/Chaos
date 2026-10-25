@@ -37,8 +37,8 @@ namespace chaos
 			if (out_state == nullptr && out_value == nullptr && check_type == InputStatusCheckType::None) // this request is useless
 				return InputConditionResultType::Invalid;
 
-			auto request_result = in_params.consumption_system->ClaimInput(input, in_params.input_receiver, in_params.input_device);
-			if (request_result.response_status == InputClaimResultStatus::Failure)
+			auto request_result = in_params.consumption_system->ConsumeInput(input, in_params.input_receiver, in_params.input_device);
+			if (request_result.response_status == InputConsumeResultStatus::Failure)
 				return InputConditionResultType::Rejected;
 			if (!request_result.input_result.state.has_value())
 				return InputConditionResultType::Invalid; // abnormal (request for an input not handled by the receiver)

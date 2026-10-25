@@ -42,6 +42,8 @@ namespace chaos
 
 		/** change the current input mode */
 		void SetInputMode(InputMode new_mode);
+		/** change the current input mode according to any devices considered (try to avoid mode change if possible) */
+		void SetInputModeForInvolvedDevices(InputDeviceTypeMask devices);
 		/* get the current input mode */
 		InputMode GetInputMode() const { return input_mode; }
 

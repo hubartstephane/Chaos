@@ -20,6 +20,29 @@ namespace chaos
 		OnInputModeChanged(new_mode, old_mode);
 	}
 
+	void InputReceiverInterface::SetInputModeForInvolvedDevices(InputDeviceTypeMask devices)
+	{
+		// early exit
+		if (devices == InputDeviceTypeMask::None)
+			return;
+
+		// avoid input mode change if possible
+		if (input_mode == InputMode::Keyboard && HasAnyFlags(devices, InputDeviceTypeMask::Keyboard))
+			return;
+		if (input_mode == InputMode::Mouse && HasAnyFlags(devices, InputDeviceTypeMask::Mouse))
+			return;
+		if (input_mode == InputMode::Gamepad && HasAnyFlags(devices, InputDeviceTypeMask::Gamepad))
+			return;
+
+		// change the mode
+		if (HasAnyFlags(devices, InputDeviceTypeMask::Keyboard))
+			return SetInputMode(InputMode::Keyboard);
+		if (HasAnyFlags(devices, InputDeviceTypeMask::Mouse))
+			return SetInputMode(InputMode::Mouse);
+		if (HasAnyFlags(devices, InputDeviceTypeMask::Gamepad))
+			return SetInputMode(InputMode::Gamepad);
+	}
+
 	bool InputReceiverInterface::CheckKeyDown(Key const* keys)
 	{
 		// early exit

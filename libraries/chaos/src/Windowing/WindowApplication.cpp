@@ -530,7 +530,10 @@ namespace chaos
 			virtual bool Process(InputReceiverInterface* in_input_receiver) override
 			{
 				PollInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_system);
-				return in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnPolling);
+
+				bool result = in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnPolling);
+				in_input_receiver->SetInputModeForInvolvedDevices(action_processor.GetInvolvedDevices());
+				return result;
 			}
 
 		protected:

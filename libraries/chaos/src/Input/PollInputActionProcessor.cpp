@@ -8,7 +8,10 @@ namespace chaos
 	{
 		InputConditionResult result = in_condition.Check({ input_receiver, input_device, consumption_system });
 		if (result.type == InputConditionResultType::True)
+		{
+			involved_devices |= result.involved_devices;
 			in_action.Process();
+		}
 		return false;
 	}
 

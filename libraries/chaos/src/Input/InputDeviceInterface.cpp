@@ -117,7 +117,7 @@ namespace chaos
 		AccumulateKeyState(vertical_input_result, 1);
 		result.update_time = frame_time; // value & previous_value are fresh from current frame
 
-		return {result, involved_devices};
+		return { result, (result.IsActive() ? involved_devices : InputDeviceTypeMask::None) };
 	}
 
 	bool InputDeviceInterface::ForAllKeys(ForAllKeysFunction func) const

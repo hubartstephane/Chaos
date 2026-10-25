@@ -110,9 +110,7 @@ namespace chaos
 
 			}, child_input_requests);
 			
-
-			return result.value_or({ InputConditionResultType::False, InputDeviceTypeMask::None });
-			//return result.value_or({});
+			return result.value_or({});
 		}
 
 		// By construction, we concat expressions

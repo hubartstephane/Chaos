@@ -160,9 +160,9 @@ auto InputDeviceInterface::GetInputState(CombinedInput<PARAMS...> const& input) 
 			{
 				inout_result.state.emplace();
 				inout_result.state->update_time = frame_time;
-				if (in_child_state.state->IsActive())
-					inout_result.involved_devices |= in_child_state.involved_devices;
 			}
+			if (in_child_state.state->IsActive())
+				inout_result.involved_devices |= in_child_state.involved_devices;
 			combine_state_func(inout_result.state.value(), in_child_state.state.value());
 		};
 

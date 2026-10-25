@@ -18,6 +18,14 @@ namespace chaos
 
 		/** override */
 		virtual bool CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action) override;
+
+		/** get the devices involved in some succesfull action */
+		InputDeviceTypeMask GetInvolvedDevices() const { return involved_devices; }
+
+	protected:
+
+		/* devices involved in some succesfull action */
+		InputDeviceTypeMask involved_devices = InputDeviceTypeMask::None;
 	};
 
 #endif

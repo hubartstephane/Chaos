@@ -52,22 +52,64 @@ namespace chaos
 		}
 
 		/** override */
-		virtual InputConditionResultType Check(InputConditionCheckParams const& in_params) const override
+		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override
 		{
-			std::optional<InputConditionResultType> result;
+			auto AggregateResult = [](std::optional<InputConditionResult> & result, InputConditionResult const & child_result)
+			{
+				auto ComputeAggregationResult = [&](std::initializer_list<InputConditionResultType> const& ordered_values)
+				{
+					if (result.has_value())
+					{
+						for (InputConditionResultType type : ordered_values)
+						{
+							if (child_result.type == type || result->type == type)
+							{
+								result->type = type;
+								return;
+							}
+						}
+					}
+					result = child_result; // first initialization
+				};
+
+				if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
+				{
+					// when you AND requests, the result type is the worse from all child requests
+					return ComputeAggregationResult({ 
+						InputConditionResultType::Rejected, 
+						InputConditionResultType::Invalid,
+						InputConditionResultType::False,
+						InputConditionResultType::True });
+				}
+				else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
+				{
+					// when you OR requests, the result type is the best from all child requests
+					return ComputeAggregationResult({ 
+						InputConditionResultType::True,
+						InputConditionResultType::False,
+						InputConditionResultType::Invalid,
+						InputConditionResultType::Rejected });
+				}
+				else
+				{
+					static_assert(0);
+				}
+			};
+
+			std::optional<InputConditionResult> result;
 
 			std::apply([&](auto const & ... child_request)
 			{
 				auto CheckChildInputRequest = [&](auto const& child_request)
 				{
-					InputConditionResultType child_result = child_request.Check(in_params);
-					result = AggregateResult(result, child_result);
+					InputConditionResult child_result = child_request.Check(in_params);
+					AggregateResult(result, child_result);
 				};
 				(CheckChildInputRequest(child_request), ...);
 
 			}, child_input_requests);
 
-			return result.value_or(InputConditionResultType::False);
+			return result.value_or({});
 		}
 
 		// By construction, we concat expressions
@@ -163,32 +205,6 @@ namespace chaos
 				return (child_request.IsRequestRelatedTo(in_input) || ...);
 			},
 			child_input_requests);
-		}
-
-		/** combine results altogether */
-		InputConditionResultType AggregateResult(std::optional<InputConditionResultType> const& result, InputConditionResultType child_result) const
-		{
-			auto ComputeAggregationResult = [&](std::initializer_list<InputConditionResultType> const& ordered_values)
-			{
-				if (result.has_value())
-					for (InputConditionResultType r : ordered_values)
-						if (child_result == r || result.value() == r)
-							return r;
-				return child_result;
-			};
-
-			if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
-			{
-				return ComputeAggregationResult({ InputConditionResultType::Rejected, InputConditionResultType::Invalid, InputConditionResultType::False, InputConditionResultType::True });
-			}
-			else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
-			{
-				return ComputeAggregationResult({ InputConditionResultType::True, InputConditionResultType::False, InputConditionResultType::Invalid, InputConditionResultType::Rejected });
-			}
-			else
-			{
-				static_assert(0);
-			}
 		}
 
 	protected:

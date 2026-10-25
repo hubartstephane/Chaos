@@ -26,7 +26,7 @@ namespace chaos
 		return debug_info_storage.buffer;
 	}
 
-	InputConditionResultType ModifiersInputCondition::Check(InputConditionCheckParams const& in_params) const
+	InputConditionResult ModifiersInputCondition::Check(InputConditionCheckParams const& in_params) const
 	{
 		struct ModifierRequest
 		{
@@ -50,11 +50,11 @@ namespace chaos
 				{
 					bool value = GetModifierKeyPairValue(in_params.input_device, request.key1, request.key2);
 					if (value != wanted_value)
-						return InputConditionResultType::False;
+						return { InputConditionResultType::False };
 				}
 			}
 		}
-		return InputConditionResultType::True;
+		return {InputConditionResultType::True};
 	}
 
 	ModifiersInputCondition RequireModifiers(KeyModifier in_modifiers)

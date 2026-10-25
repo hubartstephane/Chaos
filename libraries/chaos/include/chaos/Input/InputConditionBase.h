@@ -8,12 +8,14 @@ namespace chaos
 
 	enum class InputConditionResultType;
 
+	class InputConditionResult;
+
 	CHAOS_GENERATE_INHERIT_FROM_ANY_CONCEPT(InputRequestType, InputConditionBase);
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * InputConditionResultType: 
+	 * InputConditionResultType: the result type of an input condition check
 	 */
 
 	enum class InputConditionResultType : int
@@ -22,6 +24,18 @@ namespace chaos
 		Rejected,  // the inputs for this request have already been consumed
 		False,     // the request is not satisfied
 		True       // the request is satisfied
+	};
+
+	/**
+	 * InputConditionResult: the result of an input condition check
+	 */
+
+	class CHAOS_API InputConditionResult
+	{
+	public:
+
+		/** the type of the result */
+		InputConditionResultType type = InputConditionResultType::False;
 	};
 
 	/**
@@ -64,7 +78,7 @@ namespace chaos
 	public:
 
 		/** check whether the request matches a given input device state (polling) */
-		virtual InputConditionResultType Check(InputConditionCheckParams const & in_params) const;
+		virtual InputConditionResult Check(InputConditionCheckParams const & in_params) const;
 
 		/** check whether the request is related to some input */
 		virtual bool IsRequestRelatedTo(Key in_input) const;

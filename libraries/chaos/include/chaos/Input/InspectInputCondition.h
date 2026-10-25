@@ -32,22 +32,23 @@ namespace chaos
 		InspectInputCondition(InspectInputCondition const& src) = default;
 
 		/** override */
-		virtual InputConditionResultType Check(InputConditionCheckParams const& in_params) const override
+		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override
 		{
 			if (out_state == nullptr && out_value == nullptr && check_type == InputStatusCheckType::None) // this request is useless
-				return InputConditionResultType::Invalid;
+				return { InputConditionResultType::Invalid };
 
 			auto request_result = in_params.consumption_system->ConsumeInput(input, in_params.input_receiver, in_params.input_device);
+
 			if (request_result.response_status == InputConsumeResultStatus::Failure)
-				return InputConditionResultType::Rejected;
+				return { InputConditionResultType::Rejected };
 			if (!request_result.input_result.state.has_value())
-				return InputConditionResultType::Invalid; // abnormal (request for an input not handled by the receiver)
+				return { InputConditionResultType::Invalid }; // abnormal (request for an input not handled by the receiver)
 
 			return OuputDataAndReturnResult(request_result.input_result.state.value());
 		}
 
 		/** output necessary data and get request result from the state and the query */
-		InputConditionResultType OuputDataAndReturnResult(state_type const & in_input_state) const
+		InputConditionResult OuputDataAndReturnResult(state_type const & in_input_state) const
 		{
 			// output results
 			if (out_state != nullptr)
@@ -56,9 +57,10 @@ namespace chaos
 				*out_value = in_input_state.value;
 
 			// compute return value
-			return in_input_state.CheckStatus(check_type)?
-				InputConditionResultType::True: 
-				InputConditionResultType::False;
+			if (in_input_state.CheckStatus(check_type))
+				return { InputConditionResultType::True};
+			else
+				return { InputConditionResultType::False};
 		}
 
 		/** override */

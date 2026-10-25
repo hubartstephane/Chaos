@@ -16,7 +16,7 @@ namespace chaos
 	public:
 
 		/** override */
-		virtual InputConditionResultType Check(InputConditionCheckParams const& in_params) const override;
+		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override;
 		/** override */
 		virtual bool IsRequestRelatedTo(Key in_input) const override;
 		/** override */

@@ -6,7 +6,8 @@ namespace chaos
 {
 	bool PollInputActionProcessor::CheckAndProcess(InputConditionBase const& in_condition, char const* in_title, InputAction const & in_action)
 	{
-		if (in_condition.Check({input_receiver, input_device, consumption_system}) == InputConditionResultType::True)
+		InputConditionResult result = in_condition.Check({ input_receiver, input_device, consumption_system });
+		if (result.type == InputConditionResultType::True)
 			in_action.Process();
 		return false;
 	}

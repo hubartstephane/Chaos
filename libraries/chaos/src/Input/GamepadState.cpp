@@ -25,21 +25,24 @@ namespace chaos
 	{
 		if (!IsGamepadInput(input))
 			return {};
-		return {buttons[size_t(input) - size_t(Key::GamepadFirst)], InputDeviceTypeMask::Gamepad};
+		KeyState const & state = buttons[size_t(input) - size_t(Key::GamepadFirst)];
+		return {state, (state.IsActive()? InputDeviceTypeMask::Gamepad : InputDeviceTypeMask::None) };
 	}
 
 	InputDeviceQueryResult<float> GamepadState::DoGetInputState(Input1D input) const
 	{
 		if (!IsGamepadInput(input))
 			return {};
-		return {axes[size_t(input) - size_t(Input1D::GamepadFirst)], InputDeviceTypeMask::Gamepad};
+		Input1DState const& state = axes[size_t(input) - size_t(Input1D::GamepadFirst)];
+		return { state, (state.IsActive() ? InputDeviceTypeMask::Gamepad : InputDeviceTypeMask::None) };
 	}
 
 	InputDeviceQueryResult<glm::vec2> GamepadState::DoGetInputState(Input2D input) const
 	{	
 		if (!IsGamepadInput(input))
 			return {};
-		return {sticks[size_t(input) - size_t(Input2D::GamepadFirst)], InputDeviceTypeMask::Gamepad};
+		Input2DState const& state = sticks[size_t(input) - size_t(Input2D::GamepadFirst)];
+		return { state, (state.IsActive() ? InputDeviceTypeMask::Gamepad : InputDeviceTypeMask::None) };
 	}
 
 	bool GamepadState::DoForAllKeys(ForAllKeysFunction func) const

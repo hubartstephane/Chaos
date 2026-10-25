@@ -7,13 +7,13 @@ namespace chaos
 	{
 		if (IsKeyboardInput(input))
 		{
-			size_t input_index = size_t(input) - size_t(Key::KeyboardFirst);
-			return {keyboard_key_state[input_index], InputDeviceTypeMask::Keyboard};
+			KeyState const& state = keyboard_key_state[size_t(input) - size_t(Key::KeyboardFirst)];
+			return { state, (state.IsActive() ? InputDeviceTypeMask::Keyboard : InputDeviceTypeMask::None) };
 		}
 		if (IsMouseInput(input))
 		{
-			size_t input_index = size_t(input) - size_t(Key::MouseFirst);
-			return {mouse_key_state[input_index], InputDeviceTypeMask::Mouse};
+			KeyState const& state = mouse_key_state[size_t(input) - size_t(Key::MouseFirst)];
+			return { state, (state.IsActive() ? InputDeviceTypeMask::Mouse : InputDeviceTypeMask::None) };
 		}
 		return {};
 	}
@@ -22,8 +22,8 @@ namespace chaos
 	{
 		if (IsMouseInput(input))
 		{
-			size_t input_index = size_t(input) - size_t(Input1D::MouseFirst);
-			return {mouse_input1D_state[input_index], InputDeviceTypeMask::Mouse};
+			Input1DState const& state = mouse_input1D_state[size_t(input) - size_t(Input1D::MouseFirst)];
+			return { state, (state.IsActive() ? InputDeviceTypeMask::Mouse : InputDeviceTypeMask::None) };
 		}
 		return {};
 	}
@@ -32,8 +32,8 @@ namespace chaos
 	{
 		if (IsMouseInput(input))
 		{
-			size_t input_index = size_t(input) - size_t(Input2D::MouseFirst);
-			return {mouse_input2D_state[input_index], InputDeviceTypeMask::Mouse};
+			Input2DState const& state = mouse_input2D_state[size_t(input) - size_t(Input2D::MouseFirst)];
+			return { state, (state.IsActive() ? InputDeviceTypeMask::Mouse : InputDeviceTypeMask::None) };
 		}
 		return {};
 	}

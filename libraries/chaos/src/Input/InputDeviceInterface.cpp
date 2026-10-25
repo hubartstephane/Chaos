@@ -57,7 +57,7 @@ namespace chaos
 			if (!in_state.state.has_value())
 				return;
 
-			if (in_state.state->value)
+			if (in_state.state->IsActive())
 			{
 				result.value += in_delta_value;
 				involved_devices |= in_state.involved_devices;
@@ -79,7 +79,7 @@ namespace chaos
 		AccumulateKeyState(pos_input_result, +1.0f);
 		result.update_time = frame_time; // value & previous_value computation are fresh from current frame
 
-		return {result, involved_devices};
+		return {result, (result.IsActive()? involved_devices : InputDeviceTypeMask::None) }; // if both POS & NEG direction are pressed altogether, set involved devices to none
 	}
 
 	InputDeviceQueryResult<glm::vec2> InputDeviceInterface::GetInputState(MappedInput2D const & input) const
@@ -100,7 +100,7 @@ namespace chaos
 				return;
 
 			result.value[in_axis] = in_state.state->value;
-			if (in_state.state->value != 0.0f)
+			if (in_state.state->IsActive())
 				involved_devices |= in_state.involved_devices;
 
 			if (frame_time == in_state.state->update_time) // previous_value is valid

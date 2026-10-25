@@ -56,43 +56,44 @@ namespace chaos
 		{
 			auto AggregateResult = [](std::optional<InputConditionResult> & result, InputConditionResult const & child_result)
 			{
-				auto ComputeAggregationResult = [&](std::initializer_list<InputConditionResultType> const& ordered_values)
+				if (!result.has_value())
 				{
-					if (result.has_value())
-					{
-						for (InputConditionResultType type : ordered_values)
-						{
-							if (child_result.type == type || result->type == type)
-							{
-								result->type = type;
-								return;
-							}
-						}
-					}
 					result = child_result; // first initialization
-				};
-
-				if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
-				{
-					// when you AND requests, the result type is the worse from all child requests
-					return ComputeAggregationResult({ 
-						InputConditionResultType::Rejected, 
-						InputConditionResultType::Invalid,
-						InputConditionResultType::False,
-						InputConditionResultType::True });
-				}
-				else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
-				{
-					// when you OR requests, the result type is the best from all child requests
-					return ComputeAggregationResult({ 
-						InputConditionResultType::True,
-						InputConditionResultType::False,
-						InputConditionResultType::Invalid,
-						InputConditionResultType::Rejected });
 				}
 				else
 				{
-					static_assert(0);
+					auto ComputeAggregationResultType = [&](std::initializer_list<InputConditionResultType> const& ordered_values)
+					{
+						for (InputConditionResultType type : ordered_values)
+							if (child_result.type == type || result->type == type)
+								return type;
+						return result->type;
+					};
+				
+					if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::And)
+					{
+						// when you AND requests, the result type is the worse from all child requests
+						result->type = ComputeAggregationResultType({
+							InputConditionResultType::Rejected,
+							InputConditionResultType::Invalid,
+							InputConditionResultType::False,
+							InputConditionResultType::True });
+					}
+					else if constexpr (COMPOSITE_INPUT_TYPE == CompositeInputType::Or)
+					{
+						// when you OR requests, the result type is the best from all child requests
+						result->type = ComputeAggregationResultType({
+							InputConditionResultType::True,
+							InputConditionResultType::False,
+							InputConditionResultType::Invalid,
+							InputConditionResultType::Rejected });
+					}
+					else
+					{
+						static_assert(0);
+					}
+
+					result->involved_devices |= child_result.involved_devices;
 				}
 			};
 
@@ -108,8 +109,10 @@ namespace chaos
 				(CheckChildInputRequest(child_request), ...);
 
 			}, child_input_requests);
+			
 
-			return result.value_or({});
+			return result.value_or({ InputConditionResultType::False, InputDeviceTypeMask::None, XXX(nullptr)});
+			//return result.value_or({});
 		}
 
 		// By construction, we concat expressions

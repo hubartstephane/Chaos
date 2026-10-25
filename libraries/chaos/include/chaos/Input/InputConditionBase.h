@@ -30,13 +30,27 @@ namespace chaos
 	 * InputConditionResult: the result of an input condition check
 	 */
 
+	class XXX
+	{
+	public:
+
+		XXX(void * ){}
+	};
+
 	class CHAOS_API InputConditionResult
 	{
 	public:
 
 		/** the type of the result */
 		InputConditionResultType type = InputConditionResultType::False;
+		/** the input types concerned */
+		InputDeviceTypeMask involved_devices = InputDeviceTypeMask::None;
+
+
+		XXX xxx;
 	};
+
+
 
 	/**
 	 * InputConditionDebugInfoStorage: a structure to get debug information

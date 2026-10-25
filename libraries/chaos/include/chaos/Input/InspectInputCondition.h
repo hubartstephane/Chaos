@@ -35,32 +35,27 @@ namespace chaos
 		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override
 		{
 			if (out_state == nullptr && out_value == nullptr && check_type == InputStatusCheckType::None) // this request is useless
-				return { InputConditionResultType::Invalid };
+				return { InputConditionResultType::Invalid, InputDeviceTypeMask::None, XXX(nullptr)};
 
 			auto request_result = in_params.consumption_system->ConsumeInput(input, in_params.input_receiver, in_params.input_device);
 
 			if (request_result.response_status == InputConsumeResultStatus::Failure)
-				return { InputConditionResultType::Rejected };
+				return { InputConditionResultType::Rejected, InputDeviceTypeMask::None, XXX(nullptr) };
 			if (!request_result.input_result.state.has_value())
-				return { InputConditionResultType::Invalid }; // abnormal (request for an input not handled by the receiver)
+				return { InputConditionResultType::Invalid, InputDeviceTypeMask::None, XXX(nullptr) }; // abnormal (request for an input not handled by the receiver)
 
-			return OuputDataAndReturnResult(request_result.input_result.state.value());
-		}
-
-		/** output necessary data and get request result from the state and the query */
-		InputConditionResult OuputDataAndReturnResult(state_type const & in_input_state) const
-		{
 			// output results
-			if (out_state != nullptr)
-				*out_state = in_input_state;
-			if (out_value != nullptr)
-				*out_value = in_input_state.value;
+			state_type const& input_state = request_result.input_result.state.value();
 
-			// compute return value
-			if (in_input_state.CheckStatus(check_type))
-				return { InputConditionResultType::True};
+			if (out_state != nullptr)
+				*out_state = input_state;
+			if (out_value != nullptr)
+				*out_value = input_state.value;
+
+			if (input_state.CheckStatus(check_type))
+				return { InputConditionResultType::True, request_result.input_result.involved_devices, XXX(nullptr)};
 			else
-				return { InputConditionResultType::False};
+				return { InputConditionResultType::False, request_result.input_result.involved_devices, XXX(nullptr)};
 		}
 
 		/** override */

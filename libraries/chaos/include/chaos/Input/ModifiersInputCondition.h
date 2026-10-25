@@ -32,11 +32,6 @@ namespace chaos
 
 	protected:
 
-		/** check whether one of the 2 keys is down */
-		bool GetModifierKeyPairValue(InputDeviceInterface const* in_input_device, Key key1, Key key2) const;
-
-	protected:
-
 		/** the modifiers to search for */
 		KeyModifier modifiers = KeyModifier::None;
 		/** the wanted value for the modifiers */

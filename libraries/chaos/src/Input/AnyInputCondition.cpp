@@ -29,9 +29,9 @@ namespace chaos
 		in_params.consumption_system->SetAllInputConsumer(in_params.input_receiver);
 
 		if (in_params.input_device->IsAnyInputActive())
-			return { InputConditionResultType::True };
+			return { InputConditionResultType::True, InputDeviceTypeMask::None, XXX(nullptr)};
 		else
-			return { InputConditionResultType::False };
+			return { InputConditionResultType::False, InputDeviceTypeMask::None, XXX(nullptr) };
 	}
 
 }; // namespace chaos

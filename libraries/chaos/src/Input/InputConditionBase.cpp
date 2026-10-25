@@ -6,7 +6,7 @@ namespace chaos
 {
 	InputConditionResult InputConditionBase::Check(InputConditionCheckParams const& in_params) const
 	{
-		return { InputConditionResultType::Invalid, InputDeviceTypeMask::None, XXX(nullptr) };
+		return { InputConditionResultType::Invalid, InputDeviceTypeMask::None };
 	}
 
 	bool InputConditionBase::IsRequestRelatedTo(Key in_input) const

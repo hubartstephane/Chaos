@@ -111,7 +111,7 @@ namespace chaos
 			}, child_input_requests);
 			
 
-			return result.value_or({ InputConditionResultType::False, InputDeviceTypeMask::None, XXX(nullptr)});
+			return result.value_or({ InputConditionResultType::False, InputDeviceTypeMask::None });
 			//return result.value_or({});
 		}
 

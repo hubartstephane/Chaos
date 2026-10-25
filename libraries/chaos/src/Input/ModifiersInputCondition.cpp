@@ -54,11 +54,11 @@ namespace chaos
 					if (value)
 						involved_devices |= InputDeviceTypeMask::Keyboard;
 					if (value != wanted_value)
-						return { InputConditionResultType::False, InputDeviceTypeMask::None, XXX(nullptr) };
+						return { InputConditionResultType::False, InputDeviceTypeMask::None };
 				}
 			}
 		}
-		return {InputConditionResultType::True, involved_devices, XXX(nullptr) };
+		return {InputConditionResultType::True, involved_devices };
 	}
 
 	ModifiersInputCondition RequireModifiers(KeyModifier in_modifiers)

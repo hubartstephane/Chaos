@@ -35,14 +35,14 @@ namespace chaos
 		virtual InputConditionResult Check(InputConditionCheckParams const& in_params) const override
 		{
 			if (out_state == nullptr && out_value == nullptr && check_type == InputStatusCheckType::None) // this request is useless
-				return { InputConditionResultType::Invalid, InputDeviceTypeMask::None, XXX(nullptr)};
+				return { InputConditionResultType::Invalid, InputDeviceTypeMask::None };
 
 			auto request_result = in_params.consumption_system->ConsumeInput(input, in_params.input_receiver, in_params.input_device);
 
 			if (request_result.response_status == InputConsumeResultStatus::Failure)
-				return { InputConditionResultType::Rejected, InputDeviceTypeMask::None, XXX(nullptr) };
+				return { InputConditionResultType::Rejected, InputDeviceTypeMask::None };
 			if (!request_result.input_result.state.has_value())
-				return { InputConditionResultType::Invalid, InputDeviceTypeMask::None, XXX(nullptr) }; // abnormal (request for an input not handled by the receiver)
+				return { InputConditionResultType::Invalid, InputDeviceTypeMask::None }; // abnormal (request for an input not handled by the receiver)
 
 			// output results
 			state_type const& input_state = request_result.input_result.state.value();
@@ -53,9 +53,9 @@ namespace chaos
 				*out_value = input_state.value;
 
 			if (input_state.CheckStatus(check_type))
-				return { InputConditionResultType::True, request_result.input_result.involved_devices, XXX(nullptr)};
+				return { InputConditionResultType::True, request_result.input_result.involved_devices };
 			else
-				return { InputConditionResultType::False, request_result.input_result.involved_devices, XXX(nullptr)};
+				return { InputConditionResultType::False, request_result.input_result.involved_devices };
 		}
 
 		/** override */

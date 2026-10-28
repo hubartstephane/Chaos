@@ -309,7 +309,7 @@ namespace chaos
 		effect->gamepad = nullptr; // so that ForceFeedbackEffect::SubReference process the standard way (deletion)
 
 		if (index != feedback_effects.size() - 1)
-			std::swap(feedback_effects[index], feedback_effects[feedback_effects.size() - 1]); // proper way to handle the last reference
+			std::swap(feedback_effects[index], feedback_effects.back()); // proper way to handle the last reference
 		feedback_effects.pop_back();
 
 		return true;
@@ -405,7 +405,7 @@ namespace chaos
 		gamepad->gamepad_manager = nullptr;
 
 		if (index != user_gamepads.size() - 1)
-			std::swap(user_gamepads[index], user_gamepads[user_gamepads.size() - 1]); // proper way to handle the last reference
+			std::swap(user_gamepads[index], user_gamepads.back()); // proper way to handle the last reference
 		user_gamepads.pop_back();
 		return true;
 	}

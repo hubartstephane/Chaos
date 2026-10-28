@@ -75,7 +75,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 {
 	if (GetGame() != nullptr && !GetGame()->IsPaused())
 	{
-		auto HonkRequest = Or(JustActivated(chaos::Key::GamepadX), JustActivated(chaos::Key::LeftShift));
+		auto HonkRequest = chaos::JustActivated(chaos::CombinedInput(chaos::Key::GamepadX, chaos::Key::LeftShift));
 
 		if (in_action_processor.CheckAndProcess(HonkRequest, "Honk", [&]()
 		{

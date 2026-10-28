@@ -122,6 +122,8 @@ class ParticlePlayer : public ParticleBase
 {
 public:
 
+	glm::vec2 stick_position = {0.0f, 0.0f};
+
 	bool accelerate_pressed = false;
 
 	bool break_pressed = false;

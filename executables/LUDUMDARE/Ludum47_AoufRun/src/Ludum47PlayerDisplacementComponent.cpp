@@ -4,6 +4,90 @@
 #include "Ludum47Player.h"
 #include "Ludum47LevelInstance.h"
 
+
+
+ParticlePlayer * LudumPlayerDisplacementComponent::GetParticlePlayer()
+{
+	// early exit
+	chaos::PlayerPawn* pawn = player->GetPawn();
+	if (pawn == nullptr)
+		return nullptr;
+
+	LudumPlayer* player = GetPlayer();
+	if (player == nullptr)
+		return nullptr;
+
+	if (pawn->GetAllocation() == nullptr)
+		return nullptr;
+
+	chaos::ParticleAccessor<ParticlePlayer> accessor = pawn->GetAllocation()->GetParticleAccessor<ParticlePlayer>();
+	if (accessor.GetDataCount() == 0)
+		return nullptr;
+
+	return &accessor[0];
+}
+
+bool LudumPlayerDisplacementComponent::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
+{
+	// accelerate
+	auto AccelerateInput = chaos::CombinedInput(chaos::Key::Space, chaos::Key::GamepadA);
+
+	bool accelerate_pressed = false;
+
+	auto AccelerateInputCondition = chaos::QueryInput(AccelerateInput, &accelerate_pressed);
+
+	if (in_action_processor.CheckAndProcess(AccelerateInputCondition, "Accelerate", [&]()
+	{
+		if (ParticlePlayer * player_particle = GetParticlePlayer())
+		{
+			player_particle->accelerate_pressed = accelerate_pressed;
+		}		
+	}))
+	{
+		return true;
+	}
+
+	// break
+	auto BreakInput = chaos::CombinedInput(chaos::Key::LeftControl, chaos::Key::GamepadB);
+
+	bool break_pressed = false;
+
+	auto BreakInputCondition = chaos::QueryInput(BreakInput, &break_pressed);
+
+	if (in_action_processor.CheckAndProcess(BreakInputCondition, "Break", [&]()
+	{
+		if (ParticlePlayer * player_particle = GetParticlePlayer())
+		{
+			player_particle->break_pressed = break_pressed;
+		}		
+	}))
+	{
+		return true;
+	}
+
+	// move
+	auto MoveInput = chaos::CombinedInput(chaos::Input2D::GamepadLeftStick, chaos::Input2D::GamepadLeftStick, chaos::MappedInput2D::keyboard_arrows);
+
+	glm::vec2 stick_position = {0.0f, 0.0f};
+
+	auto MoveInputCondition = chaos::QueryInput(MoveInput, &stick_position);
+
+	if (in_action_processor.CheckAndProcess(MoveInputCondition, "Move", [&]()
+	{
+		if (ParticlePlayer* player_particle = GetParticlePlayer())
+		{
+			stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
+			stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
+			player_particle->stick_position = stick_position;
+		}
+	}))
+	{
+		return true;
+	}
+
+	return Super::EnumerateInputActions(in_action_processor, in_context);
+}
+
 bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & particle, LudumLevelInstance* li, CarData const& car_data)
 {
 	bool result = false;
@@ -100,74 +184,32 @@ bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & par
 	return result;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
 	chaos::PlayerDisplacementComponent::DoTick(delta_time);
-
-	// early exit
-	chaos::PlayerPawn* pawn = player->GetPawn();
-	if (pawn == nullptr)
-		return true;
 
 	LudumPlayer* player = GetPlayer();
 	if (player == nullptr)
 		return true;
 
-	if (pawn->GetAllocation() == nullptr)
-		return true;
-
-
 	LudumLevelInstance* level_instance = player->GetLevelInstance();
 	if (level_instance == nullptr || level_instance->effective_start_timer > 0.0f)
 		return true;
 
-
-	chaos::ParticleAccessor<ParticlePlayer> accessor = pawn->GetAllocation()->GetParticleAccessor<ParticlePlayer>();
-	if (accessor.GetDataCount() == 0)
-		return true;
-
-	ParticlePlayer& particle = accessor[0];
-
-
-	// get player inputs of interrests
-	glm::vec2 stick_position = player->GetLeftStickPosition();
-
-	bool discrete_stick_mode = true;
-	if (discrete_stick_mode)
-	{
-		stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
-		stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
-	}
-
-	chaos::Key const accelerate_keys[] = { chaos::Key::Space, chaos::Key::GamepadA, chaos::Key() };
-	particle.accelerate_pressed = player->CheckKeyDown(accelerate_keys);
-	chaos::Key const break_keys[] = { chaos::Key::LeftControl, chaos::Key::GamepadB, chaos::Key() };
-	particle.break_pressed = player->CheckKeyDown(break_keys);
+	ParticlePlayer * particle_player = GetParticlePlayer();
+	if (particle_player == nullptr)
+		return false;
 
 	// no input before race really starts
 	if (level_instance->lost_timer >= 0 || player->race_position.IsCompleted())
 	{
-		stick_position = { 0.0f , 0.0f };
-		particle.accelerate_pressed = particle.break_pressed = false;
+		particle_player->stick_position = { 0.0f , 0.0f };
+		particle_player->accelerate_pressed = particle_player->break_pressed = false;
 	}
 
 	CarData const& car_data = player->car_data;
 
-	chaos::box2 & pawn_box = particle.bounding_box;
+	chaos::box2 & pawn_box = particle_player->bounding_box;
 
 	glm::vec2 & position = pawn_box.position;
 
@@ -178,65 +220,65 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	// update position BEFORE velocity so that we are sure that we cannot force ourt way through a collider
 
-	glm::vec2 velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
+	glm::vec2 velocity_vector = particle_player->velocity * glm::vec2(std::cos(particle_player->rotation), std::sin(particle_player->rotation));
 
 	float clamped_rotation = chaos::MathTools::DegreeToRadian(
 
-		6.0f * std::floor(chaos::MathTools::RadianToDegree(particle.rotation) / 6.0f)
+		6.0f * std::floor(chaos::MathTools::RadianToDegree(particle_player->rotation) / 6.0f)
 	);
 
-	if (particle.collision_reaction_intensity > 0.0f)
+	if (particle_player->collision_reaction_intensity > 0.0f)
 	{
-		particle.collision_reaction_intensity = std::max(0.0f, particle.collision_reaction_intensity - car_data.reaction_decrease * delta_time);
-		if (particle.collision_reaction_intensity > 0.0f)
+		particle_player->collision_reaction_intensity = std::max(0.0f, particle_player->collision_reaction_intensity - car_data.reaction_decrease * delta_time);
+		if (particle_player->collision_reaction_intensity > 0.0f)
 		{
-			velocity_vector = particle.collision_direction * particle.collision_reaction_intensity;
-			particle.bounding_box.position += velocity_vector * delta_time;
+			velocity_vector = particle_player->collision_direction * particle_player->collision_reaction_intensity;
+			particle_player->bounding_box.position += velocity_vector * delta_time;
 		}
 	}
 
-	if (particle.velocity != 0.0f)
+	if (particle_player->velocity != 0.0f)
 	{
-		particle.rotation += car_data.angular_velocity * delta_time * -stick_position.x * angular_tweak;
+		particle_player->rotation += car_data.angular_velocity * delta_time * -particle_player->stick_position.x * angular_tweak;
 
-		velocity_vector = particle.velocity * glm::vec2(std::cos(clamped_rotation), std::sin(clamped_rotation));
+		velocity_vector = particle_player->velocity * glm::vec2(std::cos(clamped_rotation), std::sin(clamped_rotation));
 
-		chaos::ApplyWrapMode(particle.rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::Wrap, particle.rotation);
+		chaos::ApplyWrapMode(particle_player->rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::Wrap, particle_player->rotation);
 
-		particle.bounding_box.position += velocity_vector * delta_time;
+		particle_player->bounding_box.position += velocity_vector * delta_time;
 	}
 
 
 	// compute wanted velocity
 
-	if (particle.accelerate_pressed)
+	if (particle_player->accelerate_pressed)
 	{
-		particle.velocity += delta_time * car_data.acceleration * velocity_tweak;
+		particle_player->velocity += delta_time * car_data.acceleration * velocity_tweak;
 	}
 	else
 	{
-		if (particle.break_pressed)
+		if (particle_player->break_pressed)
 		{
-			if (particle.velocity > 0.0f)
-				particle.velocity -= delta_time * car_data.break_deceleration * velocity_tweak;
+			if (particle_player->velocity > 0.0f)
+				particle_player->velocity -= delta_time * car_data.break_deceleration * velocity_tweak;
 			else
-				particle.velocity -= delta_time * car_data.acceleration * velocity_tweak;
+				particle_player->velocity -= delta_time * car_data.acceleration * velocity_tweak;
 		}
 		else
 		{
-			if (particle.velocity > 0.0f)
-				particle.velocity = std::max(0.0f, particle.velocity - delta_time * car_data.normal_deceleration * velocity_tweak);
-			else if (particle.velocity < 0.0f)
-				particle.velocity = std::min(0.0f, particle.velocity + delta_time * car_data.normal_deceleration * velocity_tweak);
+			if (particle_player->velocity > 0.0f)
+				particle_player->velocity = std::max(0.0f, particle_player->velocity - delta_time * car_data.normal_deceleration * velocity_tweak);
+			else if (particle_player->velocity < 0.0f)
+				particle_player->velocity = std::min(0.0f, particle_player->velocity + delta_time * car_data.normal_deceleration * velocity_tweak);
 		}
 	}
 
-	particle.velocity = std::clamp(particle.velocity, car_data.min_velocity * velocity_tweak, car_data.max_velocity * velocity_tweak);
+	particle_player->velocity = std::clamp(particle_player->velocity, car_data.min_velocity * velocity_tweak, car_data.max_velocity * velocity_tweak);
 
 
 	LudumLevelInstance* li = GetLevelInstance();
 
-	if (ComputeBorderCollision(particle, li, car_data))
+	if (ComputeBorderCollision(*particle_player, li, car_data))
 		player->SoundCollision();
 
 	return true;

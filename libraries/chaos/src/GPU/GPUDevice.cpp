@@ -92,12 +92,17 @@ namespace chaos
 	
 	void GPUDevice::OnRenderContextDestroyed(GPURenderContext * in_render_context)
 	{
-		auto it = std::find_if(render_contexts.begin(), render_contexts.end(), [in_render_context](shared_ptr<GPURenderContext> & in_context)
+		for (size_t i = render_contexts.size() ; i > 0 ; --i)
 		{
-			return (in_context == in_render_context);
-		});
-		if (it != render_contexts.end())
-			render_contexts.erase(it);
+			size_t index = i - 1;
+			if (render_contexts[index] == in_render_context)
+			{
+				if (index != render_contexts.size() - 1)
+					std::swap(render_contexts[i], render_contexts.back());
+				render_contexts.pop_back();
+				return;
+			}
+		}
 	}
 
 }; // namespace chaos

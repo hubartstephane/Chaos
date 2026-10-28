@@ -30,11 +30,6 @@ protected:
 	/** override */
 	virtual bool SerializeIntoJSON(nlohmann::json * json) const override;
 
-	/** override */
-	virtual void TickInternal(float delta_time) override;
-	/** override */
-	virtual void TickPlayerDisplacement(float delta_time) override;
-
 	/** update player displacement with the stick values that are stored */
 	virtual void UpdatePlayerAcceleration(glm::vec2 const& stick_position, float delta_time);
 

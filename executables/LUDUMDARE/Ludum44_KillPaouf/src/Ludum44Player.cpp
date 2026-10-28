@@ -6,21 +6,6 @@
 #include "Ludum44GameInstance.h"
 #include "Ludum44Particles.h"
 
-void LudumPlayer::TickPlayerDisplacement(float delta_time)
-{
-	//// displace the player
-	//UpdatePlayerAcceleration(delta_time);
-}
-
-void LudumPlayer::TickInternal(float delta_time)
-{
-	chaos::Player::TickInternal(delta_time);
-}
-
-
-
-
-
 void LudumPlayer::UpdatePlayerAcceleration(glm::vec2 const & stick_position, float delta_time)
 {
 	LudumGame const * ludum_game = GetGame();

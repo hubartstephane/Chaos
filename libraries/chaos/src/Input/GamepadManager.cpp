@@ -290,13 +290,18 @@ namespace chaos
 
 	bool Gamepad::RemoveForceFeedbackAt(size_t index)
 	{
+		// XXX: beware, there a special implementation of ForceFeedbackEffect::SubReference()
+		//      As a consequence, we can enter in this RemoveForceFeedbackAt(...) from SubReference, 
+		//      when last reference but the one from this manager is lost or from the manager functions itself
+		//      we must be carefull of that point
 		ForceFeedbackEffect * effect = feedback_effects[index].get();
 		assert(effect != nullptr);
 		assert(effect->gamepad == this);
 
-		effect->gamepad = nullptr;
+		effect->gamepad = nullptr; // so that ForceFeedbackEffect::SubReference process the standard way (deletion)
 
-		feedback_effects[index] = feedback_effects[feedback_effects.size() - 1];
+		if (index != feedback_effects.size() - 1)
+			std::swap(feedback_effects[index], feedback_effects[feedback_effects.size() - 1]); // proper way to handle the last reference
 		feedback_effects.pop_back();
 
 		return true;

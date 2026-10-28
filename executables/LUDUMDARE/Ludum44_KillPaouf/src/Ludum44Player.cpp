@@ -8,21 +8,20 @@
 
 void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
-	// displace the player
-	UpdatePlayerAcceleration(delta_time);
+	//// displace the player
+	//UpdatePlayerAcceleration(delta_time);
 }
 
 void LudumPlayer::TickInternal(float delta_time)
 {
 	chaos::Player::TickInternal(delta_time);
-
-	// fire
-	UpdatePlayerFire(delta_time);
-	// buy items
-	UpdatePlayerBuyingItem(delta_time);
 }
 
-void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
+
+
+
+
+void LudumPlayer::UpdatePlayerAcceleration(glm::vec2 const & stick_position, float delta_time)
 {
 	LudumGame const * ludum_game = GetGame();
 	if (ludum_game == nullptr)
@@ -32,19 +31,14 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 
 	chaos::ParticleAccessor<ParticlePlayer> particles = pawn->GetAllocation()->GetParticleAccessor();
 
-
 	ParticlePlayer * player_particle = &particles[0];
 
 	player_particle->velocity = { 0.0f, 0.0f };
 
-	float left_length_2 = glm::length2(left_stick_position);
-	float right_length_2 = glm::length2(right_stick_position);
-	if (left_length_2 > 0.0f || right_length_2 > 0.0f)
+	float stick_length_2 = glm::length2(stick_position);
+	if (stick_length_2 > 0.0f)
 	{
-		glm::vec2 speed = (left_length_2 > right_length_2) ?
-			left_stick_position / std::sqrt(left_length_2) :
-			right_stick_position / std::sqrt(right_length_2);
-
+		glm::vec2 speed = stick_position / std::sqrt(stick_length_2);
 		player_particle->velocity = ludum_game->player_speeds[current_speed_index] * ludum_game->player_speed_factor * speed;
 	}
 }
@@ -75,7 +69,66 @@ void LudumPlayer::FireNormalProjectile()
     ludum_game_instance->FireProjectile("fire", GetPawn()->GetBoundingBox(), 0.3f, count, "fire", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_damages[current_damage_index], false, true);
 }
 
-void LudumPlayer::UpdatePlayerFire(float delta_time)
+
+bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
+{
+	// Fire
+	bool fire_pressed = false;
+	bool charged_pressed = false;
+
+	auto FireInput = chaos::CombinedInput(chaos::Key::Space, chaos::Key::GamepadA);
+	auto ChargedFireInput = chaos::CombinedInput(chaos::Key::LeftControl, chaos::Key::RightControl, chaos::Key::GamepadB);
+
+	auto FireCondition = chaos::And
+	(
+		chaos::QueryInput(FireInput, &fire_pressed),
+		chaos::QueryInput(ChargedFireInput, &charged_pressed)
+	);
+
+	if (in_action_processor.CheckAndProcess(FireCondition, "Fire", [&]()
+	{
+		UpdatePlayerFire(fire_pressed, charged_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+	}))
+	{
+		return true;
+	}
+
+	// Buy item
+	bool buy_pressed = false;
+
+	auto BuyInput = chaos::CombinedInput(chaos::Key::LeftAlt, chaos::Key::RightAlt, chaos::Key::GamepadY);
+
+	auto BuyCondition = chaos::QueryInput(BuyInput, &buy_pressed);
+
+	if (in_action_processor.CheckAndProcess(BuyCondition, "Buy item", [&]()
+	{
+		UpdatePlayerBuyingItem(buy_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+	}))
+	{
+		return true;
+	}
+
+	// Move player
+	auto Input = chaos::CombinedInput(
+		chaos::MappedInput2D::keyboard_arrows,
+		chaos::Input2D::GamepadLeftStick,
+		chaos::Input2D::GamepadRightStick,
+		chaos::MappedInput2D::gamepad_dpad
+	);
+
+	glm::vec2 stick_value = { 0.0f, 0.0f };
+	if (in_action_processor.CheckAndProcess(chaos::QueryInput(Input, &stick_value), "Move", [&]()
+	{
+		UpdatePlayerAcceleration(stick_value, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+	}))
+	{
+		return true;
+	}
+
+	return chaos::Player::EnumerateInputActions(in_action_processor, in_context);
+}
+
+void LudumPlayer::UpdatePlayerFire(bool fire_pressed, bool charged_pressed, float delta_time)
 {
 	// decrease normal fire cool down
 	fire_timer -= delta_time;
@@ -86,10 +139,6 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	if (ludum_game == nullptr)
 		return;
 
-	chaos::Key const fire_key_buttons[] = { chaos::Key::Space, chaos::Key::GamepadA, chaos::Key()};
-	chaos::Key const charged_key_buttons[] = {chaos::Key::LeftControl, chaos::Key::RightControl, chaos::Key::GamepadB, chaos::Key()};
-
-	bool charged_pressed = CheckKeyDown(charged_key_buttons);
 	if (charged_pressed)
 	{
 		charged_fire_timer += delta_time;
@@ -108,7 +157,6 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 			charged_fire_timer = 0.0f;
 			if (fire_timer == 0.0f)
 			{
-				bool fire_pressed = CheckKeyDown(fire_key_buttons);
 				if (fire_pressed)
 				{
 					FireNormalProjectile();
@@ -119,7 +167,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	}
 }
 
-void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
+void LudumPlayer::UpdatePlayerBuyingItem(bool buy_pressed, float delta_time)
 {
 	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
@@ -134,9 +182,6 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 	if (!ludum_game_instance->current_power_up->CanPowerUp(GetGame(), this, decreasing_power_up))
 		return;
 
-	chaos::Key const buy_key_buttons[] = { chaos::Key::LeftAlt, chaos::Key::RightAlt, chaos::Key::GamepadY, chaos::Key()};
-
-	bool buy_pressed = CheckKeyDown(buy_key_buttons);
 	if (buy_pressed && !buylocked)
 	{
 		buy_timer += delta_time;

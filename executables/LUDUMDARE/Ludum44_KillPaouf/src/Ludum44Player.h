@@ -36,12 +36,14 @@ protected:
 	virtual void TickPlayerDisplacement(float delta_time) override;
 
 	/** update player displacement with the stick values that are stored */
-	virtual void UpdatePlayerAcceleration(float delta_time);
+	virtual void UpdatePlayerAcceleration(glm::vec2 const& stick_position, float delta_time);
+
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context) override;
 
 	/** test whether the player is firing */
-	void UpdatePlayerFire(float delta_time);
+	void UpdatePlayerFire(bool fire_pressed, bool charged_pressed, float delta_time);
 	/** test whether the player wants to by an item */
-	void UpdatePlayerBuyingItem(float delta_time);
+	void UpdatePlayerBuyingItem(bool buy_pressed, float delta_time);
 
 	/** fire a charged projectile */
 	void FireChargedProjectile();

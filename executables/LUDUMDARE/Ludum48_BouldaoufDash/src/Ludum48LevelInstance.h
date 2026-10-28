@@ -84,7 +84,8 @@ protected:
 	virtual void CreateCameraComponents(Camera* camera, TMCameraTemplate* camera_template) override;
 	/** override */
 	virtual bool InitializeLevelInstance(TMObjectReferenceSolver& reference_solver, TiledMap::PropertyOwner const* property_owner) override;
-
+	/** override */
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context) override;
 
 	virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
@@ -130,7 +131,6 @@ protected:
 
 	void CreatePendingDiamonds();
 
-	void CapturePlayerInputs();
 	void FlushPlayerInputs();
 
 

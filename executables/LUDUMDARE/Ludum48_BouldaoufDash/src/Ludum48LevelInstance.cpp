@@ -117,62 +117,56 @@ static glm::ivec2 GetAnalogicStickPosition(glm::vec2 stick_position)
 	return RecastVector<glm::ivec2>(stick_position);
 }
 
-void LudumLevelInstance::CapturePlayerInputs()
-{
-	Player* player = GetPlayer(0);
-	if (player == nullptr)
-		return;
 
+
+
+
+bool LudumLevelInstance::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
+{
 	bool beginning = (frame_timer < frame_duration * 0.3f);
 
-	// Fake move
-	Key const fake_move_keys[] = { Key::LeftControl, Key::RightControl, Key::GamepadA, Key() };
+	// fake move
+	auto FakeMoveInput = CombinedInput(Key::LeftControl, Key::RightControl, Key::GamepadA);
 
+	bool fake_move_pressed = false;
 
-	if (player->CheckKeyDown(fake_move_keys)) // current frame
+	auto FakeMoveInputCondition = QueryInput(FakeMoveInput, &fake_move_pressed, chaos::InputStatusCheckType::Active);
+
+	if (in_action_processor.CheckAndProcess(FakeMoveInputCondition, "Fake Move", [&]()
 	{
-		if (beginning)
-		{
-			// button is just beeing pressed
-			if (!player->CheckKeyDown(fake_move_keys)) // previous frame
-				cached_fake_move = true;
-		}
-		else
-		{
-			cached_fake_move = true;
-		}
+		cached_fake_move = fake_move_pressed;
+	}))
+	{
+		return true;
 	}
 
-#if 0
-	if (player->CheckKeyDown(fake_move_keys, false)) // current frame
-	{
-		if (beginning)
-		{
-			// button is just beeing pressed
-			if (!player->CheckKeyDown(fake_move_keys, true)) // previous frame
-				cached_fake_move = true;
-		}
-		else
-		{
-			cached_fake_move = true;
-		}
-	}
-#endif
-	// Stick
-	glm::ivec2 stick_position = GetAnalogicStickPosition(player->GetLeftStickPosition(false)); // current frame
-	if (stick_position != glm::ivec2(0, 0))
+	// move
+	auto MoveInput = CombinedInput(MappedInput2D::gamepad_dpad, MappedInput2D::keyboard_arrows);
+	//auto MoveInput = CombinedInput(Input2D::GamepadLeftStick, MappedInput2D::keyboard_arrows);
+
+	Input2DState stick_state;
+
+	auto MoveInputCondition = QueryInput(MoveInput, &stick_state);
+
+	if (in_action_processor.CheckAndProcess(MoveInputCondition, "Move", [&]()
 	{
 		if (beginning)
 		{
 			// stick is just beeing moved
-			if (GetAnalogicStickPosition(player->GetLeftStickPosition(true)) != stick_position) // previous frame
-				cached_stick_position = stick_position;
+			if (stick_state.IsJustActivated())
+				cached_stick_position = stick_state.GetValue();
 		}
-		else
+		else if (stick_state.IsActive())
 		{
-			cached_stick_position = stick_position;
+			cached_stick_position = stick_state.GetValue();
 		}
+	}))
+	{
+		return true;
 	}
+
+
+	return Super::EnumerateInputActions(in_action_processor, in_context);
 }
 
 void LudumLevelInstance::FlushPlayerInputs()
@@ -231,7 +225,6 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	}
 
 	// normal frames
-	CapturePlayerInputs();
 	DisplaceObjects(delta_time);
 
 	// last frame

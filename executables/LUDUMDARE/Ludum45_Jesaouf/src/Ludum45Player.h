@@ -55,14 +55,11 @@ protected:
 	virtual void OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance) override;
 
 	/** override */
-	virtual void TickInternal(float delta_time) override;
-	/** override */
-	virtual void TickPlayerDisplacement(float delta_time) override;
+	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context) override;
 
-
-	void UpdatePlayerAcceleration(float delta_time);
-	void UpdatePlayerFire(float delta_time);
-	void UpdateBrightSideOfLife(float delta_time);
+	void UpdatePlayerAcceleration(glm::vec2 const& stick_position, bool dash_pressed, float delta_time);
+	void UpdatePlayerFire(bool fire_pressed, float delta_time);
+	void UpdateBrightSideOfLife(bool bright_side_pressed, float delta_time);
 
 	virtual void OnHealthChanged(float old_health, float new_health, bool invulnerable) override;
 

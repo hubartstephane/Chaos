@@ -15,13 +15,11 @@ bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 }
 
 
-void LudumPlayer::UpdateBrightSideOfLife(float delta_time)
+void LudumPlayer::UpdateBrightSideOfLife(bool bright_side_pressed, float delta_time)
 {
-	if (GetSpecialPowerLevel() > 0)
+	if (bright_side_pressed)
 	{
-		chaos::Key const bright_key_buttons[] = { chaos::Key::LeftAlt, chaos::Key::RightAlt, chaos::Key::GamepadY, chaos::Key()};
-		bool bright_key_pressed = CheckKeyDown(bright_key_buttons);
-		if (bright_key_pressed)
+		if (GetSpecialPowerLevel() > 0)
 		{
 			DoUpdateBrightSideOfLife(true);
 			return;
@@ -40,24 +38,72 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 	brightsideoflife = value;
 }
 
-void LudumPlayer::TickInternal(float delta_time)
+bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
-	chaos::Player::TickInternal(delta_time);
 
-	// player fire particles
-	UpdatePlayerFire(delta_time);
-	// player fire particles
-	UpdateBrightSideOfLife(delta_time);
+
+
+	// Fire
+	bool fire_pressed = false;
+
+	auto FireInput = chaos::CombinedInput(chaos::Key::Space, chaos::Key::GamepadA);
+
+	auto FireCondition = chaos::QueryInput(FireInput, &fire_pressed);
+
+	if (in_action_processor.CheckAndProcess(FireCondition, "Fire", [&]()
+	{
+		UpdatePlayerFire(fire_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+	}))
+	{
+		return true;
+	}
+
+
+	// Bright sight of life
+	bool bright_side_pressed = false;
+
+	auto BrightSideInput = chaos::CombinedInput(chaos::Key::LeftAlt, chaos::Key::RightAlt, chaos::Key::GamepadY);
+
+	auto BrightSideCondition = chaos::QueryInput(BrightSideInput, &bright_side_pressed);
+
+	if (in_action_processor.CheckAndProcess(BrightSideCondition, "Bright Side", [&]()
+	{
+		UpdateBrightSideOfLife(bright_side_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+	}))
+	{
+		return true;
+	}
+
+	// Move
+	// Move player
+	auto MoveInput = chaos::CombinedInput(
+		chaos::MappedInput2D::keyboard_arrows,
+		chaos::Input2D::GamepadLeftStick,
+		chaos::Input2D::GamepadRightStick,
+		chaos::MappedInput2D::gamepad_dpad
+	);
+
+	auto DashInput = chaos::CombinedInput(chaos::Key::LeftControl, chaos::Key::RightControl, chaos::Key::GamepadB);
+
+	glm::vec2 stick_value = { 0.0f, 0.0f };
+	bool dash_pressed = false;
+
+	auto InputCondition = chaos::And(
+		chaos::QueryInput(MoveInput, &stick_value),
+		chaos::QueryInput(DashInput, &dash_pressed)
+	);
+
+	if (in_action_processor.CheckAndProcess(InputCondition, "Move", [&]()
+	{
+		UpdatePlayerAcceleration(stick_value, dash_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+	}))
+	{
+		return true;
+	}
+	return chaos::Player::EnumerateInputActions(in_action_processor, in_context);
 }
 
-void LudumPlayer::TickPlayerDisplacement(float delta_time)
-{
-	// displace the player
-	UpdatePlayerAcceleration(delta_time);
-}
-
-
-void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
+void LudumPlayer::UpdatePlayerAcceleration(glm::vec2 const & stick_position, bool dash_pressed, float delta_time)
 {
 
 	// shufixme
@@ -84,16 +130,11 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 
 	// get the dash input
 
-	float left_length_2 = glm::length2(left_stick_position);
-	float right_length_2 = glm::length2(right_stick_position);
-
-	chaos::Key const dash_key_buttons[] = { chaos::Key::LeftControl, chaos::Key::RightControl, chaos::Key::GamepadB, chaos::Key()};
-	bool dash_pressed = CheckKeyDown(dash_key_buttons);
+	float stick_length_2 = glm::length2(stick_position);
 
 	if (dash_pressed)
 	{
-
-		if (GetDashLevel() > 0 && (left_length_2 > 0.0f || right_length_2 > 0.0f))
+		if (GetDashLevel() > 0 && (stick_length_2 > 0.0f))
 		{
 			if (GetDashLevel() > 0)
 			{
@@ -128,18 +169,16 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 	glm::vec2 player_velocity = player_particle->velocity;
 
 	// update the player
-	if (left_length_2 > 0.0f || right_length_2 > 0.0f || dashing)
+	if (stick_length_2 > 0.0f || dashing)
 	{
 
 		float input_factor = 1.0f;
 
 		glm::vec2 direction = { 0.0f, 0.0f };
 		// compute the normalized direction
-		if (left_length_2 > 0.0f || right_length_2 > 0.0f)
+		if (stick_length_2 > 0.0f)
 		{
-			direction = (left_length_2 > right_length_2) ?
-				left_stick_position / std::sqrt(left_length_2) :
-				right_stick_position / std::sqrt(right_length_2);
+			direction = stick_position / std::sqrt(stick_length_2);
 		}
 		else
 		{
@@ -181,7 +220,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 	player_particle->bounding_box.position += delta_time * player_particle->velocity;
 }
 
-void LudumPlayer::UpdatePlayerFire(float delta_time)
+void LudumPlayer::UpdatePlayerFire(bool fire_pressed, float delta_time)
 {
 	// decrease normal fire cool down
 	fire_timer -= delta_time;
@@ -192,10 +231,8 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	if (ludum_game == nullptr)
 		return;
 
-	chaos::Key const fire_key_buttons[] = { chaos::Key::Space, chaos::Key::GamepadA, chaos::Key()};
 	if (fire_timer <= 0.0f)
 	{
-		bool fire_pressed = CheckKeyDown(fire_key_buttons);
 		if (fire_pressed && GetCurrentPowerRateValue() > 0)
 		{
             FireProjectiles();

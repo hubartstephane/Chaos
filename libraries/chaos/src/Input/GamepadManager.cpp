@@ -294,6 +294,14 @@ namespace chaos
 		//      As a consequence, we can enter in this RemoveForceFeedbackAt(...) from SubReference, 
 		//      when last reference but the one from this manager is lost or from the manager functions itself
 		//      we must be carefull of that point
+		//
+		//      we can't do 
+		//         feedback_effects[index] = feedback_effects[feedback_effects.size() - 1]
+		//         feedback_effects.pop_back();
+		//
+		//      because there will be 2 references on the same object in the array and the SubReference() won't understand that 
+		//      causing (due to 'Fire & Forget or not' pattern) a double deletion
+
 		ForceFeedbackEffect * effect = feedback_effects[index].get();
 		assert(effect != nullptr);
 		assert(effect->gamepad == this);
@@ -396,7 +404,8 @@ namespace chaos
 
 		gamepad->gamepad_manager = nullptr;
 
-		user_gamepads[index] = user_gamepads[user_gamepads.size() - 1];
+		if (index != user_gamepads.size() - 1)
+			std::swap(user_gamepads[index], user_gamepads[user_gamepads.size() - 1]); // proper way to handle the last reference
 		user_gamepads.pop_back();
 		return true;
 	}

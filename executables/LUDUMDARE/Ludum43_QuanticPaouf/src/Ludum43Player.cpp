@@ -132,25 +132,23 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 {
 	if (GetGame() != nullptr && !GetGame()->IsPaused())
 	{
-		bool dash_key1 = false;
-		bool dash_key2 = false;
-		auto DashRequest = Or(QueryInput(chaos::Key::Space, &dash_key1), QueryInput(chaos::Key::GamepadA, &dash_key2));
+		auto DashInput = chaos::CombinedInput(chaos::Key::Space, chaos::Key::GamepadA);
 
-		if (in_action_processor.CheckAndProcess(DashRequest, "Dash", [&]()
+		bool dash = false;
+		if (in_action_processor.CheckAndProcess(chaos::QueryInput(DashInput, &dash), "Dash", [&]()
 		{
-			SetDashMode(dash_key1 || dash_key2);
+			SetDashMode(dash);
 		}))
 		{
 			return true;
 		}
 
-		bool reverse_mode_key1 = false;
-		bool reverse_mode_key2 = false;
-		auto ReverseModeRequest = Or(QueryInput(chaos::Key::RightControl, &reverse_mode_key1), QueryInput(chaos::Key::GamepadB, &reverse_mode_key2));
+		bool reverse = false;
+		auto ReverseInput = chaos::CombinedInput(chaos::Key::RightControl, chaos::Key::GamepadB);
 
-		if (in_action_processor.CheckAndProcess(ReverseModeRequest, "Reverse Mode", [&]()
+		if (in_action_processor.CheckAndProcess(chaos::QueryInput(ReverseInput, &reverse), "Reverse Mode", [&]()
 		{
-			SetReverseMode(reverse_mode_key1 || reverse_mode_key2);
+			SetReverseMode(reverse);
 			
 		}))
 		{
@@ -161,87 +159,17 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 		{
 			if (ParticlePlayer* player_particle = GetPlayerParticle())
 			{
-				glm::vec2 stick_value = { 0.0f, 0.0f };
-
-				auto MoveRequest = QueryInput(chaos::MappedInput2D::keyboard_arrows, &stick_value);
-
-				if (in_action_processor.CheckAndProcess(MoveRequest, "Move", [&]()
-				{
-					player_particle->acceleration = ludum_game->player_acceleration * stick_value;
-				}))
-				{
-					return true;
-				}
-			}
-		}
-
-
-
-
-
-#if 0
-
-		if (LudumGame const* ludum_game = GetGame())
-		{
-			if (ParticlePlayer* player_particle = GetPlayerParticle())
-			{
-				glm::vec2 left_stick_value  = { 0.0f, 0.0f };
-				glm::vec2 right_stick_value = { 0.0f, 0.0f };
-				bool      up_value1    = false;
-				bool      up_value2    = false;
-				bool      down_value1  = false;
-				bool      down_value2  = false;
-				bool      left_value1  = false;
-				bool      left_value2  = false;
-				bool      right_value1 = false;
-				bool      right_value2 = false;
-
-				auto StickRequest = Or(
-					QueryInput(chaos::Input2D::GamepadLeftStick, &left_stick_value),
-					QueryInput(chaos::Input2D::GamepadRightStick, &right_stick_value),
-
-					QueryInput(chaos::Key::GamepadDpadLeft,  &left_value1),
-					QueryInput(chaos::Key::GamepadDpadRight, &right_value1),
-					QueryInput(chaos::Key::GamepadDpadUp,    &up_value1),
-					QueryInput(chaos::Key::GamepadDpadDown,  &down_value1),
-
-					QueryInput(chaos::Key::Left, &left_value2),
-					QueryInput(chaos::Key::Right, &right_value2),
-					QueryInput(chaos::Key::Up, &up_value2),
-					QueryInput(chaos::Key::Down, &down_value2)
+				auto Input = chaos::CombinedInput(
+					chaos::MappedInput2D::keyboard_arrows,
+					chaos::Input2D::GamepadLeftStick,
+					chaos::Input2D::GamepadRightStick,
+					chaos::MappedInput2D::gamepad_dpad
 				);
 
-				if (in_action_processor.CheckAndProcess(StickRequest, "Move", [&]()
-				{	
-					glm::vec2 stick_value = { 0.0f, 0.0f };
+				glm::vec2 stick_value = { 0.0f, 0.0f };
 
-					bool left  = left_value1  || left_value2;
-					bool right = right_value1 || right_value2;
-					bool up    = up_value1    || up_value2;
-					bool down  = down_value1  || down_value2;
-			
-					if (left && !right)
-						stick_value.x = -1.0f;
-					else if (!left && right)
-						stick_value.x = +1.0f;
-
-					if (up && !down)
-						stick_value.y = 1.0f;
-					else if (!up && down)
-						stick_value.y = -1.0f;
-
-					if (stick_value == glm::vec2(0.0f, 0.0f))
-					{
-						float left_length_2  = glm::length2(left_stick_value);
-						float right_length_2 = glm::length2(right_stick_value);
-						if (left_length_2 > right_length_2)
-							stick_value = left_stick_value / std::sqrt(left_length_2);
-						else if (right_length_2 > left_length_2)
-							stick_value = right_stick_value / std::sqrt(right_length_2);
-						else if (right_length_2 != 0.0f)
-							stick_value = right_stick_value / std::sqrt(right_length_2);
-					}
-
+				if (in_action_processor.CheckAndProcess(QueryInput(Input, &stick_value), "Move", [&]()
+				{
 					player_particle->acceleration = ludum_game->player_acceleration * stick_value;
 				}))
 				{
@@ -249,7 +177,6 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 				}
 			}
 		}
-#endif
 	}
 
 	return chaos::Player::EnumerateInputActions(in_action_processor, in_context);

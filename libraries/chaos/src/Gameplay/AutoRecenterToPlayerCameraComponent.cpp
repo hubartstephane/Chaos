@@ -9,14 +9,8 @@ namespace chaos
 
 	bool AutoRecenterToPlayerCameraComponent::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
 	{
-		glm::vec2 stick_value = {0.0f, 0.0f};
-		if (in_action_processor.CheckAndProcess(QueryInput(Input2D::GamepadRightStick, &stick_value), "Move Camera", [&]()
-		{
-			stick_position = stick_value;
-		}))
-		{
-			return true;
-		}
+		QueryAndReserveInput(in_action_processor, Input2D::GamepadRightStick, "Move Camera", stick_position);
+
 		return Super::EnumerateInputActions(in_action_processor, in_context);
 	}
 

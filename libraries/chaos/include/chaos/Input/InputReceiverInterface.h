@@ -70,6 +70,21 @@ namespace chaos
 		/** upgrade the input device and call some functor */
 		virtual bool InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func);
 
+		/** try to read input from an action processor */
+		template<AnyInputType ANY_INPUT_TYPE>
+		bool QueryAndReserveInput(InputActionProcessor& in_action_processor, ANY_INPUT_TYPE const& in_input, char const * in_name, InputTypeToValueType_t<ANY_INPUT_TYPE> & out_result) const
+		{
+			InputTypeToValueType_t<ANY_INPUT_TYPE> input_value = {};
+			if (in_action_processor.CheckAndProcess(QueryInput(in_input, &input_value), in_name, [&]()
+			{
+				out_result = input_value;
+			}))
+			{
+				return true;
+			}
+			return false;
+		}
+
 	protected:
 
 		/** called whenever the mouse is moved */

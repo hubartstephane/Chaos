@@ -188,41 +188,15 @@ namespace chaos
 
 	bool PlatformerDisplacementComponent::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
 	{
-		// jump detection
 		auto jump_input = CombinedInput(Key::Space, Key::GamepadA);
+		QueryAndReserveInput(in_action_processor, jump_input, "Jump", jump_pressed);
 
-		bool jump_value = false;
-		if (in_action_processor.CheckAndProcess(QueryInput(jump_input, &jump_value), "Jump", [&]()
-		{
-			jump_pressed = jump_value;
-		}))
-		{
-			return true;
-		}
-
-		// run detection
 		auto run_input = CombinedInput(Key::LeftShift, Key::RightShift, Key::GamepadRightTrigger);
+		QueryAndReserveInput(in_action_processor, run_input, "Run", run_pressed);
 
-		bool run_value = false;
-		if (in_action_processor.CheckAndProcess(QueryInput(run_input, &run_value), "Run", [&]()
-		{
-			run_pressed = run_value;
-		}))
-		{
-			return true;
-		}
-
-		// move detection
 		auto move_input = CombinedInput(Input2D::GamepadLeftStick, MappedInput2D::keyboard_arrows);
+		QueryAndReserveInput(in_action_processor, move_input, "Move", move_direction);
 
-		glm::vec2 move_value = {0.0f, 0.0f};
-		if (in_action_processor.CheckAndProcess(QueryInput(move_input, &move_value), "Move", [&]()
-		{
-			move_direction = move_value;
-		}))
-		{
-			return true;
-		}
 		return Super::EnumerateInputActions(in_action_processor, in_context);
 	}
 

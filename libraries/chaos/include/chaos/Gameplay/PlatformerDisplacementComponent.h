@@ -128,6 +128,9 @@ namespace chaos
 		/** constructor */
 		using PlayerDisplacementComponent::PlayerDisplacementComponent;
 
+		/** override */
+		virtual bool EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context) override;
+
 		glm::vec2 GetPawnVelocity() const { return pawn_velocity; }
 
 		PlatformerDisplacementComponentInfo const& GetDisplacementInfo() const { return displacement_info; }
@@ -171,6 +174,16 @@ namespace chaos
 
 		/** whether jump was pressed previous frame */
 		bool was_jump_pressed = false;
+
+	protected:
+
+		/** the movement input value */
+		glm::vec2 move_direction = {0.0f, 0.0f};
+		/** whether jumping input is down */
+		bool jump_pressed = false;
+		/** whether running input is down */
+		bool run_pressed = false;
+
 	};
 
 #endif

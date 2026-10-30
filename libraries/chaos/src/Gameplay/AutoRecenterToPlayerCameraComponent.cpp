@@ -7,6 +7,19 @@ namespace chaos
 	// AutoRecenterToPlayerCameraComponent
 	// =============================================
 
+	bool AutoRecenterToPlayerCameraComponent::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
+	{
+		glm::vec2 stick_value = {0.0f, 0.0f};
+		if (in_action_processor.CheckAndProcess(QueryInput(Input2D::GamepadRightStick, &stick_value), "Move Camera", [&]()
+		{
+			stick_position = stick_value;
+		}))
+		{
+			return true;
+		}
+		return Super::EnumerateInputActions(in_action_processor, in_context);
+	}
+
 	// while the pawn_box might be larger than slow_safe_box (but never than safe_box), we work with a slightly extended slow_safe_box if necessary
 	box2 GetEffectiveSlowSafeBox(box2 const & slow_safe_box, box2 const& safe_box, box2 const& pawn_box)
 	{
@@ -106,10 +119,8 @@ namespace chaos
 			// initialize previous frame position if not initialized
 			if (isnan(pawn_previous_position[0]) || isnan(pawn_previous_position[1]))
 				pawn_previous_position = pawn_box.position;
-			// get the right stick
-			glm::vec2 right_stick = player->GetRightStickPosition();
-			glm::vec2 left_stick = player->GetLeftStickPosition();
 
+			// get the right stick
 			glm::vec2 target_min_limit = { 0.0f, 0.0f }; // limit expressed with safe_zone as unit
 			glm::vec2 target_max_limit = { 0.0f, 0.0f }; // 0 for limits on the slow_safe_zone
 
@@ -143,7 +154,7 @@ namespace chaos
 					}
 				}
 				// camera manually displaced to the right/up
-				else if (right_stick[axis] > 0.0f)
+				else if (stick_position[axis] > 0.0f)
 				{
 					idle_timer = 0.0f;
 					min_speed[axis] = max_speed[axis] = manual_limit_speed;
@@ -151,7 +162,7 @@ namespace chaos
 					target_max_limit[axis] = GetNormalizedLimitValue(slow_safe_corners.max[axis], safe_corners.min[axis], safe_box.half_size[axis]) + pawn_box_ratio[axis];
 				}
 				// camera manually displaced to the left/down
-				else if (right_stick[axis] < 0.0f)
+				else if (stick_position[axis] < 0.0f)
 				{
 					idle_timer = 0.0f;
 					min_speed[axis] = max_speed[axis] = manual_limit_speed;

@@ -386,9 +386,9 @@ namespace chaos
 	{
 		if (Game* game = GetGame())
 		{
-			auto PauseRequest = JustActivated(CombinedInput(Key::GamepadSpecialLeft, Key::GamepadSpecialRight));
+			auto pause_condition = JustActivated(CombinedInput(Key::GamepadSpecialLeft, Key::GamepadSpecialRight));
 
-			if (in_action_processor.CheckAndProcess(PauseRequest, "Toggle Pause", [&]()
+			if (in_action_processor.CheckAndProcess(pause_condition, "Toggle Pause", [&]()
 			{
 				game->RequireTogglePause();
 			}))

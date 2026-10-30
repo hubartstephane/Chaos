@@ -186,6 +186,46 @@ namespace chaos
 		return (-0.5f * displacement_info.gravity * jump_time * jump_time) + v0 * jump_time;
 	}
 
+	bool PlatformerDisplacementComponent::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
+	{
+		// jump detection
+		auto jump_input = CombinedInput(Key::Space, Key::GamepadA);
+
+		bool jump_value = false;
+		if (in_action_processor.CheckAndProcess(QueryInput(jump_input, &jump_value), "Jump", [&]()
+		{
+			jump_pressed = jump_value;
+		}))
+		{
+			return true;
+		}
+
+		// run detection
+		auto run_input = CombinedInput(Key::LeftShift, Key::RightShift, Key::GamepadRightTrigger);
+
+		bool run_value = false;
+		if (in_action_processor.CheckAndProcess(QueryInput(run_input, &run_value), "Run", [&]()
+		{
+			run_pressed = run_value;
+		}))
+		{
+			return true;
+		}
+
+		// move detection
+		auto move_input = CombinedInput(Input2D::GamepadLeftStick, MappedInput2D::keyboard_arrows);
+
+		glm::vec2 move_value = {0.0f, 0.0f};
+		if (in_action_processor.CheckAndProcess(QueryInput(move_input, &move_value), "Move", [&]()
+		{
+			move_direction = move_value;
+		}))
+		{
+			return true;
+		}
+		return Super::EnumerateInputActions(in_action_processor, in_context);
+	}
+
 	bool PlatformerDisplacementComponent::DoTick(float delta_time)
 	{
 		// early exit
@@ -194,18 +234,12 @@ namespace chaos
 			return true;
 
 		// get player inputs of interrests
-		glm::vec2 stick_position = player->GetLeftStickPosition();
+		glm::vec2 stick_position = move_direction;
 		if (displacement_info.discrete_stick_mode)
 		{
 			stick_position.x = MathTools::AnalogicToDiscret(stick_position.x);
 			stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
 		}
-
-		Key const jump_key_buttons[] = { Key::Space, Key::GamepadA, Key() };
-		bool jump_pressed = player->CheckKeyDown(jump_key_buttons);
-
-		Key const run_key_buttons[] = { Key::LeftShift, Key::RightShift, Key::GamepadRightTrigger, Key() };
-		bool run_pressed = player->CheckKeyDown(run_key_buttons);
 
 		// get player position
 		box2 initial_pawn_box = pawn->GetBoundingBox();

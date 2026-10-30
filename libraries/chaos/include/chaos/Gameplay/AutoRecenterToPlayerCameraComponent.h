@@ -27,6 +27,8 @@ namespace chaos
 		virtual bool SerializeIntoJSON(nlohmann::json * json) const;
 		/** override */
 		virtual bool SerializeFromJSON(JSONReadConfiguration config);
+		/** override */
+		virtual bool EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context) override;
 
 	protected:
 
@@ -66,6 +68,9 @@ namespace chaos
 
 		/** current idle timer value */
 		float idle_timer = 0.0f;
+
+		/** the stick position to move the camera */
+		glm::vec2 stick_position = {0.0f, 0.0f};
 	};
 
 #endif

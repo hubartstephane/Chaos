@@ -47,11 +47,6 @@ namespace chaos
 		/* get the current input mode */
 		InputMode GetInputMode() const { return input_mode; }
 
-		/** check whether a key is down. Change input mode according to success */
-		bool CheckKeyDown(Key key);
-		/** check whether a key in a set is down */
-		bool CheckKeyDown(Key const* keys);
-
 		/** called whenever the mouse is moved */
 		bool OnMouseMove(MouseMoveEvent const& mouse_move_event);
 		/** called whenever the mouse button is down / up */
@@ -108,9 +103,6 @@ namespace chaos
 		/** mark the input as consumed inside the WindowApplication ConsumCache */
 		template<BasicInputType BASIC_INPUT_TYPE>
 		static void MarkInputConsumedInApplicationCache(BASIC_INPUT_TYPE in_input, InputDeviceInterface const* in_input_device = KeyboardAndMouseDevice::GetInstance());
-
-		/** internal method to check whether a button is pressed */
-		virtual bool DoCheckKeyDown(Key key) const;
 
 	protected:
 

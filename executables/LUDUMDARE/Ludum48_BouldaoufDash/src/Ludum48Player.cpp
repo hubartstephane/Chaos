@@ -48,6 +48,13 @@ bool LudumPlayer::IsDead() const
 	return false;
 }
 
+bool LudumPlayer::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
+{
+	auto suicide_input = CombinedInput(Key::Space, Key::GamepadY);
+	QueryAndReserveInput(in_action_processor, suicide_input, "Suicide", suicide_pressed);
+	return Super::EnumerateInputActions(in_action_processor, in_context);
+}
+
 bool LudumPlayer::DoTick(float delta_time)
 {
 	Player::DoTick(delta_time);
@@ -63,8 +70,7 @@ bool LudumPlayer::DoTick(float delta_time)
 	// suicidal
 	if (death_timer < 0.0f)
 	{
-		Key const suicidal_buttons[] = { Key::Space, Key::GamepadY, Key() };
-		if (CheckKeyDown(suicidal_buttons))
+		if (suicide_pressed)
 		{
 			suicidal_timer = std::min(std::max(suicidal_timer, 0.0f) + delta_time, max_suicidal_timer);
 			if (suicidal_timer == max_suicidal_timer)

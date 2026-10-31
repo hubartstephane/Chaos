@@ -33,6 +33,8 @@ protected:
 
     virtual bool OnReadConfigurableProperties(JSONReadConfiguration config, ReadConfigurablePropertiesContext context) override;
 
+    virtual bool EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context) override;
+
 public:
 
     float death_timer = -1.0f;
@@ -44,5 +46,7 @@ public:
     float max_suicidal_timer = 1.0f;
 
     bool cheater_farid = false;
+
+    bool suicide_pressed = false;
 };
 

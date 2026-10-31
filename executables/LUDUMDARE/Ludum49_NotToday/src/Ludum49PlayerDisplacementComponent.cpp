@@ -167,6 +167,13 @@ CollisionEntry LudumPlayerDisplacementComponent::ProcessCollision(box2 & pawn_bo
 	return {};
 }
 
+bool LudumPlayerDisplacementComponent::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
+{
+	QueryAndReserveInput(in_action_processor, Input2D::GamepadLeftStick, "Move", stick_position);
+
+	return Super::EnumerateInputActions(in_action_processor, in_context);
+}
+
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
 	touching_ground_timer = std::max(0.0f, touching_ground_timer - delta_time);
@@ -192,8 +199,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	// - - - - - - - - - -
 
-
-	glm::vec2 direction = player->GetLeftStickPosition(false);
+	glm::vec2 direction = stick_position;
 	direction.x = MathTools::AnalogicToDiscret(direction.x);
 	direction.y = MathTools::AnalogicToDiscret(direction.y);
 

@@ -22,8 +22,11 @@ protected:
 
 	CollisionEntry ProcessCollision(box2& pawn_box);
 
+	virtual bool EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context) override;
 
 	float touching_ground_timer = 0.0f;
 
 	glm::vec2 pawn_velocity = { 0.0f, 0.0f };
+
+	glm::vec2 stick_position = { 0.0f, 0.0f };
 };

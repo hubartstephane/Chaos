@@ -65,28 +65,6 @@ namespace chaos
 
 	bool Player::DoTick(float delta_time)
 	{
-
-
-
-#if 0
-
-		// remove previous frame cached input
-		ResetCachedInputs();
-		// cache values for stick displacement
-		CacheKeyboardPlayerDisplacementInputs();
-		// cache values for stick displacement
-		CacheGamepadPlayerDisplacementInputs();
-#endif
-
-
-
-
-
-
-
-
-
-
 		bool mute_force_feedback   = true; // no forcefeedback except during main loop
 		bool paused_force_feedback = true;
 
@@ -131,95 +109,6 @@ namespace chaos
 		if (displacement_component != nullptr)
 			displacement_component->Tick(delta_time);
 	}
-
-
-
-
-
-
-
-#if 0
-	void Player::CacheKeyboardPlayerDisplacementInputs()
-	{
-		// test whether the stick position can be overriden
-		glm::vec2 simulated_stick = { 0.0f, 0.0f };
-
-		if (CheckKeyDown(Key::Left))
-			simulated_stick.x -= 1.0f;
-		if (CheckKeyDown(Key::Right))
-			simulated_stick.x += 1.0f;
-
-		if (CheckKeyDown(Key::Down))
-			simulated_stick.y -= 1.0f;
-		if (CheckKeyDown(Key::Up))
-			simulated_stick.y += 1.0f;
-
-		if (glm::length2(simulated_stick) > 0)
-			left_stick_position = simulated_stick;
-	}
-
-	void Player::CacheGamepadPlayerDisplacementInputs()
-	{
-		// early exit
-		if (gamepad == nullptr)
-			return;
-		// get the gamepad data
-		GamepadState const * gamepad_state = gamepad->GetGamepadState();
-		if (gamepad_state == nullptr)
-			return;
-		// change the application mode
-		if (gamepad_state->IsAnyInputActive())
-			SetInputMode(InputMode::GAMEPAD);
-
-		// cache the LEFT stick position (it is aliases with the DPAD)
-		glm::vec2 lsp = gamepad_state->GetInputValue(Input2D::GamepadLeftStick);
-		if (glm::length2(lsp) > 0.0f)
-			left_stick_position = lsp;
-		else
-		{
-			if (IsInputActive(gamepad_state->GetInputState(Key::GamepadDpadLeft)))
-				left_stick_position.x = -1.0f;
-			else if (IsInputActive(gamepad_state->GetInputState(Key::GamepadDpadRight)))
-				left_stick_position.x = 1.0f;
-
-			if (IsInputActive(gamepad_state->GetInputState(Key::GamepadDpadUp)))
-				left_stick_position.y = +1.0f;
-			else if (IsInputActive(gamepad_state->GetInputState(Key::GamepadDpadDown)))
-				left_stick_position.y = -1.0f;
-		}
-
-		// cache the RIGHT stick position
-		glm::vec2 rsp = gamepad_state->GetInputValue(Input2D::GamepadRightStick);
-		if (glm::length2(rsp) > 0.0f)
-			right_stick_position = rsp;
-
-		// cache the TRIGGERS
-		left_trigger  = gamepad_state->GetInputValue(Input1D::GamepadLeftTrigger);
-		right_trigger = gamepad_state->GetInputValue(Input1D::GamepadRightTrigger);
-	}
-
-	void Player::ResetCachedInputs()
-	{
-		previous_left_stick_position = left_stick_position;
-		previous_right_stick_position = right_stick_position;
-		previous_left_trigger = left_trigger;
-		previous_right_trigger = right_trigger;
-
-		left_stick_position  = { 0.0f, 0.0f };
-		right_stick_position = { 0.0f, 0.0f };
-		left_trigger  = 0.0f;
-		right_trigger = 0.0f;
-	}
-#endif
-
-
-
-
-
-
-
-
-
 
 	void Player::SetScore(int in_score, bool increment)
 	{
@@ -349,19 +238,6 @@ namespace chaos
 		if (health <= 0.0f)
 			return true;
 		return false;
-	}
-
-	bool Player::DoCheckKeyDown(Key button) const
-	{
-		// gamepad input
-		if (IsGamepadInput(button))
-		{
-			if (gamepad == nullptr)
-				return false;
-			return IsInputActive(gamepad->GetInputState(button));
-		}
-		// super call
-		return InputReceiverInterface::DoCheckKeyDown(button);
 	}
 
 	bool Player::InvokeWithUpgradedInputDevice(InputDeviceInterface const * in_input_device, InvokeWithUpgradedInputDeviceFunction in_func)

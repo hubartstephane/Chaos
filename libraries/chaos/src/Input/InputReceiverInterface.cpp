@@ -43,40 +43,6 @@ namespace chaos
 			return SetInputMode(InputMode::Gamepad);
 	}
 
-	bool InputReceiverInterface::CheckKeyDown(Key const* keys)
-	{
-		// early exit
-		if (keys == nullptr)
-			return false;
-		// iteration
-		for (size_t i = 0; keys[i] != Key::Unknown; ++i)
-			if (CheckKeyDown(keys[i]))
-				return true;
-		return false;
-	}
-
-	bool InputReceiverInterface::CheckKeyDown(Key key)
-	{
-		if (DoCheckKeyDown(key))
-		{
-			if (IsKeyboardInput(key))
-				SetInputMode(InputMode::Keyboard);
-			else if (IsMouseInput(key))
-				SetInputMode(InputMode::Mouse);
-			else if (IsGamepadInput(key))
-				SetInputMode(InputMode::Gamepad);
-			return true;
-		}
-		return false;
-	}
-
-	bool InputReceiverInterface::DoCheckKeyDown(Key key) const
-	{
-		if (KeyboardAndMouseDevice const * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance())
-			return IsInputActive(keyboard_and_mouse_device->GetInputState(key));
-		return false;
-	}
-
 	void InputReceiverInterface::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
 	}

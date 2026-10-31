@@ -7,6 +7,15 @@ namespace chaos
 	// FreeCameraComponent
 	// =============================================
 
+	bool FreeCameraComponent::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
+	{
+		QueryAndReserveInput(in_action_processor, Input2D::GamepadLeftStick, "Move Free Camera", move_direction);
+		QueryAndReserveInput(in_action_processor, Input1D::GamepadLeftTrigger, "Zoom-In Free Camera", zoom_in);
+		QueryAndReserveInput(in_action_processor, Input1D::GamepadRightTrigger, "Zoom-Out Free Camera", zoom_out);
+
+		return Super::EnumerateInputActions(in_action_processor, in_context);
+	}
+
 	bool FreeCameraComponent::DoTick(float delta_time)
 	{
 		CameraComponent::DoTick(delta_time);
@@ -21,13 +30,7 @@ namespace chaos
 		if (IsGeometryEmpty(camera_box))
 			return true;
 
-		// get the left stick
-		glm::vec2 left_stick_position = player->GetLeftStickPosition();
-
 		// prepare to zoom
-		float zoom_in  = player->GetLeftTrigger();
-		float zoom_out = player->GetRightTrigger();
-
 		if ((zoom_in == 0.0f) ^ (zoom_out == 0.0f))
 		{
 			if (zoom_in > 0.0f)
@@ -40,7 +43,7 @@ namespace chaos
 
 		// update camera position
 		// XXX : multiply by 'half_size' => the greater the view is, the faster we go
-		camera_box.position += left_stick_position * delta_time * camera_box.half_size * 3.0f;
+		camera_box.position += move_direction * delta_time * camera_box.half_size * 3.0f;
 
 		// try to keep the camera in the world
 		box2 world = camera->GetLevelInstance()->GetBoundingBox();

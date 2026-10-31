@@ -31,6 +31,8 @@ namespace chaos
 		virtual bool DoTick(float delta_time) override;
 		/** override */
 		virtual box2 ApplyModifier(box2 const& src) const override;
+		/** override */
+		virtual bool EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context) override;
 
 	protected:
 
@@ -38,6 +40,12 @@ namespace chaos
 		size_t player_index = 0;
 		/** the value of zoom to apply */
 		float zoom_value = 1.0f;
+		/** the camera move input value */
+		glm::vec2 move_direction = {0.0f, 0.0f};
+		/** the zoom in input value */
+		float zoom_in = 0.0f;
+		/** the zoom out input value */
+		float zoom_out = 0.0f;
 	};
 
 #endif

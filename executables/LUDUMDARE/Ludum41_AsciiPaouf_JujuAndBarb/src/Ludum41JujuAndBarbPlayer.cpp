@@ -54,33 +54,36 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 {
 	if (LudumGame const* ludum_game = GetGame())
 	{
-		float value = 0.0f;
-
-		auto Input = chaos::CombinedInput(
-			chaos::MappedInput1D::keyboard_horizontal_arrows,
-			chaos::Input1D::GamepadLeftAxisX,
-			chaos::MappedInput1D::gamepad_horizontal_dpad);
-
-		if (in_action_processor.CheckAndProcess(QueryInput(Input, &value), "Move", [&]()
+		if (!ludum_game->IsPaused() && !ludum_game->IsFreeCameraMode())
 		{
-			float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
+			float value = 0.0f;
 
-			DisplacePlayerRacket(value * ludum_game->GetGamepadSensitivity() * delta_time); // even if 0 because this will ensure player Y is well placed even if no input is pressed
-		}))
-		{
-			return true;
-		}
+			auto Input = chaos::CombinedInput(
+				chaos::MappedInput1D::keyboard_horizontal_arrows,
+				chaos::Input1D::GamepadLeftAxisX,
+				chaos::MappedInput1D::gamepad_horizontal_dpad);
 
-		for (chaos::Key key : {chaos::Key::GamepadA, chaos::Key::GamepadB, chaos::Key::GamepadX, chaos::Key::GamepadY})
-		{
-			if (in_action_processor.CheckAndProcess(JustActivated(key), "QTE", [&]()
+			if (in_action_processor.CheckAndProcess(QueryInput(Input, &value), "Move", [&]()
 			{
-				LudumGameInstance* ludum_game_instance = GetGameInstance();
-				ludum_game_instance->SendGamepadButtonToChallenge(key);
+				float delta_time = (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration();
+
+				DisplacePlayerRacket(value * ludum_game->GetGamepadSensitivity() * delta_time); // even if 0 because this will ensure player Y is well placed even if no input is pressed
 			}))
 			{
 				return true;
-			}		
+			}
+
+			for (chaos::Key key : {chaos::Key::GamepadA, chaos::Key::GamepadB, chaos::Key::GamepadX, chaos::Key::GamepadY})
+			{
+				if (in_action_processor.CheckAndProcess(JustActivated(key), "QTE", [&]()
+				{
+					LudumGameInstance* ludum_game_instance = GetGameInstance();
+					ludum_game_instance->SendGamepadButtonToChallenge(key);
+				}))
+				{
+					return true;
+				}		
+			}
 		}
 	}
 

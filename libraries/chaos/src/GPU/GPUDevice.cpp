@@ -98,7 +98,7 @@ namespace chaos
 			if (render_contexts[index] == in_render_context)
 			{
 				if (index != render_contexts.size() - 1)
-					std::swap(render_contexts[i], render_contexts.back());
+					std::swap(render_contexts[index], render_contexts.back());
 				render_contexts.pop_back();
 				return;
 			}

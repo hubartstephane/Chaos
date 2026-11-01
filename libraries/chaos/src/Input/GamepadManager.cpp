@@ -38,6 +38,20 @@ namespace chaos
 	// PhysicalGamepad functions
 	//
 
+	char const* PhysicalGamepad::GetName() const
+	{
+		if (is_present)
+			return glfwGetJoystickName(int(gamepad_index));
+		return nullptr;
+	}
+
+	char const * PhysicalGamepad::GetGUID() const
+	{
+		if (is_present)
+			return glfwGetJoystickGUID(int(gamepad_index));
+		return nullptr;
+	}
+
 	void PhysicalGamepad::ClearInputs()
 	{
 		gamepad_state.Clear();

@@ -102,6 +102,10 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		bool IsAllocated() const { return (user_gamepad != nullptr); }
 		/** returns true whether the gamepad is connected */
 		bool IsPresent() const { return is_present; }
+		/** return the name of gamepad */
+		char const* GetName() const;
+		/** return the GUID of gamepad model */
+		char const * GetGUID() const;
 
 		/** take a physical device, and create a logical device if possible */
 		class Gamepad* CaptureDevice(GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);

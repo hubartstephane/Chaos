@@ -103,6 +103,16 @@ namespace chaos
 				});
 			};
 
+			DisplayProperty("Name", [](PhysicalGamepad const & gamepad)
+			{
+				ImGui::Text("%s", gamepad.GetName());
+			});
+
+			DisplayProperty("Guid", [](PhysicalGamepad const & gamepad)
+			{
+				ImGui::Text("%s", gamepad.GetGUID());
+			});
+
 			DisplayProperty("Allocated", [](PhysicalGamepad const & gamepad)
 			{
 				ImGui::Text("%s", gamepad.IsAllocated() ? "true" : "false");
@@ -121,7 +131,6 @@ namespace chaos
 
 				ImGui::Text("%d", gamepad_state->GetAxisCount());
 			});
-
 		});
 
 		ImGui::Dummy({ 0.0f, 20.0f });

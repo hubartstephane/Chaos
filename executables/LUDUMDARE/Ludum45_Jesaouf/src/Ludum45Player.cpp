@@ -40,65 +40,66 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 
 bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
-
-
-
-	// Fire
-	bool fire_pressed = false;
-
-	auto FireInput = chaos::CombinedInput(chaos::Key::Space, chaos::Key::GamepadA);
-
-	auto FireCondition = chaos::QueryInput(FireInput, &fire_pressed);
-
-	if (in_action_processor.CheckAndProcess(FireCondition, "Fire", [&]()
+	LudumGame * ludum_game = GetGame();
+	if (!ludum_game->IsPaused() && !ludum_game->IsFreeCameraMode())
 	{
-		UpdatePlayerFire(fire_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
-	}))
-	{
-		return true;
-	}
+		// Fire
+		bool fire_pressed = false;
+
+		auto FireInput = chaos::CombinedInput(chaos::Key::Space, chaos::Key::GamepadA);
+
+		auto FireCondition = chaos::QueryInput(FireInput, &fire_pressed);
+
+		if (in_action_processor.CheckAndProcess(FireCondition, "Fire", [&]()
+		{
+			UpdatePlayerFire(fire_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+		}))
+		{
+			return true;
+		}
 
 
-	// Bright sight of life
-	bool bright_side_pressed = false;
+		// Bright sight of life
+		bool bright_side_pressed = false;
 
-	auto BrightSideInput = chaos::CombinedInput(chaos::Key::LeftAlt, chaos::Key::RightAlt, chaos::Key::GamepadY);
+		auto BrightSideInput = chaos::CombinedInput(chaos::Key::LeftAlt, chaos::Key::RightAlt, chaos::Key::GamepadY);
 
-	auto BrightSideCondition = chaos::QueryInput(BrightSideInput, &bright_side_pressed);
+		auto BrightSideCondition = chaos::QueryInput(BrightSideInput, &bright_side_pressed);
 
-	if (in_action_processor.CheckAndProcess(BrightSideCondition, "Bright Side", [&]()
-	{
-		UpdateBrightSideOfLife(bright_side_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
-	}))
-	{
-		return true;
-	}
+		if (in_action_processor.CheckAndProcess(BrightSideCondition, "Bright Side", [&]()
+		{
+			UpdateBrightSideOfLife(bright_side_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+		}))
+		{
+			return true;
+		}
 
-	// Move
-	// Move player
-	auto MoveInput = chaos::CombinedInput(
-		chaos::MappedInput2D::keyboard_arrows,
-		chaos::Input2D::GamepadLeftStick,
-		chaos::Input2D::GamepadRightStick,
-		chaos::MappedInput2D::gamepad_dpad
-	);
+		// Move
+		// Move player
+		auto MoveInput = chaos::CombinedInput(
+			chaos::MappedInput2D::keyboard_arrows,
+			chaos::Input2D::GamepadLeftStick,
+			chaos::Input2D::GamepadRightStick,
+			chaos::MappedInput2D::gamepad_dpad
+		);
 
-	auto DashInput = chaos::CombinedInput(chaos::Key::LeftControl, chaos::Key::RightControl, chaos::Key::GamepadB);
+		auto DashInput = chaos::CombinedInput(chaos::Key::LeftControl, chaos::Key::RightControl, chaos::Key::GamepadB);
 
-	glm::vec2 stick_value = { 0.0f, 0.0f };
-	bool dash_pressed = false;
+		glm::vec2 stick_value = { 0.0f, 0.0f };
+		bool dash_pressed = false;
 
-	auto InputCondition = chaos::And(
-		chaos::QueryInput(MoveInput, &stick_value),
-		chaos::QueryInput(DashInput, &dash_pressed)
-	);
+		auto InputCondition = chaos::And(
+			chaos::QueryInput(MoveInput, &stick_value),
+			chaos::QueryInput(DashInput, &dash_pressed)
+		);
 
-	if (in_action_processor.CheckAndProcess(InputCondition, "Move", [&]()
-	{
-		UpdatePlayerAcceleration(stick_value, dash_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
-	}))
-	{
-		return true;
+		if (in_action_processor.CheckAndProcess(InputCondition, "Move", [&]()
+		{
+			UpdatePlayerAcceleration(stick_value, dash_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+		}))
+		{
+			return true;
+		}	
 	}
 	return chaos::Player::EnumerateInputActions(in_action_processor, in_context);
 }

@@ -15,7 +15,7 @@ namespace chaos
 	class GlobalVariable;
 
 #define CHAOS_GLOBAL_VARIABLE(TYPE, VARIABLE_NAME, ...)\
-static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::GlobalVariableManager::GetInstance()->RegisterVariable<TYPE>(#VARIABLE_NAME __VA_OPT__(,) __VA_ARGS__);\
+static inline chaos::GlobalVariable<TYPE> & VARIABLE_NAME = *chaos::GlobalVariableManager::GetInstance()->RegisterVariable<TYPE>(#VARIABLE_NAME __VA_OPT__(,) __VA_ARGS__);\
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
@@ -209,6 +209,11 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 		{
 			return value;
 		}
+		/** setter */
+		void Set(T const & in_value)
+		{
+			value = in_value;
+		}
 
 	protected:
 
@@ -226,7 +231,7 @@ static inline chaos::GlobalVariable<TYPE> const & VARIABLE_NAME = *chaos::Global
 
 		/** register a variable */
 		template<typename T>
-		GlobalVariable<T> const * RegisterVariable(char const* name, T default_value = {})
+		GlobalVariable<T> * RegisterVariable(char const* name, T default_value = {})
 		{
 			// a variable with the same name already exists ?
 			if (GlobalVariableBase* result = ObjectRequest(name).FindObject(variables))

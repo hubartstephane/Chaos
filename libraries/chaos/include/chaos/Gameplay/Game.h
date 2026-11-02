@@ -382,7 +382,6 @@ namespace chaos
 		/** cheating */
 #if _DEBUG
 		mutable bool cheat_skip_level_required = false;
-		bool cheat_mode = false;
 #endif
 
 		/** game settings */

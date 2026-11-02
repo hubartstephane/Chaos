@@ -32,23 +32,27 @@ namespace chaos
 		return cheat_skip_level_required;
 	}
 
-	void Game::SetCheatMode(bool value)
-	{
-		cheat_mode = value;
-	}
-
 	namespace GlobalVariables
 	{
 		CHAOS_GLOBAL_VARIABLE(bool, CheatMode, false);
 	};
 
+	void Game::SetCheatMode(bool value)
+	{
+		GlobalVariables::CheatMode.Set(value);
+	}
+
 	bool Game::GetCheatMode() const
 	{
 		if (GlobalVariables::CheatMode.Get())
 			return true;
-		if (IsFreeCameraMode())
-			return true;
-		return cheat_mode;
+
+		// shuxxx pourquoi ???
+	//	if (IsFreeCameraMode())
+	//		return true;
+
+
+		return false;
 	}
 #endif // _DEBUG
 

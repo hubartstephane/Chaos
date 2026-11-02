@@ -46,12 +46,6 @@ namespace chaos
 	{
 		if (GlobalVariables::CheatMode.Get())
 			return true;
-
-		// shuxxx pourquoi ???
-	//	if (IsFreeCameraMode())
-	//		return true;
-
-
 		return false;
 	}
 #endif // _DEBUG

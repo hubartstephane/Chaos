@@ -41,7 +41,7 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
 	LudumGame * ludum_game = GetGame();
-	if (!ludum_game->IsPaused() && !ludum_game->IsFreeCameraMode())
+	if (ludum_game->IsRunning())
 	{
 		// Fire
 		bool fire_pressed = false;

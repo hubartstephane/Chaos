@@ -1331,6 +1331,11 @@ namespace chaos
 		return game_instance_class.CreateInstance();
 	}
 
+	bool Game::IsRunning() const
+	{
+		return !IsPaused() && !IsFreeCameraMode();
+	}
+
 	bool Game::IsFreeCameraMode() const
 	{
 		return free_camera_mode;

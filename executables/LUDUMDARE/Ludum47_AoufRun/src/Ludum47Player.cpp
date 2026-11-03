@@ -73,7 +73,7 @@ bool LudumPlayer::OnReadConfigurableProperties(chaos::JSONReadConfiguration conf
 
 bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
-	if (GetGame() != nullptr && !GetGame()->IsPaused())
+	if (GetGame() != nullptr && GetGame()->IsRunning())
 	{
 		auto HonkRequest = chaos::JustActivated(chaos::CombinedInput(chaos::Key::GamepadX, chaos::Key::LeftShift));
 

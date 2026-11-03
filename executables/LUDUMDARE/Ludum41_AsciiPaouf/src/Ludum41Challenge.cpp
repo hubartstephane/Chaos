@@ -11,9 +11,7 @@ bool LudumChallenge::OnCharEventImpl(chaos::CharEvent const& char_event)
 	char c = std::tolower(char_event.char_value);
 
 	LudumGame* game = game_instance->GetGame();
-	if (game->IsPaused())
-		return false;
-	if (game->IsFreeCameraMode())
+	if (!game->IsRunning())
 		return false;
 
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
@@ -47,7 +45,7 @@ void LudumChallenge::Show(bool visible)
 void LudumChallenge::OnGamepadButtonReceived(chaos::Key key)
 {
 	LudumGame * game = game_instance->GetGame();
-	if (game->IsFreeCameraMode())
+	if (!game->IsRunning())
 		return;
 
 	chaos::WindowApplication* window_application = chaos::Application::GetInstance();

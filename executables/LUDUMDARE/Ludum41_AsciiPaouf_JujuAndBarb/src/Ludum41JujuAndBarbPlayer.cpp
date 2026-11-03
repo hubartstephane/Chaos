@@ -44,7 +44,7 @@ bool LudumPlayer::OnMouseMoveImpl(chaos::MouseMoveEvent const & mouse_move_event
 	chaos::Game const * game = GetGame();
 	if (game == nullptr)
 		return true;
-	if (game->IsPaused() || game->IsFreeCameraMode())
+	if (!game->IsRunning())
 		return true;
 	DisplacePlayerRacket(game->GetMouseSensitivity() * delta.x);
 	return true;
@@ -54,7 +54,7 @@ bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_p
 {
 	if (LudumGame const* ludum_game = GetGame())
 	{
-		if (!ludum_game->IsPaused() && !ludum_game->IsFreeCameraMode())
+		if (ludum_game->IsRunning())
 		{
 			float value = 0.0f;
 

@@ -202,7 +202,7 @@ bool LudumGameInstance::DoTick(float delta_time)
 		return false;
 
 	// some other calls
-	if (game->IsPlaying() && !game->IsFreeCameraMode())
+	if (game->IsPlaying() && game->IsRunning())
 	{
 		TickBrickOffset(delta_time);
 		TickChallenge(delta_time);

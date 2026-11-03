@@ -130,7 +130,7 @@ void LudumPlayer::SetDashMode(bool dash)
 
 bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
-	if (GetGame() != nullptr && !GetGame()->IsPaused() && !GetGame()->IsFreeCameraMode())
+	if (GetGame() != nullptr && GetGame()->IsRunning())
 	{
 		auto DashInput = chaos::CombinedInput(chaos::Key::Space, chaos::Key::GamepadA);
 

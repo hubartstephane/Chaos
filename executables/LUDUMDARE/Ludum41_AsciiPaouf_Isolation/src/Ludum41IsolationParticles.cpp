@@ -118,7 +118,7 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 		return false;
 
 	// do not update particles during pause
-	if (!game->IsPlaying() || game->IsFreeCameraMode())
+	if (!game->IsPlaying() || !game->IsRunning())
 		return false;
 
 	// delay before moving the particle

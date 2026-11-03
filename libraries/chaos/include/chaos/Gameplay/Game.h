@@ -143,6 +143,8 @@ namespace chaos
 		/** create the background image */
 		virtual bool CreateBackgroundImage(ObjectRequest material_request, ObjectRequest texture_request);
 
+		/** returns whether the game is in a running state (not paused and not free camera) */
+		bool IsRunning() const;
 		/** returns whether we are in free camera mode */
 		bool IsFreeCameraMode() const;
 		/** change free camera mode */

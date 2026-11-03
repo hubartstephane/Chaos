@@ -119,54 +119,25 @@ static glm::ivec2 GetAnalogicStickPosition(glm::vec2 stick_position)
 
 
 
+void LudumLevelInstance::SetCachedFakeMove(bool in_value)
+{
+	cached_fake_move = in_value;
+}
 
-
-bool LudumLevelInstance::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
+void LudumLevelInstance::SetMoveInputState(Input2DState const & in_state)
 {
 	bool beginning = (frame_timer < frame_duration * 0.3f);
 
-	// fake move
-	auto FakeMoveInput = CombinedInput(Key::LeftControl, Key::RightControl, Key::GamepadA);
-
-	bool fake_move_pressed = false;
-
-	auto FakeMoveInputCondition = QueryInput(FakeMoveInput, &fake_move_pressed, chaos::InputStatusCheckType::Active);
-
-	if (in_action_processor.CheckAndProcess(FakeMoveInputCondition, "Fake Move", [&]()
+	if (beginning)
 	{
-		cached_fake_move = fake_move_pressed;
-	}))
-	{
-		return true;
+		// stick is just beeing moved
+		if (in_state.IsJustActivated())
+			cached_stick_position = in_state.GetValue();
 	}
-
-	// move
-	auto MoveInput = CombinedInput(MappedInput2D::gamepad_dpad, MappedInput2D::keyboard_arrows);
-	//auto MoveInput = CombinedInput(Input2D::GamepadLeftStick, MappedInput2D::keyboard_arrows);
-
-	Input2DState stick_state;
-
-	auto MoveInputCondition = QueryInput(MoveInput, &stick_state);
-
-	if (in_action_processor.CheckAndProcess(MoveInputCondition, "Move", [&]()
+	else if (in_state.IsActive())
 	{
-		if (beginning)
-		{
-			// stick is just beeing moved
-			if (stick_state.IsJustActivated())
-				cached_stick_position = stick_state.GetValue();
-		}
-		else if (stick_state.IsActive())
-		{
-			cached_stick_position = stick_state.GetValue();
-		}
-	}))
-	{
-		return true;
+		cached_stick_position = in_state.GetValue();
 	}
-
-
-	return Super::EnumerateInputActions(in_action_processor, in_context);
 }
 
 void LudumLevelInstance::FlushPlayerInputs()

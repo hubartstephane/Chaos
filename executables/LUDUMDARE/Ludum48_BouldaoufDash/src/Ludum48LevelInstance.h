@@ -84,8 +84,7 @@ protected:
 	virtual void CreateCameraComponents(Camera* camera, TMCameraTemplate* camera_template) override;
 	/** override */
 	virtual bool InitializeLevelInstance(TMObjectReferenceSolver& reference_solver, TiledMap::PropertyOwner const* property_owner) override;
-	/** override */
-	virtual bool EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context) override;
+
 
 	virtual int DoDisplay(GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params) override;
 
@@ -100,6 +99,9 @@ protected:
 
 	void DestroyNeighboorsAndCreateDiamonds(glm::ivec2 const& p, bool create_diamond);
 
+	void SetCachedFakeMove(bool in_value);
+
+	void SetMoveInputState(Input2DState const& in_state);
 
 	GridInfo const & GetGridInfo() const { return grid_info; }
 	GridInfo& GetGridInfo(){ return grid_info; }

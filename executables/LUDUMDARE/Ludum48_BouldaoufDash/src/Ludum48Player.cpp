@@ -52,6 +52,42 @@ bool LudumPlayer::EnumerateInputActions(InputActionProcessor& in_action_processo
 {
 	auto suicide_input = CombinedInput(Key::Space, Key::GamepadY);
 	QueryAndReserveInput(in_action_processor, suicide_input, "Suicide", suicide_pressed);
+
+
+	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
+	if (ludum_level_instance != nullptr)
+	{
+		// fake move
+		auto FakeMoveInput = CombinedInput(Key::LeftControl, Key::RightControl, Key::GamepadA);
+
+		bool fake_move_pressed = false;
+
+		auto FakeMoveInputCondition = QueryInput(FakeMoveInput, &fake_move_pressed, chaos::InputStatusCheckType::Active);
+
+		if (in_action_processor.CheckAndProcess(FakeMoveInputCondition, "Fake Move", [&]()
+		{
+			ludum_level_instance->SetCachedFakeMove(fake_move_pressed);
+		}))
+		{
+			return true;
+		}
+	
+		// move
+		auto MoveInput = CombinedInput(Input2D::GamepadLeftStick, MappedInput2D::gamepad_dpad, MappedInput2D::keyboard_arrows);
+		//auto MoveInput = CombinedInput(Input2D::GamepadLeftStick, MappedInput2D::keyboard_arrows);
+		Input2DState stick_state;
+
+		auto MoveInputCondition = QueryInput(MoveInput, &stick_state);
+
+		if (in_action_processor.CheckAndProcess(MoveInputCondition, "Move", [&]()
+		{
+			ludum_level_instance->SetMoveInputState(stick_state);
+		}))
+		{
+			return true;
+		}	
+	
+	}
 	return Super::EnumerateInputActions(in_action_processor, in_context);
 }
 

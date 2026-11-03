@@ -5,8 +5,6 @@ namespace chaos
 
 	enum class DrawImGuiVariableFlags;
 
-	class DrawImGuiTable;
-
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	enum class DrawImGuiVariableFlags : int
@@ -30,74 +28,38 @@ namespace chaos
 
 	namespace ImGuiTools
 	{
-		/** 
-		 * DrawImGuiTable: utility class that create an imgui table with its header and closes it at destruction
-		 */
-		class DrawImGuiTable
+		/** ImGUI use 32 bits integers (or strings) for ID's. when using pointers as key, a dedicated function is necessary while pointers are 64 bits */
+		CHAOS_API void PushID(void* ptr);
+
+		/** implementaion coming from imgui_stdlib.cpp */
+		CHAOS_API bool InputText(const char* label, std::string& str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = nullptr, void* user_data = nullptr);
+
+		/** create a ImGui window that fills the whole GLFW window (returns true if the window must be kept alive) */
+		CHAOS_API bool FullViewportWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
+
+		/** conditionnally disable some content */
+		CHAOS_API void ConditionalDisable(bool disabled, LightweightFunction<void()> func);
+
+		/** Opening a table method */
+		template<typename... COLUMN_NAME>
+		bool OpenTable(char const* title, std::optional<int> table_flags, COLUMN_NAME... column_names)
 		{
-		public:
+			static_assert((std::is_convertible_v<COLUMN_NAME, const char*> && ...)); // accept only char const * for column names
 
-			/** constructor (that opens a ImGui table) */
-			template<typename... COLUMN_NAME>
-			DrawImGuiTable(char const* title, std::optional<int> table_flags, COLUMN_NAME... column_names)
+			int flags = table_flags.value_or(ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg);
+
+			int column_count = sizeof...(COLUMN_NAME);
+			if (ImGui::BeginTable(title, column_count, flags))
 			{
-				static_assert((std::is_convertible_v<COLUMN_NAME, const char*> && ...)); // accept only char const * for column names
-
-				int flags = table_flags.value_or(ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg);
-
-				int column_count = sizeof...(COLUMN_NAME);
-				if (ImGui::BeginTable(title, column_count, flags))
-				{
-					(ImGui::TableSetupColumn(column_names), ...);
-					ImGui::TableHeadersRow();
-
-					table_opened = true;
-				}
+				(ImGui::TableSetupColumn(column_names), ...);
+				ImGui::TableHeadersRow();
+				return true;
 			}
-			/** constructor (that opens a ImGui table) */
-			DrawImGuiTable(char const* title, std::optional<int> table_flags, std::span<std::string_view> column_names)
-			{
-				if (column_names.size() == 0)
-					return;
+			return false;
+		}
 
-				int flags = table_flags.value_or(ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg);
-
-				if (ImGui::BeginTable(title, (int)column_names.size(), flags))
-				{
-					for (std::string_view column_name : column_names)
-						ImGui::TableSetupColumn(column_name.data());
-					ImGui::TableHeadersRow();
-
-					table_opened = true;
-				}
-			}
-
-			/** destructor (that closes ImGui table) */
-			~DrawImGuiTable()
-			{
-				if (table_opened)
-				{
-					ImGui::EndTable();
-					table_opened = false;
-				}
-			}
-
-			/** inserting content */
-			DrawImGuiTable const & operator ()(LightweightFunction<void()> func) const
-			{
-				func();
-				return *this;
-			}
-
-			// no copy
-			DrawImGuiTable(const DrawImGuiTable&) = delete;
-			DrawImGuiTable& operator=(const DrawImGuiTable&) = delete;
-
-		protected:
-
-			/** whether the table has sucessufully be opened */
-			bool table_opened = false;
-		};
+		/** Opening a table method */
+		CHAOS_API bool OpenTable(char const* title, std::optional<int> table_flags, std::span<std::string_view> column_names);
 
 		/** check whether there is a function named DrawImGuiVariableImpl */
 		template<typename T>
@@ -127,18 +89,6 @@ namespace chaos
 				HasDrawImGuiVariableMethod<T> ||
 				HasEnumMetaData<T>;
 		};
-
-		/** ImGUI use 32 bits integers (or strings) for ID's. when using pointers as key, a dedicated function is necessary while pointers are 64 bits */
-		CHAOS_API void PushID(void* ptr);
-
-		/** implementaion coming from imgui_stdlib.cpp */
-		CHAOS_API bool InputText(const char* label, std::string& str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = nullptr, void* user_data = nullptr);
-
-		/** create a ImGui window that fills the whole GLFW window (returns true if the window must be kept alive) */
-		CHAOS_API bool FullViewportWindow(char const* title, int imgui_window_flags, LightweightFunction<void()> content_func);
-
-		/** conditionnally disable some content */
-		CHAOS_API void ConditionalDisable(bool disabled, LightweightFunction<void()> func);
 
 	}; // namespace ImGuiTools
 

@@ -113,6 +113,24 @@ namespace chaos
 				ImGui::EndDisabled();
 		}
 
+		bool OpenTable(char const* title, std::optional<int> table_flags, std::span<std::string_view> column_names)
+		{
+			if (column_names.size() == 0)
+				return false;
+
+			int flags = table_flags.value_or(ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg);
+
+			if (ImGui::BeginTable(title, (int)column_names.size(), flags))
+			{
+				for (std::string_view column_name : column_names)
+					ImGui::TableSetupColumn(column_name.data());
+				ImGui::TableHeadersRow();
+
+				return true;
+			}
+			return false;
+		}
+
 	}; // namespace ImGuiTools
 
 }; // namespace chaos

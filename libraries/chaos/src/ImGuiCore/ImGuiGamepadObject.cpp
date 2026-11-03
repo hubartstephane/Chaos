@@ -50,7 +50,7 @@ namespace chaos
 
 			int table_flags =  ImGuiTableFlags_RowBg | ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_WidthFixed;
 
-			ImGuiTools::DrawImGuiTable(column0_title, { table_flags }, column_titles)([&]()
+			DrawImGuiTable(column0_title, { table_flags }, column_titles)([&]()
 			{
 				fill_content_func();
 			});

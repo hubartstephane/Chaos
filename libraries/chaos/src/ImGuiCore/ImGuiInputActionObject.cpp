@@ -30,11 +30,11 @@ namespace chaos
 					color = { 0.0f, 1.0f, 1.0f, 1.0f };
 
 				int column_index = 0;
-				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", in_title);
-
 				ImGui::TableSetColumnIndex(column_index++);
-				if (char const * receiver_name = input_receiver->GetInputReceiverName())
+				if (char const* receiver_name = input_receiver->GetInputReceiverName())
 					ImGui::TextColored(color, "%s", receiver_name);
+
+				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", in_title);
 
 				InputConditionDebugInfoStorage debug_info_storage;
 				char const* debug_info = in_condition.GetDebugInfo(debug_info_storage);
@@ -42,13 +42,9 @@ namespace chaos
 					
 				ImGui::TableSetColumnIndex(column_index++);
 				if (request_result.type == InputConditionResultType::Invalid)
-					ImGui::TextColored(color, "Invalid", in_title);
+					ImGui::TextColored(color, "Invalid");
 				else if (request_result.type == InputConditionResultType::Rejected)
-					ImGui::TextColored(color, "Rejected", in_title);
-
-				ImGui::TableSetColumnIndex(column_index++);
-				if (!in_action.IsEnabled())
-					ImGui::TextColored(color, "Disabled", in_title);
+					ImGui::TextColored(color, "Rejected");
 
 				ImGui::EndDisabled();
 
@@ -76,7 +72,7 @@ namespace chaos
 			InputConsumptionSystem consumption_system;
 		};
 
-		ImGuiTools::DrawImGuiTable("objects", {}, "Description", "Object", "Input", "Request Status", "Enabled")([&]()
+		DrawImGuiTable("objects", {}, "Object", "Description", "Input", "Request Status")([&]()
 		{
 			KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 

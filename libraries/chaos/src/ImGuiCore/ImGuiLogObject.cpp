@@ -20,7 +20,7 @@ namespace chaos
 		// the lines
 		int table_flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_Reorderable;
 
-		ImGuiTools::DrawImGuiTable("##lines", table_flags, "Date", "Severity", "Domain", "Count", "Message", "Action")([&]()
+		DrawImGuiTable("##lines", table_flags, "Date", "Severity", "Domain", "Count", "Message", "Action")([&]()
 		{
 			std::vector<LogLine> const& lines = logger->GetLines();
 			for (size_t i = 0; i < lines.size(); ++i)

@@ -57,57 +57,60 @@ void LudumPlayer::FireNormalProjectile()
 
 bool LudumPlayer::EnumerateInputActions(chaos::InputActionProcessor& in_action_processor, chaos::EnumerateInputActionContext in_context)
 {
-	// Fire
-	bool fire_pressed = false;
-	bool charged_pressed = false;
-
-	auto FireInput = chaos::CombinedInput(chaos::Key::Space, chaos::Key::GamepadA);
-	auto ChargedFireInput = chaos::CombinedInput(chaos::Key::LeftControl, chaos::Key::RightControl, chaos::Key::GamepadB);
-
-	auto FireCondition = chaos::And
-	(
-		chaos::QueryInput(FireInput, &fire_pressed),
-		chaos::QueryInput(ChargedFireInput, &charged_pressed)
-	);
-
-	if (in_action_processor.CheckAndProcess(FireCondition, "Fire", [&]()
+	if (GetGame() && GetGame()->IsRunning())
 	{
-		UpdatePlayerFire(fire_pressed, charged_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
-	}))
-	{
-		return true;
-	}
+		// Fire
+		bool fire_pressed = false;
+		bool charged_pressed = false;
 
-	// Buy item
-	bool buy_pressed = false;
+		auto FireInput = chaos::CombinedInput(chaos::Key::Space, chaos::Key::GamepadA);
+		auto ChargedFireInput = chaos::CombinedInput(chaos::Key::LeftControl, chaos::Key::RightControl, chaos::Key::GamepadB);
 
-	auto BuyInput = chaos::CombinedInput(chaos::Key::LeftAlt, chaos::Key::RightAlt, chaos::Key::GamepadY);
+		auto FireCondition = chaos::And
+		(
+			chaos::QueryInput(FireInput, &fire_pressed),
+			chaos::QueryInput(ChargedFireInput, &charged_pressed)
+		);
 
-	auto BuyCondition = chaos::QueryInput(BuyInput, &buy_pressed);
+		if (in_action_processor.CheckAndProcess(FireCondition, "Fire", [&]()
+		{
+			UpdatePlayerFire(fire_pressed, charged_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+		}))
+		{
+			return true;
+		}
 
-	if (in_action_processor.CheckAndProcess(BuyCondition, "Buy item", [&]()
-	{
-		UpdatePlayerBuyingItem(buy_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
-	}))
-	{
-		return true;
-	}
+		// Buy item
+		bool buy_pressed = false;
 
-	// Move player
-	auto Input = chaos::CombinedInput(
-		chaos::MappedInput2D::keyboard_arrows,
-		chaos::Input2D::GamepadLeftStick,
-		chaos::Input2D::GamepadRightStick,
-		chaos::MappedInput2D::gamepad_dpad
-	);
+		auto BuyInput = chaos::CombinedInput(chaos::Key::LeftAlt, chaos::Key::RightAlt, chaos::Key::GamepadY);
 
-	glm::vec2 stick_value = { 0.0f, 0.0f };
-	if (in_action_processor.CheckAndProcess(chaos::QueryInput(Input, &stick_value), "Move", [&]()
-	{
-		UpdatePlayerAcceleration(stick_value, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
-	}))
-	{
-		return true;
+		auto BuyCondition = chaos::QueryInput(BuyInput, &buy_pressed);
+
+		if (in_action_processor.CheckAndProcess(BuyCondition, "Buy item", [&]()
+		{
+			UpdatePlayerBuyingItem(buy_pressed, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+		}))
+		{
+			return true;
+		}
+
+		// Move player
+		auto Input = chaos::CombinedInput(
+			chaos::MappedInput2D::keyboard_arrows,
+			chaos::Input2D::GamepadLeftStick,
+			chaos::Input2D::GamepadRightStick,
+			chaos::MappedInput2D::gamepad_dpad
+		);
+
+		glm::vec2 stick_value = { 0.0f, 0.0f };
+		if (in_action_processor.CheckAndProcess(chaos::QueryInput(Input, &stick_value), "Move", [&]()
+		{
+			UpdatePlayerAcceleration(stick_value, (float)chaos::FrameTimeManager::GetInstance()->GetCurrentFrameDuration());
+		}))
+		{
+			return true;
+		}	
 	}
 
 	return chaos::Player::EnumerateInputActions(in_action_processor, in_context);

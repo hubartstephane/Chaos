@@ -45,27 +45,31 @@ namespace chaos
 				ImGui::TableNextRow();
 				ImGui::BeginDisabled(!in_action.IsEnabled());
 
-				ImVec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+				ImVec4 const default_color  = { 1.0f, 1.0f, 1.0f, 1.0f };
+				ImVec4 const invalid_color  = { 1.0f, 1.0f, 1.0f, 1.0f };
+				ImVec4 const rejected_color = { 0.0f, 1.0f, 1.0f, 1.0f };
+
+				ImVec4 const * color = &default_color;
 
 				InputConditionResult request_result = in_condition.Check({ input_receiver, input_device, consumption_system });
 				if (request_result.type == InputConditionResultType::Invalid)
-					color = { 1.0f, 0.0f, 0.0f, 1.0f };
+					color = &invalid_color;
 				else if (request_result.type == InputConditionResultType::Rejected)
-					color = { 0.0f, 1.0f, 1.0f, 1.0f };
+					color = &rejected_color;
 
 				int column_index = 0;
 
-				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", in_title);
+				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(*color, "%s", in_title); 
 
 				InputConditionDebugInfoStorage debug_info_storage;
 				char const* debug_info = in_condition.GetDebugInfo(debug_info_storage);
-				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", debug_info);
+				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(*color, "%s", debug_info);
 					
 				ImGui::TableSetColumnIndex(column_index++);
 				if (request_result.type == InputConditionResultType::Invalid)
-					ImGui::TextColored(color, "Invalid");
+					ImGui::TextColored(*color, "Invalid");
 				else if (request_result.type == InputConditionResultType::Rejected)
-					ImGui::TextColored(color, "Rejected");
+					ImGui::TextColored(*color, "Rejected");
 
 				ImGui::EndDisabled();
 

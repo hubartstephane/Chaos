@@ -100,7 +100,7 @@ namespace chaos
 
 	bool WindowImGuiContext::EnumerateInputActions(InputActionProcessor& in_action_processor, EnumerateInputActionContext in_context)
 	{
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::F7), "Toggle ImGui", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F7), "Menu Mode", [this]()
 		{
 			WindowApplication::SetImGuiMenuEnabled(!WindowApplication::IsImGuiMenuEnabled());
 		}))

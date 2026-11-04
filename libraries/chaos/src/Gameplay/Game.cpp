@@ -97,7 +97,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(ForbidModifiers(KeyModifier::Shift, JustActivated(Key::Escape)), "Toggle Pause", [this]()
+		if (in_action_processor.CheckAndProcess(ForbidModifiers(KeyModifier::Shift, JustActivated(Key::Escape)), "Pause", [this]()
 		{
 			RequireTogglePause();
 		}))
@@ -115,7 +115,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::F2), "Toggle Cheat Mode", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F2), "Cheat Mode", [this]()
 		{
 			SetCheatMode(!GetCheatMode());
 		}))
@@ -147,7 +147,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::F6), "Toggle Free Camera Mode", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F6), "Free Camera Mode", [this]()
 		{
 			SetFreeCameraMode(!IsFreeCameraMode());
 		}))

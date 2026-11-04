@@ -1014,7 +1014,7 @@ namespace chaos
 			return true;
 		}
 
-		if (in_action_processor.CheckAndProcess(JustActivated(Key::F10) , "Toggle Fullscreen", [this]()
+		if (in_action_processor.CheckAndProcess(JustActivated(Key::F10) , "Fullscreen", [this]()
 		{
 			ToggleFullscreen();
 		}))

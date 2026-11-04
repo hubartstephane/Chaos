@@ -40,10 +40,19 @@ namespace chaos
 		/** conditionnally disable some content */
 		CHAOS_API void ConditionalDisable(bool disabled, LightweightFunction<void()> func);
 
+		/** extract column flags from its name */
+		CHAOS_API ImGuiTableColumnFlags DecodeColumnFlagFromName(char const * & column_name);
+
 		/** Opening a table method */
 		template<typename... COLUMN_NAME>
 		bool OpenTable(char const* title, std::optional<int> table_flags, COLUMN_NAME... column_names)
 		{
+			auto SetupColumn = [](char const * column_name)
+			{
+				ImGuiTableColumnFlags column_flags = DecodeColumnFlagFromName(column_name);
+				ImGui::TableSetupColumn(column_name, column_flags);
+			};
+
 			static_assert((std::is_convertible_v<COLUMN_NAME, const char*> && ...)); // accept only char const * for column names
 
 			int flags = table_flags.value_or(ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg);
@@ -51,7 +60,7 @@ namespace chaos
 			int column_count = sizeof...(COLUMN_NAME);
 			if (ImGui::BeginTable(title, column_count, flags))
 			{
-				(ImGui::TableSetupColumn(column_names), ...);
+				(SetupColumn(column_names), ...);
 				ImGui::TableHeadersRow();
 				return true;
 			}

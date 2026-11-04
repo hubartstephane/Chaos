@@ -113,6 +113,26 @@ namespace chaos
 				ImGui::EndDisabled();
 		}
 
+		ImGuiTableColumnFlags DecodeColumnFlagFromName(char const*& column_name)
+		{
+			ImGuiTableColumnFlags result = 0;
+			if (column_name[0] == '/') // joker
+			{
+				++result;
+			}
+			else if (column_name[0] == '+')
+			{
+				++column_name;
+				result = ImGuiTableColumnFlags_WidthStretch;
+			}
+			else if (column_name[0] == '-')
+			{
+				++column_name;
+				result = ImGuiTableColumnFlags_WidthFixed;
+			}
+			return result;
+		}
+
 		bool OpenTable(char const* title, std::optional<int> table_flags, std::span<std::string_view> column_names)
 		{
 			if (column_names.size() == 0)
@@ -123,7 +143,12 @@ namespace chaos
 			if (ImGui::BeginTable(title, (int)column_names.size(), flags))
 			{
 				for (std::string_view column_name : column_names)
-					ImGui::TableSetupColumn(column_name.data());
+				{
+					char const* name = column_name.data();
+
+					ImGuiTableColumnFlags column_flags = DecodeColumnFlagFromName(name);
+					ImGui::TableSetupColumn(name, column_flags);
+				}
 				ImGui::TableHeadersRow();
 
 				return true;

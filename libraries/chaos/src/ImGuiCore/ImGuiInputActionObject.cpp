@@ -37,7 +37,7 @@ namespace chaos
 					ImGui::Text("%s", receiver_name);
 					ImGui::TableNextColumn();
 
-					table_opened = ImGuiTools::OpenTable("objects", {}, "Description", "Input", "Request Status");
+					table_opened = ImGuiTools::OpenTable("objects", {}, "-Description", "+Input", "-Request Status");
 					if (!table_opened)
 						return false;
 				}
@@ -90,6 +90,8 @@ namespace chaos
 				ImGui::TableNextRow();
 				ImGui::PushID(in_input_receiver);
 				{
+					// this code need to be in bracket to reduce the scope of ImGuiQueryInputActionProcessor
+					// it's destructor will be called before PopID() occurs
 					ImGuiQueryInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_system);
 					in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnQuery);
 				}
@@ -102,7 +104,7 @@ namespace chaos
 			InputConsumptionSystem consumption_system;
 		};
 
-		DrawImGuiTable("objects", {}, "Input Receiver", "Actions")([&]()
+		DrawImGuiTable("objects", {}, "-Input Receiver", "+Actions")([&]()
 		{
 			KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 			ImGuiQueryInputReceiverTraverser traverser(keyboard_and_mouse_device);

@@ -210,13 +210,13 @@ namespace chaos
 		InputConsumeResultFlags& out_response_flags)
 	{
 		InputConsumeResultFlags  response_flags = InputConsumeResultFlags::None;
-		InputConsumeResultStatus response_status = InputConsumeResultStatus::Success;
+		InputConsumeResultStatus response_status = InputConsumeResultStatus::Failure;
 
 		std::apply([&](auto const & ... child_request)
 		{
 			auto TryConsumeInputChild = [&](auto const& child_request)
 			{
-				response_status &= TryConsumeInput(child_request, in_input_receiver, in_consume_flags, response_flags);
+				response_status |= TryConsumeInput(child_request, in_input_receiver, in_consume_flags, response_flags);
 			};
 			(TryConsumeInputChild(child_request), ...);
 

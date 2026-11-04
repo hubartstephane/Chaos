@@ -16,8 +16,32 @@ namespace chaos
 
 			using InputActionProcessor::InputActionProcessor;
 
+			~ImGuiQueryInputActionProcessor()
+			{
+				if (table_opened)
+				{
+					ImGui::EndTable();
+					ImGui::Dummy({0.0f, 40.0f});
+				}
+			}
+
 			virtual bool CheckAndProcess(InputConditionBase const & in_condition, char const * in_title, InputAction const & in_action) override
 			{
+				if (!table_opened)
+				{
+					char const* receiver_name = input_receiver->GetInputReceiverName();
+					if (receiver_name == nullptr)
+						receiver_name = "unnamed";
+
+					ImGui::TableNextColumn();
+					ImGui::Text("%s", receiver_name);
+					ImGui::TableNextColumn();
+
+					table_opened = ImGuiTools::OpenTable("objects", {}, "Description", "Input", "Request Status");
+					if (!table_opened)
+						return false;
+				}
+
 				ImGui::TableNextRow();
 				ImGui::BeginDisabled(!in_action.IsEnabled());
 
@@ -30,9 +54,6 @@ namespace chaos
 					color = { 0.0f, 1.0f, 1.0f, 1.0f };
 
 				int column_index = 0;
-				ImGui::TableSetColumnIndex(column_index++);
-				if (char const* receiver_name = input_receiver->GetInputReceiverName())
-					ImGui::TextColored(color, "%s", receiver_name);
 
 				ImGui::TableSetColumnIndex(column_index++); ImGui::TextColored(color, "%s", in_title);
 
@@ -50,6 +71,10 @@ namespace chaos
 
 				return false; // continue with following input receivers
 			}
+
+		protected:
+
+			bool table_opened = false;
 		};
 
 		class ImGuiQueryInputReceiverTraverser : public InputReceiverTraverser
@@ -62,8 +87,13 @@ namespace chaos
 
 			virtual bool Process(InputReceiverInterface* in_input_receiver) override
 			{
-				ImGuiQueryInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_system);
-				in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnQuery);
+				ImGui::TableNextRow();
+				ImGui::PushID(in_input_receiver);
+				{
+					ImGuiQueryInputActionProcessor action_processor(in_input_receiver, input_device, &consumption_system);
+					in_input_receiver->EnumerateInputActions(action_processor, EnumerateInputActionContext::OnQuery);
+				}
+				ImGui::PopID();
 				return false; // pass through all receivers			
 			}
 
@@ -72,12 +102,11 @@ namespace chaos
 			InputConsumptionSystem consumption_system;
 		};
 
-		DrawImGuiTable("objects", {}, "Object", "Description", "Input", "Request Status")([&]()
+		DrawImGuiTable("objects", {}, "Input Receiver", "Actions")([&]()
 		{
-			KeyboardAndMouseDevice * keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
-
+			KeyboardAndMouseDevice* keyboard_and_mouse_device = KeyboardAndMouseDevice::GetInstance();
 			ImGuiQueryInputReceiverTraverser traverser(keyboard_and_mouse_device);
-			window->TraverseInputReceiverFull(traverser); // include ImGuiWindowContext and WindowApplication in the traversal
+			window->TraverseInputReceiverFull(traverser); // include ImGuiWindowContext and WindowApplication in the traversal		
 		});
 	}
 

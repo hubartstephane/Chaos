@@ -12,7 +12,7 @@ namespace chaos
 			game->Finalize();
 			game = nullptr;
 		}
-		WindowApplication::FinalizeGPUResources();
+		Super::FinalizeGPUResources();
 	}
 
 	bool GameApplication::InitializeGPUResources(JSONReadConfiguration config)
@@ -27,7 +27,7 @@ namespace chaos
 		if (!game->Initialize())
 			return false;
 		// super method : need to be done game initialization ! (because atlas creation requires the game to have loaded its levels)
-		if (!WindowApplication::InitializeGPUResources(config))
+		if (!Super::InitializeGPUResources(config))
 			return false;
 		// create now some game resources that need application resources to be initialized
 		if (!game->CreateGPUResources())
@@ -39,7 +39,7 @@ namespace chaos
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 		// super
-		WindowApplication::DoTick(delta_time);
+		Super::DoTick(delta_time);
 		// update the game
 		if (game != nullptr)
 			if (!IsGameSuspended())
@@ -49,7 +49,7 @@ namespace chaos
 
 	bool GameApplication::FillAtlasGeneratorInput(AtlasInput& input)
 	{
-		if (!WindowApplication::FillAtlasGeneratorInput(input))
+		if (!Super::FillAtlasGeneratorInput(input))
 			return false;
 		if (game != nullptr)
 			if (!game->FillAtlasGeneratorInput(input))
@@ -63,7 +63,7 @@ namespace chaos
 			if (!IsGameSuspended())
 				if (in_traverser.Traverse(game.get()))
 					return true;
-		return WindowApplication::TraverseInputReceiver(in_traverser);
+		return Super::TraverseInputReceiver(in_traverser);
 	}
 
 	bool GameApplication::IsGameSuspended() const

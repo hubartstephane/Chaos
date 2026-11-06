@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/Cpp
 -- =============================================================================
 
-build:ProcessSubPremake("Cpp17")
+build:ProcessSubPremake("GlobalVariablesTest")
 build:ProcessSubPremake("Cpp_CheckStack")
 build:ProcessSubPremake("Cpp20_Concepts")
 build:ProcessSubPremake("Cpp20_Coroutine")

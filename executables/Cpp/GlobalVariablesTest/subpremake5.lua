@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/Cpp/Cpp17
+-- ROOT_PATH/executables/Cpp/GlobalVariablesTest
 -- =============================================================================
 
 local project = build:WindowedApp()

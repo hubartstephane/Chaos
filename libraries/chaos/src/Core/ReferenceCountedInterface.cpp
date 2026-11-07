@@ -28,7 +28,7 @@ namespace chaos
 	void ReferenceCountedInterface::SubReference()
 	{
 		assert(shared_count > 0);
-		if (--shared_count <= 0)
+		if (--shared_count == 0)
 			OnLastReferenceLost();
 	}
 

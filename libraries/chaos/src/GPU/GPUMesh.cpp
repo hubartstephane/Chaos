@@ -118,10 +118,16 @@ namespace chaos
 	{
 		bounding_box = in_bounding_box;
 	}
-	/** get the bounding box of the mesh */
+
 	std::optional<box3> const& GPUMesh::GetBoundingBox() const
 	{
 		return bounding_box;
+	}
+
+	void GPUMesh::swap(GPUMesh& other)
+	{
+		std::swap(elements, other.elements);
+		std::swap(bounding_box, other.bounding_box);
 	}
 
 }; // namespace chaos

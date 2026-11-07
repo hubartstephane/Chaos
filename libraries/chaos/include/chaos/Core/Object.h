@@ -34,8 +34,6 @@ namespace chaos
 
 	class CHAOS_API Object : public ReferenceCountedInterface
 	{
-		friend class SharedPointerPolicy;
-		friend class WeakPointerPolicy;
 
 	protected:
 

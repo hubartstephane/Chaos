@@ -4,7 +4,18 @@ namespace chaos
 
 	class SharedPointerPolicy;
 
+	template<typename T>
+	using shared_ptr = SmartPointer<T, SharedPointerPolicy>;
+
+	template<typename T>
+	struct is_shared_ptr;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
+
+	//	shared_ptr<> is more or less a clone of boost::intrusive_ptr<>. 
+	//	It can be used on any class as soon as there are the 2 following functions
+	//		-intrusive_ptr_add_ref(...) 
+	//		-intrusive_ptr_release(...)
 
 	/**
 	 * SharedPointerPolicy: policy used for shared_ptr
@@ -43,6 +54,25 @@ namespace chaos
 			return in_target;
 		}
 	};
+
+	/**
+	* checking whether a data is some kind of shared pointer
+	*/
+
+	template<typename T>
+	struct is_shared_ptr
+	{
+		static constexpr bool value = false;
+	};
+
+	template<typename T>
+	struct is_shared_ptr<shared_ptr<T>>
+	{
+		static constexpr bool value = true;
+	};
+
+	template<typename T>
+	constexpr bool is_shared_ptr_v = is_shared_ptr<T>::value;
 
 #endif
 

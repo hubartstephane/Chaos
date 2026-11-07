@@ -5,28 +5,26 @@ namespace chaos
 	class WeakPointerData;
 	class WeakPointerPolicy;
 
+	template<typename T>
+	using weak_ptr = SmartPointer<T, WeakPointerPolicy>;
+
+	template<typename T>
+	struct is_weak_ptr;
+
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	// XXX : -shared_ptr<> is more or less a clone of boost::intrusive_ptr<>. It can be used on any class as soon as there are the 2 following functions
+	//   weak_ptr<> use an intermediate structure that points on the target object
 	//
-	//           intrusive_ptr_add_ref(...) and intrusive_ptr_release(...)
+	//   weak_ptr
+	//       |
+	//       +-----> WeakPointerData <-----+
+	//                     |               |
+	//                     +----> target --+
 	//
-	//       -weak_ptr<> use an intermediate structure that points on the target object
+	//    to work the target must have a pointer on the WeakPointerData so it can reset it when it is destroyed
 	//
-	//        weak_ptr
-	//            |
-	//            +-----> WeakPointerData <-----+
-	//                          |               |
-	//                          +----> target --+
-	//
-	//         to work the target must have a pointer on the WeakPointerData so it can reset it when it is destroyed
-	//
-	//         As a side effect, accessing target from a weak_ptr requires an additionnal indirection (slower)
-	//                           using weak_ptr cause an allocation (for the very first time only)
-	//
-	// XXX : -shared_ptr<T const> make no sense !!! (while the shared_ptr is responsible for the death of the object)
-	//
-	//       -weak_ptr<T const>   can be used
+	//    As a side effect, accessing target from a weak_ptr requires an additionnal indirection (slower)
+	//                      using weak_ptr cause an allocation (for the very first time only)
 
 	/**
 	 * WeakPointerData : an utility structure used to handle weak pointers
@@ -93,6 +91,25 @@ namespace chaos
 			return nullptr;
 		}
 	};
+
+	/**
+	* checking whether a data is some kind of weak pointer
+	*/
+
+	template<typename T>
+	struct is_weak_ptr
+	{
+		static constexpr bool value = false;
+	};
+
+	template<typename T>
+	struct is_weak_ptr<weak_ptr<T>>
+	{
+		static constexpr bool value = true;
+	};
+
+	template<typename T>
+	constexpr bool is_weak_ptr_v = is_weak_ptr<T>::value;
 
 #endif
 

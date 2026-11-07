@@ -276,7 +276,7 @@ namespace chaos
 		}
 
 		/** swap pointers */
-		void swap(SmartPointerBase& other)
+		void Swap(SmartPointerBase& other)
 		{
 			std::swap(target, other.target); // this works for shared_ptr AND weak_ptr
 		}
@@ -352,7 +352,7 @@ namespace chaos
 	*/
 
 	template<typename T, typename POLICY>
-	void swap(SmartPointerBase<T, POLICY>& src1, SmartPointerBase<T, POLICY>& src2)
+	void Swap(SmartPointerBase<T, POLICY>& src1, SmartPointerBase<T, POLICY>& src2)
 	{
 		src1.swap(src2);
 	}
@@ -407,8 +407,9 @@ namespace std
 	template<typename T, typename POLICY>
 	void swap(chaos::SmartPointerBase<T, POLICY>& src1, chaos::SmartPointerBase<T, POLICY>& src2)
 	{
-		src1.swap(src2);
+		src1.Swap(src2);
 	}
-};
+
+}; // namespace std
 
 #endif

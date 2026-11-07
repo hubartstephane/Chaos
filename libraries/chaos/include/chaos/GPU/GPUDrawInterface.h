@@ -53,7 +53,7 @@ namespace chaos
 			GPUMesh * result = new GPUMesh(GetGPUDevice());
 
 			this->Flush();
-			swap(*result, *this->mesh);
+			std::swap(*result, *this->mesh);
 
 			return result;
 		}

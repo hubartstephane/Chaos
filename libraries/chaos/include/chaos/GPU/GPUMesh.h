@@ -70,7 +70,7 @@ namespace chaos
 		std::optional<box3> const& GetBoundingBox() const;
 
 		/** swapping two meshes */
-		void swap(GPUMesh& other);
+		void Swap(GPUMesh& other);
 
 		/** override the material for the mesh and display */
 		int DisplayWithMaterial(GPURenderMaterial const* material, GPURenderContext* render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const& render_params);
@@ -98,10 +98,8 @@ namespace chaos
 
 namespace std
 {
-	void swap(chaos::GPUMesh& src1, chaos::GPUMesh& src2)
-	{
-		src1.swap(src2);
-	}
-};
+	void CHAOS_API swap(chaos::GPUMesh& src1, chaos::GPUMesh& src2);
+
+}; // namespace std
 
 #endif

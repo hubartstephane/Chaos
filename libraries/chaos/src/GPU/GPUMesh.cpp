@@ -124,10 +124,19 @@ namespace chaos
 		return bounding_box;
 	}
 
-	void GPUMesh::swap(GPUMesh& other)
+	void GPUMesh::Swap(GPUMesh& other)
 	{
 		std::swap(elements, other.elements);
 		std::swap(bounding_box, other.bounding_box);
 	}
 
 }; // namespace chaos
+
+namespace std
+{
+	void swap(chaos::GPUMesh& src1, chaos::GPUMesh& src2)
+	{
+		src1.Swap(src2);
+	}
+
+}; // namespace std

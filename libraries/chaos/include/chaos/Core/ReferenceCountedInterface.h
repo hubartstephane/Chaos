@@ -4,9 +4,6 @@ namespace chaos
 {
 	class ReferenceCountedInterface;
 
-	template<typename T>
-	class DisableReferenceCount;
-
 }; // namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -92,26 +89,6 @@ namespace chaos
 		std::atomic<int> shared_count;
 		/** a reference to the weak structure */
 		mutable WeakPointerData* weak_ptr_data = nullptr;
-	};
-
-	/**
-	* DisableReferenceCount : an utility class to help using referenced object on stack
-	*/
-
-	template<typename T>
-	class DisableReferenceCount : public T
-	{
-	public:
-
-		/** forwarding constructor */
-		using T::T;
-
-	protected:
-
-		/** disable all reference count functions */
-		virtual void AddReference() override { }
-		virtual void SubReference() override { }
-		virtual void OnLastReferenceLost() override { }
 	};
 
 }; // namespace chaos

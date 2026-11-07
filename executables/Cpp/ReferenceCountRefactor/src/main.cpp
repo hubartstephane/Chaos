@@ -8,7 +8,7 @@ class OwnerPointerPolicy;
 class OwnerCountedInterface;
 
 template<typename T>
-using owner_ptr = SmartPointerBase<T, OwnerPointerPolicy>;
+using owner_ptr = SmartPointer<T, OwnerPointerPolicy>;
 
 
 

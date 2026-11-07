@@ -2,17 +2,13 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class WeakPointerData;
-	class SharedPointerPolicy;
-	class WeakPointerPolicy;
-
 	template<typename T, typename POLICY>
-	class SmartPointerBase;
+	class SmartPointer;
 
 	template<typename T>
-	using weak_ptr = SmartPointerBase<T, WeakPointerPolicy>;
+	using weak_ptr = SmartPointer<T, WeakPointerPolicy>;
 	template<typename T>
-	using shared_ptr = SmartPointerBase<T, SharedPointerPolicy>;
+	using shared_ptr = SmartPointer<T, SharedPointerPolicy>;
 
 	template<typename T>
 	struct is_weak_ptr;
@@ -43,118 +39,12 @@ namespace chaos
 	//       -weak_ptr<T const>   can be used
 
 	/**
-	 * WeakPointerData : an utility structure used to handle weak pointers
-	 */
-
-	class CHAOS_API WeakPointerData
-	{
-	public:
-
-		/** constructor */
-		WeakPointerData(void const* ptr) : // XXX : const here because a weak_ptr<T const> make sense
-			object_ptr(ptr)
-		{
-			assert(ptr != nullptr);
-		}
-
-		/** pointer on the object */
-		void const* object_ptr = nullptr;
-		/** count weak reference */
-		std::atomic<int> weak_count;
-	};
-
-	/**
-	 * SharedPointerPolicy : policy used for shared_ptr
-	 */
-
-	class CHAOS_API SharedPointerPolicy
-	{
-	public:
-
-		/** the internal data in the smart pointer */
-		template<typename T>
-		using pointer_type = T;
-
-		/** adding a reference */
-		template<typename T>
-		static T * AddReference(T* in_target)
-		{
-			assert(in_target != nullptr);
-			::intrusive_ptr_add_ref(in_target);
-			return in_target;
-		}
-
-		/** removing a reference */
-		template<typename T>
-		static T * SubReference(pointer_type<T>* in_target)
-		{
-			assert(in_target != nullptr);
-			::intrusive_ptr_release(in_target);
-			return nullptr;
-		}
-
-		/** get the resource pointed */
-		template<typename T>
-		static T* Get(T* in_target)
-		{
-			return in_target;
-		}
-	};
-
-	/**
-	 * SharedPointerPolicy : policy used for weak_ptr
-	 */
-
-	class CHAOS_API WeakPointerPolicy
-	{
-	public:
-
-		/** the internal data in the smart pointer */
-		template<typename T>
-		using pointer_type = WeakPointerData;
-
-		/** adding a reference */
-		template<typename T>
-		static WeakPointerData* AddReference(T* in_target)
-		{
-			assert(in_target != nullptr);
-
-			if (in_target->weak_ptr_data == nullptr) // reserve a weak structure if needed
-			{
-				in_target->weak_ptr_data = new WeakPointerData(in_target);
-				if (in_target->weak_ptr_data == nullptr)
-					return nullptr;
-			}
-			++in_target->weak_ptr_data->weak_count;
-			return in_target->weak_ptr_data;
-		}
-
-		/** removing a reference */
-		static WeakPointerData* SubReference(WeakPointerData* in_target)
-		{
-			--in_target->weak_count;
-			return nullptr;
-		}
-
-		/** get the resource pointed */
-		template<typename T>
-		static T* Get(WeakPointerData* in_target)
-		{
-			if (in_target != nullptr)
-				return (T*)in_target->object_ptr; // remove constness here
-			return nullptr;
-		}
-	};
-
-	/**
-	 * SmartPointerBase : implementation of both shared_ptr and weak_ptr
+	 * SmartPointer : implementation of both shared_ptr and weak_ptr
 	 */
 
 	template<typename T, typename POLICY>
-	class SmartPointerBase
+	class SmartPointer
 	{
-		friend class SharedPointerPolicy;
-		friend class WeakPointerPolicy;
 
 	public:
 
@@ -162,20 +52,20 @@ namespace chaos
 		using type = T;
 
 		/** default constructor */
-		SmartPointerBase() = default;
+		SmartPointer() = default;
 		/** constructor with capturing the object */
-		SmartPointerBase(type* in_target)
+		SmartPointer(type* in_target)
 		{
 			if (in_target != nullptr)
 				target = POLICY::AddReference(in_target);
 		}
 		/** copy constructor */
-		SmartPointerBase(SmartPointerBase<T, POLICY> const& src) :
-			SmartPointerBase(src.get())
+		SmartPointer(SmartPointer<T, POLICY> const& src) :
+			SmartPointer(src.get())
 		{
 		}
 		/** move constructor */
-		SmartPointerBase(SmartPointerBase<T, POLICY>&& src) noexcept : // XXX : the noexcept is required to have move semantic used during vector resized
+		SmartPointer(SmartPointer<T, POLICY>&& src) noexcept : // XXX : the noexcept is required to have move semantic used during vector resized
 			target(src.target)
 		{
 			src.target = nullptr; // capture the reference
@@ -183,14 +73,14 @@ namespace chaos
 
 		/** copy/cast constructor */
 		template<typename T2, typename POLICY2>
-		SmartPointerBase(SmartPointerBase<T2, POLICY2> const& src) :
-			SmartPointerBase(src.get())
+		SmartPointer(SmartPointer<T2, POLICY2> const& src) :
+			SmartPointer(src.get())
 		{
 			static_assert(std::is_base_of_v<T, T2>);
 		}
 		/** constructor with AutoCastable */
 		template<typename U>
-		SmartPointerBase(AutoCastable<U> const& src)
+		SmartPointer(AutoCastable<U> const& src)
 		{
 			if (src != nullptr)
 				if (T * casted_src = (T*)src)
@@ -198,28 +88,28 @@ namespace chaos
 		}
 
 		/** destructor */
-		~SmartPointerBase()
+		~SmartPointer()
 		{
 			if (target != nullptr)
 				target = POLICY::SubReference(target);
 		}
 
 		/** copy */
-		SmartPointerBase& operator = (type* src)
+		SmartPointer& operator = (type* src)
 		{
 			if (src != get())
 				DoSetTarget(src);
 			return *this;
 		}
 		/** copy */
-		SmartPointerBase& operator = (SmartPointerBase<T, POLICY> const& src)
+		SmartPointer& operator = (SmartPointer<T, POLICY> const& src)
 		{
 			if (src.target != target) // no need to fully get() => small optimization for weak_ptr
 				DoSetTarget(src.get());
 			return *this;
 		}
 		/** move */
-		SmartPointerBase& operator = (SmartPointerBase<T, POLICY>&& src) noexcept
+		SmartPointer& operator = (SmartPointer<T, POLICY>&& src) noexcept
 		{
 			if (src.target != target)
 			{
@@ -238,7 +128,7 @@ namespace chaos
 
 		/** copy */
 		template<typename T2, typename POLICY2>
-		SmartPointerBase& operator = (SmartPointerBase<T2, POLICY2> const& src)
+		SmartPointer& operator = (SmartPointer<T2, POLICY2> const& src)
 		{
 			static_assert(std::is_base_of_v<T, T2>);
 			if (src.target != target) // no need to fully get() => small optimization for weak_ptr
@@ -248,7 +138,7 @@ namespace chaos
 
 		/** constructor with AutoCastable */
 		template<typename U>
-		SmartPointerBase& operator = (AutoCastable<U> const& src)
+		SmartPointer& operator = (AutoCastable<U> const& src)
 		{
 			return operator = ((type*)src);
 		}
@@ -276,7 +166,7 @@ namespace chaos
 		}
 
 		/** swap pointers */
-		void Swap(SmartPointerBase& other)
+		void Swap(SmartPointer& other)
 		{
 			std::swap(target, other.target); // this works for shared_ptr AND weak_ptr
 		}
@@ -306,53 +196,53 @@ namespace chaos
 	};
 
 	/**
-	* SmartPointerBase / raw pointer comparaisons
+	* SmartPointer / raw pointer comparaisons
 	*/
 
 	template<typename T, typename POLICY, typename U>
-	bool operator == (SmartPointerBase<T, POLICY> const& src1, U* src2)
+	bool operator == (SmartPointer<T, POLICY> const& src1, U* src2)
 	{
 		return (src1.get() == src2);
 	}
 
 	template<typename T, typename POLICY, typename U>
-	bool operator == (U* src1, SmartPointerBase<T, POLICY> const& src2)
+	bool operator == (U* src1, SmartPointer<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
 	}
 
 	/**
-	* SmartPointerBase / nullptr comparaisons
+	* SmartPointer / nullptr comparaisons
 	*/
 
 	template<typename T, typename POLICY>
-	bool operator == (SmartPointerBase<T, POLICY> const& src1, nullptr_t src2)
+	bool operator == (SmartPointer<T, POLICY> const& src1, nullptr_t src2)
 	{
 		return (src1.get() == src2);
 	}
 
 	template<typename T, typename POLICY>
-	bool operator == (nullptr_t src1, SmartPointerBase<T, POLICY> const& src2)
+	bool operator == (nullptr_t src1, SmartPointer<T, POLICY> const& src2)
 	{
 		return (src1 == src2.get());
 	}
 
 	/**
-	* SmartPointerBase / SmartPointerBase comparaisons
+	* SmartPointer / SmartPointer comparaisons
 	*/
 
 	template<typename T, typename POLICY, typename U, typename POLICY2>
-	bool operator == (SmartPointerBase<T, POLICY> const& src1, SmartPointerBase<U, POLICY2> const& src2)
+	bool operator == (SmartPointer<T, POLICY> const& src1, SmartPointer<U, POLICY2> const& src2)
 	{
 		return (src1.get() == src2.get());
 	}
 
 	/**
-	* swap
+	* Swap
 	*/
 
 	template<typename T, typename POLICY>
-	void Swap(SmartPointerBase<T, POLICY>& src1, SmartPointerBase<T, POLICY>& src2)
+	void Swap(SmartPointer<T, POLICY>& src1, SmartPointer<T, POLICY>& src2)
 	{
 		src1.swap(src2);
 	}
@@ -405,7 +295,7 @@ namespace chaos
 namespace std
 {
 	template<typename T, typename POLICY>
-	void swap(chaos::SmartPointerBase<T, POLICY>& src1, chaos::SmartPointerBase<T, POLICY>& src2)
+	void swap(chaos::SmartPointer<T, POLICY>& src1, chaos::SmartPointer<T, POLICY>& src2)
 	{
 		src1.Swap(src2);
 	}

@@ -33,6 +33,7 @@
 #include "chaos/Core/SmartPointer.h"
 #include "chaos/Core/SharedPointerPolicy.h"
 #include "chaos/Core/WeakPointerPolicy.h"
+#include "chaos/Core/ManagedPointerPolicy.h"
 #include "chaos/Core/Class.h"
 #include "chaos/Core/ClassRegistration.h"
 #include "chaos/Core/ClassFindResult.h"

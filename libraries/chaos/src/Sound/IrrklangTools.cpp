@@ -1,28 +1,30 @@
 #include "chaos/ChaosPCH.h"
 #include "chaos/ChaosInternals.h"
 
-/** boost/chaos smart pointer adapter */
-void intrusive_ptr_add_ref(irrklang::IVirtualRefCounted * obj)
+namespace irrklang
 {
-	obj->grab();
-}
+	/** boost/chaos smart pointer adapter */
+	void IntrusiveAddSharedReference(IVirtualRefCounted* obj)
+	{
+		obj->grab();
+	}
 
-/** boost/chaos smart pointer adapter */
-void intrusive_ptr_release(irrklang::IVirtualRefCounted * obj)
-{
-	obj->drop();
-}
+	/** boost/chaos smart pointer adapter */
+	void IntrusiveSubSharedReference(IVirtualRefCounted* obj)
+	{
+		obj->drop();
+	}
 
-/** boost/chaos smart pointer adapter */
-void intrusive_ptr_add_ref(irrklang::IRefCounted * obj)
-{
-	obj->grab();
-}
+	/** boost/chaos smart pointer adapter */
+	void IntrusiveAddSharedReference(IRefCounted* obj)
+	{
+		obj->grab();
+	}
 
-/** boost/chaos smart pointer adapter */
-void intrusive_ptr_release(irrklang::IRefCounted * obj)
-{
-	obj->drop();
-}
+	/** boost/chaos smart pointer adapter */
+	void IntrusiveSubSharedReference(IRefCounted* obj)
+	{
+		obj->drop();
+	}
 
-
+}; // namespace irrklang

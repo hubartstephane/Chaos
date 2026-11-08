@@ -12,11 +12,6 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	//	shared_ptr<> is more or less a clone of boost::intrusive_ptr<>. 
-	//	It can be used on any class as soon as there are the 2 following functions
-	//		-intrusive_ptr_add_ref(...) 
-	//		-intrusive_ptr_release(...)
-
 	/**
 	 * SharedPointerPolicy: policy used for shared_ptr
 	 */
@@ -34,7 +29,7 @@ namespace chaos
 		static T * AddReference(T* in_target)
 		{
 			assert(in_target != nullptr);
-			::intrusive_ptr_add_ref(in_target);
+			IntrusiveAddSharedReference(in_target);
 			return in_target;
 		}
 
@@ -43,7 +38,7 @@ namespace chaos
 		static T * SubReference(pointer_type<T>* in_target)
 		{
 			assert(in_target != nullptr);
-			::intrusive_ptr_release(in_target);
+			IntrusiveSubSharedReference(in_target);
 			return nullptr;
 		}
 

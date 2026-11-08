@@ -92,7 +92,6 @@
 #include <boost/range/irange.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-#include <boost/intrusive_ptr.hpp>
 #include <boost/log/utility/functional/nop.hpp>
 #include <boost/tti/has_member_data.hpp>
 #include <boost/tti/has_member_function.hpp>

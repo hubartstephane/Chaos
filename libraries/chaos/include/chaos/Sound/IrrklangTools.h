@@ -1,12 +1,18 @@
+namespace irrklang
+{
+
 #if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-/** boost/chaos smart pointer adapter */
-extern CHAOS_API void intrusive_ptr_add_ref(irrklang::IVirtualRefCounted* obj);
-/** boost/chaos smart pointer adapter */
-extern CHAOS_API void intrusive_ptr_release(irrklang::IVirtualRefCounted* obj);
-/** boost/chaos smart pointer adapter */
-extern CHAOS_API void intrusive_ptr_add_ref(irrklang::IRefCounted* obj);
-/** boost/chaos smart pointer adapter */
-extern CHAOS_API void intrusive_ptr_release(irrklang::IRefCounted* obj);
+	/** boost/chaos smart pointer adapter */
+	CHAOS_API void IntrusiveAddSharedReference(IVirtualRefCounted* obj);
+	/** boost/chaos smart pointer adapter */
+	CHAOS_API void IntrusiveSubSharedReference(IVirtualRefCounted* obj);
+	/** boost/chaos smart pointer adapter */
+	CHAOS_API void IntrusiveAddSharedReference(IRefCounted* obj);
+	/** boost/chaos smart pointer adapter */
+	CHAOS_API void IntrusiveSubSharedReference(IRefCounted* obj);
 
 #endif
+
+}; // namespace irrklang
+

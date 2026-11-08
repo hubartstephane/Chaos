@@ -38,16 +38,14 @@ namespace chaos
 		delete(this);
 	}
 
+	void IntrusiveAddSharedReference(ShareableInterface* obj)
+	{
+		obj->AddReference();
+	}
+
+	void IntrusiveSubSharedReference(ShareableInterface* obj)
+	{
+		obj->SubReference();
+	}
+
 }; // namespace chaos
-
-// outside of chaos scope
-void intrusive_ptr_add_ref(chaos::ShareableInterface* obj)
-{
-	obj->AddReference();
-}
-
-// outside of chaos scope
-void intrusive_ptr_release(chaos::ShareableInterface* obj)
-{
-	obj->SubReference();
-}

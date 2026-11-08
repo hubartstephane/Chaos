@@ -8,22 +8,18 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-
-/**
-* ShareableInterface reference count external methods
-*
-* XXX : theses functions are out of chaos scope, else while shared_ptr is in chaos, it searches for intrusive_ptr_add function in prioriy
-*       and if it was finding Object reference functions inside chaos scope, it will fail with IrrklangTools functions
-*/
-
-/** utility method for shared_ptr */
-extern CHAOS_API void intrusive_ptr_add_ref(chaos::ShareableInterface* obj); // should work with boost::intrusive_ptr<>
-
-/** utility method for shared_ptr */
-extern CHAOS_API void intrusive_ptr_release(chaos::ShareableInterface* obj); // should work with boost::intrusive_ptr<>
-
 namespace chaos
 {
+
+	/**
+	* ShareableInterface reference count external methods
+	*/
+
+	/** utility method for shared_ptr */
+	CHAOS_API void IntrusiveAddSharedReference(ShareableInterface* obj);
+	/** utility method for shared_ptr */
+	CHAOS_API void IntrusiveSubSharedReference(ShareableInterface* obj);
+
 	/**
 	* ShareableInterface is a base class that have a reference count (shared and weak)
 	*/
@@ -39,9 +35,9 @@ namespace chaos
 	//
 	//                  +--- this (from the point of view of ShareableInterface)
 	//                  v
-	//   +------------+------------------------------+
+	//   +------------+-----------------------+
 	//   |            | ShareableInterface    |
-	//   +------------+------------------------------+
+	//   +------------+-----------------------+
 	//   ^
 	//   +-- allocated buffer for the whole class
 	//
@@ -52,9 +48,9 @@ namespace chaos
 	//
 	//   +--- this (from the point of view of ShareableInterface)
 	//   v
-	//   +----------------------------+------------+
+	//   +---------------------+------------+
 	//   | ShareableInterface  |            |
-	//   +----------------------------+------------+
+	//   +---------------------+------------+
 	//   ^
 	//   +-- allocated buffer for the whole class
 	//
@@ -64,8 +60,8 @@ namespace chaos
 	{
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;
-		friend void ::intrusive_ptr_add_ref(ShareableInterface* obj);
-		friend void ::intrusive_ptr_release(ShareableInterface* obj);
+		friend void IntrusiveAddSharedReference(ShareableInterface* obj);
+		friend void IntrusiveSubSharedReference(ShareableInterface* obj);
 
 	public:
 

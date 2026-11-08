@@ -39,6 +39,7 @@
 #include "chaos/Core/ClassFindResult.h"
 #include "chaos/Core/SubClassOf.h"
 #include "chaos/Core/ReferenceCountedInterface.h"
+#include "chaos/Core/ManagedInterface.h"
 #include "chaos/Core/DisableReferenceCount.h"
 #include "chaos/Core/Object.h"
 #include "chaos/Core/DataWrapperObject.h"

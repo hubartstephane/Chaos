@@ -10,6 +10,7 @@ namespace chaos
 
 	ReferenceCountedInterface::~ReferenceCountedInterface()
 	{
+		assert(shared_count == 0);
 		// reset or destroy weak structure
 		if (weak_ptr_data != nullptr)
 		{

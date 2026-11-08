@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	class ManagedInterface;
+	class SupervisableInterface;
 
 }; // namespace chaos
 
@@ -10,33 +10,33 @@ namespace chaos
 
 namespace chaos
 {
-	class CHAOS_API ManagedInterface : public ReferenceCountedInterface
+	class CHAOS_API SupervisableInterface : public ReferenceCountedInterface
 	{
 		friend class ManagedPointerPolicy;
 
 	public:
 
 		/** constructor */
-		ManagedInterface();
+		SupervisableInterface();
 		/** destructor */
-		virtual ~ManagedInterface();
+		virtual ~SupervisableInterface();
 
 	protected:
 
 		/** override */
 		virtual void SubReference() override;
 
-		/** add a managed reference */
-		virtual void AddOwnerReference();
+		/** add a supervised reference */
+		virtual void AddSuperviserReference();
 		/** remove a managed reference */
-		virtual void SubOwnerReference();
+		virtual void SubSuperviserReference();
 		/** when last SHARED reference is lost */
-		virtual void OnRemoveFromManager();
+		virtual void OnRemoveFromSuperviser();
 
 	protected:
 
-		/** count manager reference */
-		std::atomic<int> manager_count;
+		/** count superviser reference */
+		std::atomic<int> supervised_ref_count;
 	};
 
 }; // namespace chaos

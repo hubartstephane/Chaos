@@ -2,22 +2,22 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class ManagedPointerPolicy;
+	class SupervisedPointerPolicy;
 
 	template<typename T>
-	using managed_ptr = SmartPointer<T, ManagedPointerPolicy>;
+	using supervised_ptr = SmartPointer<T, SupervisedPointerPolicy>;
 
 	template<typename T>
-	struct is_managed_ptr;
+	struct is_supervised_ptr;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	
 	/**
-	 * ManagedPointerPolicy: policy used for managed_ptr
+	 * SupervisedPointerPolicy: policy used for supervised_ptr
 	 */
 
-	class CHAOS_API ManagedPointerPolicy
+	class CHAOS_API SupervisedPointerPolicy
 	{
 	public:
 
@@ -30,7 +30,7 @@ namespace chaos
 		static T* AddReference(T* in_target)
 		{
 			assert(in_target != nullptr);
-			in_target->AddOwnerReference();
+			in_target->AddSuperviserReference();
 			return in_target;
 		}
 
@@ -39,7 +39,7 @@ namespace chaos
 		static T* SubReference(pointer_type<T>* in_target)
 		{
 			assert(in_target != nullptr);
-			in_target->SubOwnerReference();
+			in_target->SubSuperviserReference();
 			return nullptr;
 		}
 
@@ -52,23 +52,23 @@ namespace chaos
 	};
 
 	/**
-	* checking whether a data is some kind of managed pointer
+	* checking whether a data is some kind of supervised pointer
 	*/
 
 	template<typename T>
-	struct is_managed_ptr
+	struct is_supervised_ptr
 	{
 		static constexpr bool value = false;
 	};
 
 	template<typename T>
-	struct is_managed_ptr<managed_ptr<T>>
+	struct is_supervised_ptr<supervised_ptr<T>>
 	{
 		static constexpr bool value = true;
 	};
 
 	template<typename T>
-	constexpr bool is_managed_ptr_v = is_managed_ptr<T>::value;
+	constexpr bool is_supervised_ptr_v = is_supervised_ptr<T>::value;
 
 #endif
 

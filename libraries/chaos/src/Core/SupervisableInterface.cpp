@@ -20,8 +20,8 @@ namespace chaos
 
 	void SupervisableInterface::SubReference()
 	{
-		assert(shared_count > 0);
-		if (--shared_count == 0)
+		assert(shared_ref_count > 0);
+		if (--shared_ref_count == 0)
 		{
 			if (supervised_ref_count == 0)
 				OnLastReferenceLost();
@@ -40,7 +40,7 @@ namespace chaos
 		assert(supervised_ref_count > 0);
 		if (--supervised_ref_count == 0)
 		{
-			if (shared_count == 0)
+			if (shared_ref_count == 0)
 				OnLastReferenceLost();
 		}
 	}

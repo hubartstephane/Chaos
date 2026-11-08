@@ -15,14 +15,14 @@ public:
 	/** get the instances */
 	static T* GetInstance()
 	{
-		if constexpr (std::is_base_of_v<ReferenceCountedInterface, T>)
+		if constexpr (std::is_base_of_v<ShareableInterface, T>)
 		{
 			static shared_ptr<T> result = new T;
 			return result.get();	
 		}
 		else
 		{
-			class ReferencedInstance : public T, public ReferenceCountedInterface
+			class ReferencedInstance : public T, public ShareableInterface
 			{
 			public:
 

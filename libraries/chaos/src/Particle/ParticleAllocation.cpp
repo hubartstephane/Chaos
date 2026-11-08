@@ -107,7 +107,7 @@ namespace chaos
 		if (layer == nullptr)
 			Object::SubReference();
         // the last reference is the one from the layer. Destroy it
-		else if (--shared_count == 1)
+		else if (--shared_ref_count == 1)
             RemoveFromLayer();
 	}
 

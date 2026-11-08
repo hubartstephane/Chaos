@@ -32,7 +32,7 @@ namespace chaos
 	* Object: base class for most objects
 	*/
 
-	class CHAOS_API Object : public ReferenceCountedInterface
+	class CHAOS_API Object : public ShareableInterface
 	{
 
 	protected:

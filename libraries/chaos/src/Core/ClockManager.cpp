@@ -470,7 +470,7 @@ namespace chaos
 		}
 		else
 		{
-			if (--shared_count == 1) // the last reference is the one from the parent clock. Destroy it
+			if (--shared_ref_count == 1) // the last reference is the one from the parent clock. Destroy it
 				RemoveFromParent();
 		}
 	}

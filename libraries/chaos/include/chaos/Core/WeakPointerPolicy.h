@@ -44,7 +44,7 @@ namespace chaos
 		/** pointer on the object */
 		void const* object_ptr = nullptr;
 		/** count weak reference */
-		std::atomic<int> weak_count;
+		std::atomic<int> weak_ref_count;
 	};
 
 	/**
@@ -71,14 +71,14 @@ namespace chaos
 				if (in_target->weak_ptr_data == nullptr)
 					return nullptr;
 			}
-			++in_target->weak_ptr_data->weak_count;
+			++in_target->weak_ptr_data->weak_ref_count;
 			return in_target->weak_ptr_data;
 		}
 
 		/** removing a reference */
 		static WeakPointerData* SubReference(WeakPointerData* in_target)
 		{
-			--in_target->weak_count;
+			--in_target->weak_ref_count;
 			return nullptr;
 		}
 

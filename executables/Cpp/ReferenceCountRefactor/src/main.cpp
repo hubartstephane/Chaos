@@ -64,7 +64,7 @@ public:
 };
 
 
-class OwnerCountedInterface : public ReferenceCountedInterface
+class OwnerCountedInterface : public ShareableInterface
 {
 	friend class OwnerPointerPolicy;
 

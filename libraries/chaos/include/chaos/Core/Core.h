@@ -38,7 +38,7 @@
 #include "chaos/Core/ClassRegistration.h"
 #include "chaos/Core/ClassFindResult.h"
 #include "chaos/Core/SubClassOf.h"
-#include "chaos/Core/ReferenceCountedInterface.h"
+#include "chaos/Core/ShareableInterface.h"
 #include "chaos/Core/SupervisableInterface.h"
 #include "chaos/Core/DisableReferenceCount.h"
 #include "chaos/Core/Object.h"

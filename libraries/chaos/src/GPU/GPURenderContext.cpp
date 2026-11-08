@@ -214,10 +214,10 @@ namespace chaos
 
 	void GPURenderContext::SubReference()
 	{
-		--shared_count;
-		if (shared_count == 0)
+		--shared_ref_count;
+		if (shared_ref_count == 0)
 			OnLastReferenceLost();
-		else if (shared_count == 1) // the last reference is comming from GPUDevice
+		else if (shared_ref_count == 1) // the last reference is comming from GPUDevice
 			gpu_device->OnRenderContextDestroyed(this);
 	}
 

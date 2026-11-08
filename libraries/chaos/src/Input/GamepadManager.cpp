@@ -87,7 +87,7 @@ namespace chaos
 		if (gamepad == nullptr)
 			Object::SubReference();
 		// the last reference is the one from the gamepad. Destroy it
-		else if (--shared_count == 1)
+		else if (--shared_ref_count == 1)
 		{
 			assert(gamepad != nullptr);
 			RemoveFromGamepad();
@@ -146,7 +146,7 @@ namespace chaos
 		if (gamepad_manager == nullptr)
 			Object::SubReference();
 		// the last reference is the one from the manager. Destroy it
-		else if (--shared_count == 1)
+		else if (--shared_ref_count == 1)
 		{
 			assert(gamepad_manager != nullptr);
 			gamepad_manager->RemoveGamepad(this);

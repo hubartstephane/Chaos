@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	Identifiable::Identifiable()
+	IdentifiableInterface::IdentifiableInterface()
 	{
 		static std::atomic<uint64_t> next_id = 0;
 		unique_id = ++next_id;

@@ -2,20 +2,20 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	class Identifiable;
+	class IdentifiableInterface;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 	
 	/**
-	 * Identifiable: this is a class that has a unique id
+	 * IdentifiableInterface: this is a class that has a unique id
 	 */
 
-	class CHAOS_API Identifiable
+	class CHAOS_API IdentifiableInterface : public virtual Interface
 	{
 	public:
 
 		/** constructor */
-		Identifiable();
+		IdentifiableInterface();
 
 		/** gets the unique ID */
 		uint64_t GetUniqueID() const { return unique_id;}

@@ -10,7 +10,7 @@ namespace chaos
 	// GPUResource
 	// ==============================================================
 
-	class CHAOS_API GPUResource : public Object, public Identifiable
+	class CHAOS_API GPUResource : public Object, public IdentifiableInterface
 	{
 	public:
 

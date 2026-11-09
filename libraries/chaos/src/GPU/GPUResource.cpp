@@ -3,11 +3,6 @@
 
 namespace chaos
 {
-
-	GPUResource::~GPUResource()
-	{
-	}
-
 	void GPUResource::Release()
 	{
 	}

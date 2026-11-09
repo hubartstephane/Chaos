@@ -35,7 +35,7 @@ namespace chaos
 		/** apply the name to resource */
 		void ApplyNameToLoadedResource(NamedInterface* resource) const;
 		/** apply the path to resource */
-		void ApplyPathToLoadedResource(FileResource* resource) const;
+		void ApplyPathToLoadedResource(FileResourceInterface* resource) const;
 
 	protected:
 
@@ -83,7 +83,7 @@ namespace chaos
 			{
 				if constexpr (std::is_base_of_v<NamedInterface, RESOURCE_TYPE>)
 					ApplyNameToLoadedResource(result);
-				if constexpr (std::is_base_of_v<FileResource, RESOURCE_TYPE>)
+				if constexpr (std::is_base_of_v<FileResourceInterface, RESOURCE_TYPE>)
 					ApplyPathToLoadedResource(result);
 
 				if (manager != nullptr)
@@ -111,7 +111,7 @@ namespace chaos
 			{
 				if constexpr (std::is_base_of_v<NamedInterface, RESOURCE_TYPE>)
 					ApplyNameToLoadedResource(result);
-				if constexpr (std::is_base_of_v<FileResource, RESOURCE_TYPE>)
+				if constexpr (std::is_base_of_v<FileResourceInterface, RESOURCE_TYPE>)
 					ApplyPathToLoadedResource(result);
 
 				if (manager != nullptr)

@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-	void FileResource::SetPath(boost::filesystem::path const & in_path)
+	void FileResourceInterface::SetPath(boost::filesystem::path const & in_path)
 	{
 		// shu49
 		// si on test toute les redirections pour la date, on va se retrouver avec un timestamp qui ne correspond pas du tout au fichier considere

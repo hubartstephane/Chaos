@@ -270,7 +270,7 @@ namespace chaos
 	// SOURCE
 	// ==============================================================
 
-	class CHAOS_API SoundSource : public SoundObject, public FileResource
+	class CHAOS_API SoundSource : public SoundObject, public FileResourceInterface
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 

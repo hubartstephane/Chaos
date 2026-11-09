@@ -14,7 +14,7 @@ namespace chaos
 		Compute
 	};
 
-	class CHAOS_API GPUProgram : public GPUResource, public NamedInterface, public FileResource
+	class CHAOS_API GPUProgram : public GPUResource, public NamedInterface, public FileResourceInterface
 	{
 		friend class GPUResourceManager;
 		friend class GPUProgramGenerator;

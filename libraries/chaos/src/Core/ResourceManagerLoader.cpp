@@ -66,7 +66,7 @@ namespace chaos
 		resource_name = std::string(); // reset
 	}
 
-	void ResourceManagerLoaderBase::ApplyPathToLoadedResource(FileResource* resource) const
+	void ResourceManagerLoaderBase::ApplyPathToLoadedResource(FileResourceInterface* resource) const
 	{
 		if (resource != nullptr)
 		{

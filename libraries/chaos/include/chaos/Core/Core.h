@@ -55,7 +55,7 @@
 #include "chaos/Core/ObjectConfiguration.h"
 #include "chaos/Core/ClassLoader.h"
 #include "chaos/Core/Log.h"
-#include "chaos/Core/FileResource.h"
+#include "chaos/Core/FileResourceInterface.h"
 #include "chaos/Core/Tag.h"
 #include "chaos/Core/NameFilter.h"
 #include "chaos/Core/GlobalVariables.h"

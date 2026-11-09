@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** destructor */
-		virtual ~GPUResource();
+		virtual ~GPUResource() = default;
 		/** cleaning the resource */
 		virtual void Release();
 	};

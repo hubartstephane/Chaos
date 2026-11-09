@@ -10,7 +10,7 @@ namespace chaos
 	 * GPUDeviceResourceInterface: for all objects owned by a GPUDevice
 	 */
 
-	class CHAOS_API GPUDeviceResourceInterface
+	class CHAOS_API GPUDeviceResourceInterface : public virtual Interface
 	{
 	public:
 

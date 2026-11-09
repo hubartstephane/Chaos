@@ -58,7 +58,7 @@ namespace chaos
 	* InputDeviceInterface: a class to make request for some device state
 	*/
 
-	class CHAOS_API InputDeviceInterface
+	class CHAOS_API InputDeviceInterface : public virtual Interface
 	{
 
 	public:

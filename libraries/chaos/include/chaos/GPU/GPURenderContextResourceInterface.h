@@ -10,7 +10,7 @@ namespace chaos
 	 * GPURenderContextResourceInterface: for all objects owned by a GPURenderContext
 	 */
 
-	class CHAOS_API GPURenderContextResourceInterface
+	class CHAOS_API GPURenderContextResourceInterface : public virtual Interface
 	{
 	public:
 

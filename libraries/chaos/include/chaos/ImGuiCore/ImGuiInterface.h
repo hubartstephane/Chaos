@@ -11,7 +11,7 @@ namespace chaos
 	/**
 	 * ImGuiInterface: an interface to display some ImGui content
 	 */
-	class CHAOS_API ImGuiInterface
+	class CHAOS_API ImGuiInterface : public virtual Interface
 	{
 	public:
 

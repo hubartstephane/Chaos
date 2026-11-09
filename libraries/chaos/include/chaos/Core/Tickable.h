@@ -10,7 +10,7 @@ namespace chaos
 	// TickableInterface : an object that deserve to be ticked
 	// ========================================================
 
-	class CHAOS_API TickableInterface
+	class CHAOS_API TickableInterface : public virtual Interface
 	{
 
 	public:

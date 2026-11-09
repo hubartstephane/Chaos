@@ -27,6 +27,7 @@
 #include "chaos/Core/FilePathParam.h"
 #include "chaos/Core/FileTools.h"
 #include "chaos/Core/PathTools.h"
+#include "chaos/Core/Interface.h"
 #include "chaos/Core/JSONRecursiveLoader.h"
 #include "chaos/Core/JSONSerializableInterface.h"
 #include "chaos/Core/AutoCast.h"

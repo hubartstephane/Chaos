@@ -29,14 +29,11 @@ namespace chaos
 	* InputReceiverInterface: an interface for objects that can handle inputs
 	*/
 
-	class CHAOS_API InputReceiverInterface
+	class CHAOS_API InputReceiverInterface : public virtual Interface
 	{
 
 	public:
 	
-		/** destructor */
-		virtual ~InputReceiverInterface() = default;
-
 		/** get a name for the receiver */
 		virtual char const* GetInputReceiverName() const;
 

@@ -56,7 +56,7 @@ namespace chaos
 	//
 	//   operator delete(this) <==> free(this)   ===> we call free with a GOOD pointer
 
-	class CHAOS_API ShareableInterface
+	class CHAOS_API ShareableInterface : public virtual Interface
 	{
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;

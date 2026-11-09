@@ -29,7 +29,7 @@ namespace chaos
 	* GPUProgramProviderInterface : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
 	*/
 
-	class CHAOS_API GPUProgramProviderInterface
+	class CHAOS_API GPUProgramProviderInterface : public virtual Interface
 	{
 		friend class GPUProgramProvider; // WTF : GPUProgramProvider could not call DoProcessAction(...) an another instance without that !!
 		friend class GPUProgramProviderChainEntry;

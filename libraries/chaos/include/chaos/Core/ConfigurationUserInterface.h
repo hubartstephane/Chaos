@@ -34,14 +34,11 @@ namespace chaos
 	* ConfigurationUserInterface: an interface representing that can have a configuration. Theses objects may react to configuration updates
 	*/
 
-	class CHAOS_API ConfigurationUserInterface
+	class CHAOS_API ConfigurationUserInterface : public virtual Interface
 	{
 		friend class ObjectConfigurationBase;
 
 	public:
-
-		/** destructor */
-		virtual ~ConfigurationUserInterface() = default;
 
 		/** getter on the configuration */
 		ObjectConfigurationBase const * GetObjectConfiguration() const

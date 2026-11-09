@@ -7,7 +7,7 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/** a class that describe an object that can be reference by tag and by name */
-	class CHAOS_API NamedInterface
+	class CHAOS_API NamedInterface : public virtual Interface
 	{
 	public:
 

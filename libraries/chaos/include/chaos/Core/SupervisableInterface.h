@@ -10,9 +10,25 @@ namespace chaos
 
 namespace chaos
 {
+
+	/**
+	 * SupervisableInterface reference count external methods
+	 */
+
+	/** utility method for supervised_ptr */
+	CHAOS_API void IntrusiveAddSupervisedReference(SupervisableInterface* obj);
+	/** utility method for supervised_ptr */
+	CHAOS_API void IntrusiveSubSupervisedReference(SupervisableInterface* obj);
+
+	/**
+	 * SupervisableInterface: a class for objects that can be extract from their owner
+	 */
+
 	class CHAOS_API SupervisableInterface : public virtual Interface
 	{
-		friend class ManagedPointerPolicy;
+		friend class SupervisedPointerPolicy;
+		friend void IntrusiveAddSupervisedReference(SupervisableInterface* obj);
+		friend void IntrusiveSubSupervisedReference(SupervisableInterface* obj);
 
 	public:
 
@@ -41,7 +57,7 @@ namespace chaos
 		/** remove a managed reference */
 		virtual void SubSuperviserReference();
 		/** when last SHARED reference is lost */
-		virtual void OnRemoveFromSuperviser();
+		virtual void OnRemoveFromSuperviser() = 0;
 
 	protected:
 

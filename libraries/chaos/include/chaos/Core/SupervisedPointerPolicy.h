@@ -12,7 +12,6 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	
 	/**
 	 * SupervisedPointerPolicy: policy used for supervised_ptr
 	 */
@@ -30,7 +29,7 @@ namespace chaos
 		static T* AddReference(T* in_target)
 		{
 			assert(in_target != nullptr);
-			in_target->AddSuperviserReference();
+			IntrusiveAddSupervisedReference(in_target);
 			return in_target;
 		}
 
@@ -39,7 +38,7 @@ namespace chaos
 		static T* SubReference(pointer_type<T>* in_target)
 		{
 			assert(in_target != nullptr);
-			in_target->SubSuperviserReference();
+			IntrusiveSubSupervisedReference(in_target);
 			return nullptr;
 		}
 

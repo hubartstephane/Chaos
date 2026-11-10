@@ -25,11 +25,6 @@ namespace chaos
 		// do not copy reference count related members 
 	}
 
-	void SupervisableInterface::OnRemoveFromSuperviser()
-	{
-		assert(0);
-	}
-
 	SupervisableInterface& SupervisableInterface::operator = (SupervisableInterface&&)
 	{
 		return *this; // do not copy reference count related members 
@@ -64,6 +59,16 @@ namespace chaos
 			if (shared_ref_count == 0)
 				OnLastReferenceLost();
 		}
+	}
+
+	void IntrusiveAddSupervisedReference(SupervisableInterface* obj)
+	{
+		obj->AddSuperviserReference();
+	}
+
+	void IntrusiveSubSupervisedReference(SupervisableInterface* obj)
+	{
+		obj->SubSuperviserReference();
 	}
 
 }; // namespace chaos

@@ -18,8 +18,18 @@ namespace chaos
 
 		/** constructor */
 		SupervisableInterface();
+		/** copy constructor */
+		SupervisableInterface(SupervisableInterface const&);
+		/** move constructor */
+		SupervisableInterface(SupervisableInterface&&);
+
 		/** destructor */
 		virtual ~SupervisableInterface();
+
+		/** copy operator */
+		SupervisableInterface& operator = (SupervisableInterface const&);
+		/** move operator */
+		SupervisableInterface& operator = (SupervisableInterface&&);
 
 	protected:
 

@@ -13,9 +13,30 @@ namespace chaos
 		assert(supervised_ref_count == 0);
 	}
 
+	SupervisableInterface::SupervisableInterface(SupervisableInterface const&) :
+		SupervisableInterface()
+	{
+		// do not copy reference count related members 
+	}
+
+	SupervisableInterface::SupervisableInterface(SupervisableInterface&&) :
+		SupervisableInterface()
+	{
+		// do not copy reference count related members 
+	}
+
 	void SupervisableInterface::OnRemoveFromSuperviser()
 	{
 		assert(0);
+	}
+
+	SupervisableInterface& SupervisableInterface::operator = (SupervisableInterface&&)
+	{
+		return *this; // do not copy reference count related members 
+	}
+	SupervisableInterface& SupervisableInterface::operator = (SupervisableInterface const&)
+	{
+		return *this; // do not copy reference count related members 
 	}
 
 	void SupervisableInterface::SubReference()

@@ -38,12 +38,13 @@ namespace chaos
 		Interface(Interface const &);
 		/** move constructor */
 		Interface(Interface &&);
+
 		/** destructor */
 		virtual ~Interface();
 
 		/** copy operator */
 		Interface& operator = (Interface const&);
-		/** copy operator */
+		/** move operator */
 		Interface& operator = (Interface&&);
 
 	protected:

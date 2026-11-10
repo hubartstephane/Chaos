@@ -10,7 +10,7 @@ namespace chaos
 
 namespace chaos
 {
-	class CHAOS_API SupervisableInterface : public ShareableInterface
+	class CHAOS_API SupervisableInterface : public virtual Interface
 	{
 		friend class ManagedPointerPolicy;
 

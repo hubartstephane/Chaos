@@ -32,7 +32,7 @@ namespace chaos
 	* Object: base class for most objects
 	*/
 
-	class CHAOS_API Object : public ShareableInterface
+	class CHAOS_API Object : public virtual Interface
 	{
 
 	protected:

@@ -3,49 +3,6 @@
 
 namespace chaos
 {
-	ShareableInterface::ShareableInterface() :
-		shared_ref_count(0)
-	{
-	}
 
-	ShareableInterface::~ShareableInterface()
-	{
-		assert(shared_ref_count == 0);
-		// reset or destroy weak structure
-		if (weak_ptr_data != nullptr)
-		{
-			if (weak_ptr_data->weak_ref_count == 0)
-				delete weak_ptr_data;
-			else
-				weak_ptr_data->object_ptr = nullptr;
-		}
-	}
-
-	void ShareableInterface::AddReference()
-	{
-		++shared_ref_count;
-	}
-
-	void ShareableInterface::SubReference()
-	{
-		assert(shared_ref_count > 0);
-		if (--shared_ref_count == 0)
-			OnLastReferenceLost();
-	}
-
-	void ShareableInterface::OnLastReferenceLost()
-	{
-		delete(this);
-	}
-
-	void IntrusiveAddSharedReference(ShareableInterface* obj)
-	{
-		obj->AddReference();
-	}
-
-	void IntrusiveSubSharedReference(ShareableInterface* obj)
-	{
-		obj->SubReference();
-	}
 
 }; // namespace chaos

@@ -11,16 +11,56 @@ namespace chaos
 namespace chaos
 {
 	/**
+	* Interface reference count external methods
+	*/
+
+	/** utility method for shared_ptr */
+	CHAOS_API void IntrusiveAddSharedReference(Interface* obj);
+	/** utility method for shared_ptr */
+	CHAOS_API void IntrusiveSubSharedReference(Interface* obj);
+
+	/**
 	* Interface: a base class for all interfaces
 	*/
 
 	class CHAOS_API Interface
 	{
+		friend class SharedPointerPolicy;
+		friend class WeakPointerPolicy;
+		friend void IntrusiveAddSharedReference(Interface* obj);
+		friend void IntrusiveSubSharedReference(Interface* obj);
 
 	public:
 
+		/** constructor */
+		Interface();
+		/** copy constructor */
+		Interface(Interface const &);
+		/** move constructor */
+		Interface(Interface &&);
 		/** destructor */
-		virtual ~Interface() = default;
+		virtual ~Interface();
+
+		/** copy operator */
+		Interface& operator = (Interface const&);
+		/** copy operator */
+		Interface& operator = (Interface&&);
+
+	protected:
+
+		/** adding a shared reference */
+		virtual void AddReference();
+		/** removing a shared reference */
+		virtual void SubReference();
+		/** called whenever there are no more reference on the interface */
+		virtual void OnLastReferenceLost();
+
+	protected:
+
+		/** count shared reference */
+		std::atomic<int> shared_ref_count;
+		/** a reference to the weak structure */
+		mutable WeakPointerData* weak_ptr_data = nullptr;
 	};
 
 }; // namespace chaos

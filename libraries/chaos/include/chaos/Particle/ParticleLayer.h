@@ -7,7 +7,7 @@ namespace chaos
 	 */
 
 	template<typename LAYER_TRAIT>
-	class ParticleLayer : public ParticleLayerBase, public DataOwnerInterface<LAYER_TRAIT>
+	class ParticleLayer : public ParticleLayerBase
 	{
 		static_assert(std::is_base_of_v<ParticleLayerTraitBase, LAYER_TRAIT>);
 
@@ -21,7 +21,7 @@ namespace chaos
 
 		/** constructor */
 		ParticleLayer(layer_trait_type const& in_layer_trait = {}) :
-			DataOwnerInterface<layer_trait_type>(in_layer_trait)
+			layer_trait(in_layer_trait)
 		{
 			assert(ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>() != nullptr); // ensure class is declared
 		}
@@ -42,7 +42,7 @@ namespace chaos
 		/** override */
 		virtual bool AreVerticesDynamic() const override
 		{
-			return this->data.dynamic_vertices;
+			return layer_trait.dynamic_vertices;
 		}
 		/** override */
 		virtual Class const* GetParticleClass() const override { return ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>(); }
@@ -58,9 +58,9 @@ namespace chaos
 			return result;
 		}
 		/** override */
-		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() override { return &this->data; }
+		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() override { return &layer_trait; }
 		/** override */
-		virtual AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const override { return &this->data; }
+		virtual AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const override { return &layer_trait; }
 
 	protected:
 
@@ -72,7 +72,7 @@ namespace chaos
 		{
 			ParticleAllocation<layer_trait_type>* allocation = auto_cast(in_allocation);
 			if (allocation != nullptr)
-				return allocation->TickAllocation(delta_time, &this->data);
+				return allocation->TickAllocation(delta_time, &layer_trait);
 			return false; // do not destroy the allocation
 		}
 
@@ -80,7 +80,7 @@ namespace chaos
 		virtual void UpdateRenderingStates(GPURenderContext* render_context, bool begin) const override
 		{
 			if constexpr (check_method_UpdateRenderingStates_v<layer_trait_type const, GPURenderContext*, bool>)
-				this->data.UpdateRenderingStates(render_context, begin);
+				layer_trait.UpdateRenderingStates(render_context, begin);
 			else
 				ParticleLayerBase::UpdateRenderingStates(render_context, begin);
 		}
@@ -90,6 +90,11 @@ namespace chaos
 
 		// convert particles into vertices
 		void ParticlesToPrimitivesLoop(GPUPrimitiveOutput<vertex_type>& output);
+
+	protected:
+
+		/** the layer trait */
+		layer_trait_type layer_trait;
 	};
 
 #elif defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -112,7 +117,7 @@ namespace chaos
 			if (!allocation->IsVisible())
 				continue;
 			// transform particles into vertices
-			allocation->ParticlesToPrimitives(output, &this->data);
+			allocation->ParticlesToPrimitives(output, &layer_trait);
 		}
 		output.Flush();
 	}

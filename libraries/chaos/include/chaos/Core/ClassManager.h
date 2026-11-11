@@ -80,16 +80,19 @@ namespace chaos
 				// instance constructible only if derives from Object
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
 				{
-					result->create_instance = []()
+					if constexpr (std::constructible_from<CLASS_TYPE>)
 					{
-						return new CLASS_TYPE;
-					};
+						result->create_instance = []()
+						{
+							return new CLASS_TYPE;
+						};
 
-					result->create_instance_on_stack = [](LightweightFunction<void(Object*)> func)
-					{
-						CLASS_TYPE instance;
-						func(&instance);
-					};
+						result->create_instance_on_stack = [](LightweightFunction<void(Object*)> func)
+						{
+							CLASS_TYPE instance;
+							func(&instance);
+						};
+					}
 				}
 				// the parent is accessed, but not necesseraly initialized yet
 				if (!std::is_same_v<PARENT_CLASS_TYPE, EmptyClass>)

@@ -81,17 +81,14 @@ namespace chaos
 	// ForceFeedbackEffect functions
 	//
 
+	void ForceFeedbackEffect::OnRemoveFromSuperviser()
+	{
+		RemoveFromGamepad();
+	}
+
 	void ForceFeedbackEffect::SubReference()
 	{
-		// the object is handled as usual
-		if (gamepad == nullptr)
-			Object::SubReference();
-		// the last reference is the one from the gamepad. Destroy it
-		else if (--shared_ref_count == 1)
-		{
-			assert(gamepad != nullptr);
-			RemoveFromGamepad();
-		}
+		SupervisableInterface::SubReference();
 	}
 
 	bool ForceFeedbackEffect::TickAndGetMotorValues(float delta_time, ForceFeedbackMotorValues& out_motor_values)
@@ -304,23 +301,11 @@ namespace chaos
 
 	bool Gamepad::RemoveForceFeedbackAt(size_t index)
 	{
-		// XXX: beware, there a special implementation of ForceFeedbackEffect::SubReference()
-		//      As a consequence, we can enter in this RemoveForceFeedbackAt(...) from SubReference, 
-		//      when last reference but the one from this manager is lost or from the manager functions itself
-		//      we must be carefull of that point
-		//
-		//      we can't do 
-		//         feedback_effects[index] = feedback_effects[feedback_effects.size() - 1]
-		//         feedback_effects.pop_back();
-		//
-		//      because there will be 2 references on the same object in the array and the SubReference() won't understand that 
-		//      causing (due to 'Fire & Forget or not' pattern) a double deletion
-
 		ForceFeedbackEffect * effect = feedback_effects[index].get();
 		assert(effect != nullptr);
 		assert(effect->gamepad == this);
 
-		effect->gamepad = nullptr; // so that ForceFeedbackEffect::SubReference process the standard way (deletion)
+		effect->gamepad = nullptr;
 
 		if (index != feedback_effects.size() - 1)
 			std::swap(feedback_effects[index], feedback_effects.back()); // proper way to handle the last reference

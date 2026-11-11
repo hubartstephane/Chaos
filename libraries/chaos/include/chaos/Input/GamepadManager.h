@@ -152,7 +152,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	 * ForceFeedbackEffect : the feedback effects
 	 */
 
-	class CHAOS_API ForceFeedbackEffect : public Object
+	class CHAOS_API ForceFeedbackEffect : public Object, public SupervisableInterface
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -162,8 +162,13 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		virtual bool TickAndGetMotorValues(float delta_time, ForceFeedbackMotorValues& out_motor_values);
 		/** remove the forcefeedback from its gamepad */
 		void RemoveFromGamepad();
-		/** the force feedbaack effect may deleted itself as soon as a reference is removed and the last one is from the gamepad */
-		virtual void SubReference() override;
+
+	protected:
+
+		/** override */
+		virtual void OnRemoveFromSuperviser() override;
+		/** override */
+		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
 
 	protected:
 
@@ -296,7 +301,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		bool force_feedback_paused = false;
 
 		/** the forcefeedback effects */
-		std::vector<shared_ptr<ForceFeedbackEffect>> feedback_effects;
+		std::vector<supervised_ptr<ForceFeedbackEffect>> feedback_effects;
 	};
 
 	/**

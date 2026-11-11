@@ -115,6 +115,9 @@ namespace chaos
 
 	protected:
 
+		/** create and register some particle allocation */
+		ParticleAllocationBase* CreateParticleAllocation();
+
 		/** ticking the particle system */
 		virtual bool DoTick(float delta_time) override;
 		/** draw the layer */
@@ -233,7 +236,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual ParticleAllocationBase* DoCreateParticleAllocation() override { return new ParticleAllocation<layer_trait_type>(); }
+		virtual ParticleAllocationBase* DoCreateParticleAllocation() override { return new ParticleAllocation<layer_trait_type>(this); }
 
 		/** override */
 		virtual bool TickAllocation(float delta_time, ParticleAllocationBase* in_allocation)

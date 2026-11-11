@@ -3,6 +3,12 @@
 
 namespace chaos
 {
+	ParticleAllocationBase::ParticleAllocationBase(ParticleLayerBase* in_layer):
+		layer(in_layer)
+	{
+		assert(in_layer != nullptr);
+	}
+
 	ParticleAllocationBase::~ParticleAllocationBase()
 	{
 		assert(layer == nullptr);

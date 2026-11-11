@@ -87,11 +87,9 @@ namespace chaos
 		// create an allocation is mandatory
 		if (new_allocation || particles_allocations.size() == 0)
 		{
-			allocation = DoCreateParticleAllocation();
+			allocation = CreateParticleAllocation();
 			if (allocation == nullptr)
 				return {};
-			allocation->layer = this;
-			particles_allocations.push_back(allocation); // register the allocation
 		}
 		// get the very first allocation
 		else
@@ -102,6 +100,15 @@ namespace chaos
 		allocation->AddParticles(count);
 
 		return { allocation, allocation->GetParticleCount() - count, count };
+	}
+
+	ParticleAllocationBase * ParticleLayerBase::CreateParticleAllocation()
+	{
+		ParticleAllocationBase* result = DoCreateParticleAllocation();
+		if (result == nullptr)
+			return nullptr;
+		particles_allocations.push_back(result);
+		return result;
 	}
 
 	int ParticleLayerBase::DoDisplay(GPURenderContext * render_context, GPUProgramProviderInterface const * uniform_provider, GPURenderParams const & render_params)

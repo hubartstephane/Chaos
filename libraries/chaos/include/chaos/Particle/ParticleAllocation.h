@@ -12,6 +12,8 @@ namespace chaos
 
 	public:
 
+		/** constructor */
+		ParticleAllocationBase(ParticleLayerBase * in_layer);
 		/** destructor */
 		virtual ~ParticleAllocationBase();
 
@@ -168,7 +170,8 @@ namespace chaos
 		using allocation_trait_type = typename get_AllocationTrait<layer_trait_type>::type;
 
 		/** constructor */
-		ParticleAllocation(allocation_trait_type const & in_allocation_trait = {}) :
+		ParticleAllocation(ParticleLayerBase* in_layer, allocation_trait_type const & in_allocation_trait = {}) :
+			ParticleAllocationBase(in_layer),
 			DataOwner<allocation_trait_type>(in_allocation_trait)
         {
 			assert(ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>() != nullptr); // ensure class is declared

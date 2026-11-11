@@ -7,7 +7,7 @@ namespace chaos
 	 */
 
 	template<typename LAYER_TRAIT>
-	class ParticleAllocation : public ParticleAllocationBase, public DataOwnerInterface<typename get_AllocationTrait<LAYER_TRAIT>::type>
+	class ParticleAllocation : public ParticleAllocationBase
 	{
         friend class ParticleLayer<LAYER_TRAIT>;
 
@@ -21,7 +21,7 @@ namespace chaos
 		/** constructor */
 		ParticleAllocation(ParticleLayerBase* in_layer, allocation_trait_type const & in_allocation_trait = {}) :
 			ParticleAllocationBase(in_layer),
-			DataOwnerInterface<allocation_trait_type>(in_allocation_trait)
+			allocation_trait(in_allocation_trait)
         {
 			assert(ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>() != nullptr); // ensure class is declared
         }
@@ -97,12 +97,12 @@ namespace chaos
 						DoParticlesToPrimitivesLoop_LayerTraitImplementation(
 							layer_trait,
 							output,
-							layer_trait->BeginParticlesToPrimitives(accessor, this->data), // do not use a temp variable, so it can be a left-value reference
-							this->data);
+							layer_trait->BeginParticlesToPrimitives(accessor, allocation_trait), // do not use a temp variable, so it can be a left-value reference
+							allocation_trait);
 					}
 					else
 					{
-						DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait, output, this->data);
+						DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait, output, allocation_trait);
 					}
 				}
 				else if constexpr (with_begin_call != 0)
@@ -168,12 +168,12 @@ namespace chaos
 							delta_time,
 							layer_trait,
 							particle_accessor,
-							layer_trait->BeginUpdateParticles(delta_time, particle_accessor, this->data), // do not use a temp variable, so it can be a left-value reference
-							this->data);
+							layer_trait->BeginUpdateParticles(delta_time, particle_accessor, allocation_trait), // do not use a temp variable, so it can be a left-value reference
+							allocation_trait);
 					}
 					else
 					{
-						remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor, this->data);
+						remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor, allocation_trait);
 					}
 				}
 				else if constexpr (with_begin_call != 0)
@@ -273,6 +273,8 @@ namespace chaos
 
 		/** the particles buffer */
 		std::vector<particle_type> particles;
+		/** the allocation trait */
+		allocation_trait_type allocation_trait;
 	};
 
 #endif

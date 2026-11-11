@@ -90,8 +90,13 @@ namespace chaos
 			render_context->OnProgramDestroyed(in_program_id);
 	}
 	
-	void GPUDevice::OnRenderContextDestroyed(GPURenderContext * in_render_context)
+	void GPUDevice::RemoveRenderContext(GPURenderContext * in_render_context)
 	{
+		assert(in_render_context != nullptr);
+		assert(in_render_context->gpu_device == this);
+
+		in_render_context->gpu_device = nullptr;
+
 		for (size_t i = render_contexts.size() ; i > 0 ; --i)
 		{
 			size_t index = i - 1;

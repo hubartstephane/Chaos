@@ -11,6 +11,11 @@ namespace chaos
 		assert(in_window != nullptr);
 	}
 
+	GPURenderContext::~GPURenderContext()
+	{
+		assert(gpu_device == nullptr);
+	}
+
 	bool GPURenderContext::BindVertexArray(GPUVertexArrayBindingInfo const & binding_info)
 	{
 		//assert(IsRenderContextCurrent());
@@ -214,11 +219,14 @@ namespace chaos
 
 	void GPURenderContext::SubReference()
 	{
-		--shared_ref_count;
-		if (shared_ref_count == 0)
-			OnLastReferenceLost();
-		else if (shared_ref_count == 1) // the last reference is comming from GPUDevice
-			gpu_device->OnRenderContextDestroyed(this);
+		SupervisableInterface::SubReference();
+	}
+
+	void GPURenderContext::OnRemoveFromSuperviser()
+	{
+		if (gpu_device == nullptr)
+			return;
+		gpu_device->RemoveRenderContext(this);
 	}
 
 	bool GPURenderContext::IsRenderContextCurrent() const

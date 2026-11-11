@@ -126,7 +126,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual void SubReference() override;
+		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
 		/** override */
 		virtual void OnRemoveFromSuperviser() override;
 

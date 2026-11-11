@@ -12,15 +12,12 @@ namespace chaos
 	 * GPURenderContext: interface for rendering
 	 */
 
-	class CHAOS_API GPURenderContext : public Tickable, public GPUDeviceResourceInterface
+	class CHAOS_API GPURenderContext : public Tickable, public GPUDeviceResourceInterface, public SupervisableInterface
 	{
 		friend class Window;
 		friend class GPUDevice;
 
 	public:
-
-		/** override */
-		virtual void SubReference() override;
 
 		/** render a frame (into the window directly) */
 		bool RenderFrame(LightweightFunction<bool()> render_func);
@@ -50,6 +47,13 @@ namespace chaos
 
 		/** constructor */
 		GPURenderContext(GPUDevice * in_gpu_device, Window* in_window);
+		/** destructor */
+		virtual ~GPURenderContext();
+
+		/** override */
+		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
+		/** override */
+		virtual void OnRemoveFromSuperviser() override;
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

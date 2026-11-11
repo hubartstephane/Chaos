@@ -55,7 +55,7 @@ namespace chaos
 		/** called whenever a program resource is destroyed */
 		void OnProgramDestroyed(GLuint in_program_id);
 		/** called whenever a render context is about to be destroyed */
-		void OnRenderContextDestroyed(GPURenderContext * in_render_context);
+		void RemoveRenderContext(GPURenderContext * in_render_context);
 
 		/** called whenever a buffer is not used anymore (but there is still a reference from device) */
 		void OnBufferUnused(GPUBuffer * in_buffer);
@@ -69,7 +69,7 @@ namespace chaos
 		/** the pool for textures */
 		GPUTexturePool texture_pool;
 		/** the render contexts created by this */
-		std::vector<shared_ptr<GPURenderContext>> render_contexts;
+		std::vector<supervised_ptr<GPURenderContext>> render_contexts;
 
 		/** a time stamp for rendering */
 		uint64_t rendering_timestamp = 0;

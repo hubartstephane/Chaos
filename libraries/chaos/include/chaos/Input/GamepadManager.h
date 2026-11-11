@@ -166,9 +166,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	protected:
 
 		/** override */
-		virtual void OnRemoveFromSuperviser() override;
-		/** override */
 		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
+		/** override */
+		virtual void OnRemoveFromSuperviser() override;
 
 	protected:
 
@@ -207,7 +207,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	/**
 	* Gamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
 	*/
-	class CHAOS_API Gamepad : public Object, public InputDeviceInterface
+	class CHAOS_API Gamepad : public Object, public InputDeviceInterface, public SupervisableInterface
 	{
 	public:
 
@@ -263,10 +263,12 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** set the filter settings */
 		void SetInputFilterSettings(GamepadInputFilterSettings const& in_filter_settings);
 
-		/** override */
-		virtual void SubReference() override;
-
 	protected:
+
+		/** override */
+		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
+		/** override */
+		virtual void OnRemoveFromSuperviser() override;
 
 		/** override */
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const override;
@@ -396,7 +398,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		GamepadInputFilterSettings gamepad_filter_settings;
 
 		/** the logical gamepads */
-		std::vector<shared_ptr<Gamepad>> user_gamepads;
+		std::vector<supervised_ptr<Gamepad>> user_gamepads;
 
 		/** the physical gamepads */
 		std::array<PhysicalGamepad, CHAOS_SUPPORTED_GAMEPAD_COUNT> physical_gamepads;

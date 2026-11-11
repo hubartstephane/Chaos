@@ -137,17 +137,16 @@ namespace chaos
 		assert(in_filter_settings != nullptr);
 	}
 
+	void Gamepad::OnRemoveFromSuperviser()
+	{
+		if (gamepad_manager == nullptr)
+			return;
+		gamepad_manager->RemoveGamepad(this);
+	}
+
 	void Gamepad::SubReference()
 	{
-		// the object is handled as usual
-		if (gamepad_manager == nullptr)
-			Object::SubReference();
-		// the last reference is the one from the manager. Destroy it
-		else if (--shared_ref_count == 1)
-		{
-			assert(gamepad_manager != nullptr);
-			gamepad_manager->RemoveGamepad(this);
-		}
+		SupervisableInterface::SubReference();
 	}
 
 	bool Gamepad::EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const

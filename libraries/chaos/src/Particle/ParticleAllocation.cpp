@@ -3,12 +3,6 @@
 
 namespace chaos
 {
-	ParticleAllocationBase::ParticleAllocationBase(ParticleLayerBase * in_layer) :
-		layer(in_layer)
-	{
-		assert(in_layer != nullptr);
-	}
-
 	ParticleAllocationBase::~ParticleAllocationBase()
 	{
 		assert(layer == nullptr);
@@ -101,14 +95,17 @@ namespace chaos
 	//              -> as soon as this intrusive_ptr<...> is destroyed, we want to destroy the ParticleAllocation even if there still is 1 reference
 	//                 from the layer
 	//
+
 	void ParticleAllocationBase::SubReference()
 	{
-        // the ParticleAllocation is handled as usual
+		SupervisableInterface::SubReference();
+	}
+	
+	void ParticleAllocationBase::OnRemoveFromSuperviser()
+	{
 		if (layer == nullptr)
-			Object::SubReference();
-        // the last reference is the one from the layer. Destroy it
-		else if (--shared_ref_count == 1)
-            RemoveFromLayer();
+			return;
+		RemoveFromLayer();
 	}
 
     void const* ParticleAllocationBase::GetAccessorEffectiveRanges(size_t& start, size_t& count, size_t& particle_size) const

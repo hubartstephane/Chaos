@@ -89,7 +89,8 @@ namespace chaos
 		{
 			allocation = DoCreateParticleAllocation();
 			if (allocation == nullptr)
-				return nullptr;
+				return {};
+			allocation->layer = this;
 			particles_allocations.push_back(allocation); // register the allocation
 		}
 		// get the very first allocation

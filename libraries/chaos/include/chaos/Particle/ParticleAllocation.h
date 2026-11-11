@@ -6,19 +6,14 @@ namespace chaos
 		// ParticleAllocationBase
 		// ==============================================================
 
-	class CHAOS_API ParticleAllocationBase : public Object
+	class CHAOS_API ParticleAllocationBase : public Object, public SupervisableInterface
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
 	public:
 
-		/** constructor */
-		ParticleAllocationBase(ParticleLayerBase * in_layer);
 		/** destructor */
 		virtual ~ParticleAllocationBase();
-
-		/** Reference count updated : 2 use cases (external reference or not) */
-		virtual void SubReference() override;
 
 		/** returns true whether the allocation is attached to a layer */
 		bool IsAttachedToLayer() const;
@@ -130,6 +125,11 @@ namespace chaos
 
 	protected:
 
+		/** override */
+		virtual void SubReference() override;
+		/** override */
+		virtual void OnRemoveFromSuperviser() override;
+
         /** compute the ranges for accessor (returns false in case of failure) */
         void const * GetAccessorEffectiveRanges(size_t& start, size_t& count, size_t& particle_size) const;
 
@@ -168,8 +168,7 @@ namespace chaos
 		using allocation_trait_type = typename get_AllocationTrait<layer_trait_type>::type;
 
 		/** constructor */
-		ParticleAllocation(ParticleLayerBase* in_layer, allocation_trait_type const & in_allocation_trait = {}) :
-            ParticleAllocationBase(in_layer),
+		ParticleAllocation(allocation_trait_type const & in_allocation_trait = {}) :
 			DataOwner<allocation_trait_type>(in_allocation_trait)
         {
 			assert(ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>() != nullptr); // ensure class is declared

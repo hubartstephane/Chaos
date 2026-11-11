@@ -157,7 +157,7 @@ namespace chaos
 		/** the texture atlas */
 		shared_ptr<GPUAtlas> atlas;
 		/** particles allocations */
-		std::vector<shared_ptr<ParticleAllocationBase>> particles_allocations;
+		std::vector<supervised_ptr<ParticleAllocationBase>> particles_allocations;
 
 		/** the material used to render the layer */
 		shared_ptr<GPURenderMaterial> render_material;
@@ -233,7 +233,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual ParticleAllocationBase* DoCreateParticleAllocation() override { return new ParticleAllocation<layer_trait_type>(this); }
+		virtual ParticleAllocationBase* DoCreateParticleAllocation() override { return new ParticleAllocation<layer_trait_type>(); }
 
 		/** override */
 		virtual bool TickAllocation(float delta_time, ParticleAllocationBase* in_allocation)

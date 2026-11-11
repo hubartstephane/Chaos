@@ -116,7 +116,7 @@ namespace chaos
 		/** override */
 		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
 		/** override */
-		virtual void OnRemoveFromSuperviser() override;
+		virtual void RemoveFromSuperviser() override;
 
         /** compute the ranges for accessor (returns false in case of failure) */
         void const * GetAccessorEffectiveRanges(size_t& start, size_t& count, size_t& particle_size) const;

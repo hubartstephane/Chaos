@@ -107,7 +107,7 @@ namespace chaos
 		SupervisableInterface::SubReference();
 	}
 	
-	void ParticleAllocationBase::OnRemoveFromSuperviser()
+	void ParticleAllocationBase::RemoveFromSuperviser()
 	{
 		if (layer == nullptr)
 			return;

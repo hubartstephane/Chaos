@@ -53,7 +53,7 @@ namespace chaos
 		/** override */
 		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
 		/** override */
-		virtual void OnRemoveFromSuperviser() override;
+		virtual void RemoveFromSuperviser() override;
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

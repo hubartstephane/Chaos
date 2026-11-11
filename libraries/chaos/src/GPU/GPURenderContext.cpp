@@ -222,7 +222,7 @@ namespace chaos
 		SupervisableInterface::SubReference();
 	}
 
-	void GPURenderContext::OnRemoveFromSuperviser()
+	void GPURenderContext::RemoveFromSuperviser()
 	{
 		if (gpu_device == nullptr)
 			return;

@@ -57,7 +57,7 @@ namespace chaos
 		/** remove a managed reference */
 		virtual void SubSuperviserReference();
 		/** when last SHARED reference is lost */
-		virtual void OnRemoveFromSuperviser() = 0;
+		virtual void RemoveFromSuperviser() = 0;
 
 	protected:
 

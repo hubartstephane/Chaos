@@ -42,7 +42,7 @@ namespace chaos
 			if (supervised_ref_count == 0)
 				OnLastReferenceLost();
 			else
-				OnRemoveFromSuperviser();
+				RemoveFromSuperviser();
 		}
 	}
 

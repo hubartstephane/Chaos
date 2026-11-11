@@ -168,7 +168,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** override */
 		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
 		/** override */
-		virtual void OnRemoveFromSuperviser() override;
+		virtual void RemoveFromSuperviser() override;
 
 	protected:
 
@@ -268,7 +268,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		/** override */
 		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
 		/** override */
-		virtual void OnRemoveFromSuperviser() override;
+		virtual void RemoveFromSuperviser() override;
 
 		/** override */
 		virtual bool EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const override;

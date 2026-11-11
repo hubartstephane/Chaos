@@ -81,7 +81,7 @@ namespace chaos
 	// ForceFeedbackEffect functions
 	//
 
-	void ForceFeedbackEffect::OnRemoveFromSuperviser()
+	void ForceFeedbackEffect::RemoveFromSuperviser()
 	{
 		RemoveFromGamepad();
 	}
@@ -137,7 +137,7 @@ namespace chaos
 		assert(in_filter_settings != nullptr);
 	}
 
-	void Gamepad::OnRemoveFromSuperviser()
+	void Gamepad::RemoveFromSuperviser()
 	{
 		if (gamepad_manager == nullptr)
 			return;

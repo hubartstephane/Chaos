@@ -120,6 +120,7 @@ namespace chaos
 #include "chaos/Particle/ParticleTraitTools.h"
 #include "chaos/Particle/ParticleAllocationBase.h"
 #include "chaos/Particle/ParticleAllocation.h"
+#include "chaos/Particle/ParticleLayerBase.h"
 #include "chaos/Particle/ParticleLayer.h"
 #include "chaos/Particle/ParticleManager.h"
 #include "chaos/Particle/ParticleSpawner.h"

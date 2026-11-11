@@ -276,12 +276,5 @@ namespace chaos
         return result;
     }
 
-
-
-
-
-
-
-
 }; // namespace chaos
 

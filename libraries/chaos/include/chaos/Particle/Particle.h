@@ -118,6 +118,7 @@ namespace chaos
 #include "chaos/Particle/ParticleDefault.h"
 #include "chaos/Particle/ParticleAccessor.h"
 #include "chaos/Particle/ParticleTraitTools.h"
+#include "chaos/Particle/ParticleAllocationBase.h"
 #include "chaos/Particle/ParticleAllocation.h"
 #include "chaos/Particle/ParticleLayer.h"
 #include "chaos/Particle/ParticleManager.h"

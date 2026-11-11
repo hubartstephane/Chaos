@@ -135,5 +135,6 @@ namespace chaos
         return ((char const*)buffer) + start * particle_size;
     }
 
+
 }; // namespace chaos
 

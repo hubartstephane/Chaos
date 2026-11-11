@@ -9,7 +9,7 @@
 #include "chaos/Misc/Corner.h"
 #include "chaos/Misc/TimedAccumulator.h"
 #include "chaos/Misc/MemoryBufferWriter.h"
-#include "chaos/Misc/DataOwner.h"
+#include "chaos/Misc/DataOwnerInterface.h"
 #include "chaos/Misc/Edge.h"
 #include "chaos/Misc/Direction.h"
 #include "chaos/Misc/Axis.h"

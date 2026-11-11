@@ -7,7 +7,7 @@ namespace chaos
 	 */
 
 	template<typename LAYER_TRAIT>
-	class ParticleLayer : public ParticleLayerBase, public DataOwner<LAYER_TRAIT>
+	class ParticleLayer : public ParticleLayerBase, public DataOwnerInterface<LAYER_TRAIT>
 	{
 		static_assert(std::is_base_of_v<ParticleLayerTraitBase, LAYER_TRAIT>);
 
@@ -21,7 +21,7 @@ namespace chaos
 
 		/** constructor */
 		ParticleLayer(layer_trait_type const& in_layer_trait = {}) :
-			DataOwner<layer_trait_type>(in_layer_trait)
+			DataOwnerInterface<layer_trait_type>(in_layer_trait)
 		{
 			assert(ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>() != nullptr); // ensure class is declared
 		}

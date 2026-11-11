@@ -3,28 +3,27 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	template<typename TYPE>
-	class DataOwner;
+	class DataOwnerInterface;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	// ==============================================================
-	// DataOwner
-	// ==============================================================
+	/**
+	 * DataOwnerInterface: an interface designed to just to have a getter on some data
+	 **/
 
-	// the template
 	template<typename TYPE>
-	class DataOwner
+	class DataOwnerInterface : public virtual Interface
 	{
 	public:
 
 		using type = TYPE;
 
 		/** constructor */
-		DataOwner() = default;
+		DataOwnerInterface() = default;
 		/** constructor */
-		DataOwner(DataOwner const& src) = default;
+		DataOwnerInterface(DataOwnerInterface const& src) = default;
 		/** constructor */
-		DataOwner(type const& in_type) :
+		DataOwnerInterface(type const& in_type) :
 			data(in_type) {}
 
 		/** gets the data */
@@ -32,7 +31,7 @@ namespace chaos
 		/** gets the data */
 		type const& GetData() const { return data; }
 
-	public:
+	protected:
 
 		/** the data */
 		type data;
@@ -40,36 +39,36 @@ namespace chaos
 
 	// the empty specialization
 	template<>
-	class DataOwner<EmptyClass>
+	class DataOwnerInterface<EmptyClass> : public virtual Interface
 	{
 	public:
 		/** constructor */
-		DataOwner() = default;
+		DataOwnerInterface() = default;
 		/** constructor */
-		DataOwner(DataOwner const& src) = default;
+		DataOwnerInterface(DataOwnerInterface const& src) = default;
 		/** constructor */
-		DataOwner(EmptyClass const& in_type) {}
+		DataOwnerInterface(EmptyClass const& in_type) {}
 	};
 
-	// ==============================================================
-	// Functions
-	// ==============================================================
+	/**
+	 * Functions
+	 */
 
 	template<typename T, typename U>
 	T* GetOwnedData(U* src)
 	{
-		DataOwner<T>* owner = auto_cast(src);
+		DataOwnerInterface<T>* owner = auto_cast(src);
 		if (owner != nullptr)
-			return &owner->data;
+			return &owner->GetData();
 		return nullptr;
 	}
 
 	template<typename T, typename U>
 	T const* GetOwnedData(U const* src)
 	{
-		DataOwner<T> const* owner = auto_cast(src);
+		DataOwnerInterface<T> const* owner = auto_cast(src);
 		if (owner != nullptr)
-			return &owner->data;
+			return &owner->GetData();
 		return nullptr;
 	}
 

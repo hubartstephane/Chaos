@@ -7,7 +7,7 @@ namespace chaos
 	 */
 
 	template<typename LAYER_TRAIT>
-	class ParticleAllocation : public ParticleAllocationBase, public DataOwner<typename get_AllocationTrait<LAYER_TRAIT>::type>
+	class ParticleAllocation : public ParticleAllocationBase, public DataOwnerInterface<typename get_AllocationTrait<LAYER_TRAIT>::type>
 	{
         friend class ParticleLayer<LAYER_TRAIT>;
 
@@ -21,7 +21,7 @@ namespace chaos
 		/** constructor */
 		ParticleAllocation(ParticleLayerBase* in_layer, allocation_trait_type const & in_allocation_trait = {}) :
 			ParticleAllocationBase(in_layer),
-			DataOwner<allocation_trait_type>(in_allocation_trait)
+			DataOwnerInterface<allocation_trait_type>(in_allocation_trait)
         {
 			assert(ClassManager::GetDefaultInstance()->FindCPPClass<particle_type>() != nullptr); // ensure class is declared
         }

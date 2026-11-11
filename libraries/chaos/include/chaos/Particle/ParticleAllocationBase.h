@@ -111,20 +111,6 @@ namespace chaos
 			return GetParticleConstAccessor<PARTICLE_TYPE>();
 		}
 
-		/** getter on the extra data */
-		template<typename T>
-		T* GetOwnedData()
-		{
-			return chaos::GetOwnedData<T>(this);
-		}
-
-		/** getter on the extra data */
-		template<typename T>
-		T const* GetOwnedData() const
-		{
-			return chaos::GetOwnedData<T>(this);
-		}
-
 	protected:
 
 		/** override */

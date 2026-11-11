@@ -96,20 +96,6 @@ namespace chaos
 		/** force GPU buffer update */
 		void SetGPUBufferDirty() { require_GPU_update = true; }
 
-		/** getter on the extra data */
-		template<typename T>
-		T* GetOwnedData()
-		{
-			return GetOwnedData<T>(this);
-		}
-
-		/** getter on the extra data */
-		template<typename T>
-		T const* GetOwnedData() const
-		{
-			return GetOwnedData<T>(this);
-		}
-
 		/** generate the mesh corresponding to this layer. not related to the cached mesh */
 		GPUMesh* GenerateMesh(GPUDevice* in_gpu_device);
 

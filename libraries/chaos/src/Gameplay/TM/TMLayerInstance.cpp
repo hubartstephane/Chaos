@@ -359,13 +359,6 @@ namespace chaos
 			{
 				effective_particle_populator->FlushParticles();
 				object->allocations = effective_particle_populator->GetParticleAllocation();
-				if (object->allocations != nullptr)
-				{
-					// whether the allocation wants to kwow about the TMObject
-					GameEntity const** allocation_data = object->allocations->GetOwnedData<GameEntity const*>();
-					if (allocation_data != nullptr)
-						*allocation_data = object;
-				}
 			}
 		}
 	}

@@ -25,7 +25,6 @@ namespace chaos
 
 	class CHAOS_API Interface
 	{
-		template<typename T> friend class SharedPointerData;
 		template<typename T> friend class WeakPointerData;
 		friend void IntrusiveAddSharedReference(Interface* obj);
 		friend void IntrusiveSubSharedReference(Interface* obj);

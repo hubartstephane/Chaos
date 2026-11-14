@@ -15,18 +15,21 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
-	//   weak_ptr<> use an intermediate structure that points on the target object
+	//   weak_ptr -----------> target
+	//       |                    |
+	//       |                    |
+	//       |                    v
+	//       +-----> WeakPointerControlBlock
+	//                            |
+	//                            +---- is_target_valid
+	//                            |
+	//                            +---- weak_ref_count
 	//
-	//   weak_ptr
-	//       |
-	//       +-----> WeakPointerControlBlock <-----+
-	//                     |               |
-	//                     +----> target --+
+	//    When using a weak_ptr on an object, the first time it will cause a memory allocation: WeakPointerControlBlock
 	//
-	//    to work the target must have a pointer on the WeakPointerControlBlock so it can reset it when it is destroyed
-	//
-	//    As a side effect, accessing target from a weak_ptr requires an additionnal indirection (slower)
-	//                      using weak_ptr cause an allocation (for the very first time only)
+	//    Each time the weak_ptr tryes to access the object, it has to check in the WeakPointerControlBlock whether the target is
+	//    still valid. It may destroy the WeakPointerControlBlock if necessary.
+	//    weak_ptr is a bit slower
 
 	/**
 	 * WeakPointerControlBlock : an utility structure used to handle weak pointers

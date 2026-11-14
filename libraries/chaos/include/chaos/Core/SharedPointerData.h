@@ -79,13 +79,14 @@ namespace chaos
 		{
 			if (target != in_target)
 			{
-				type * old_target = std::exchange(target, nullptr);
+				type* old_target = target;
 
-				if (old_target != nullptr)
-					IntrusiveSubSharedReference(old_target);
 				target = in_target;
 				if (target != nullptr)
 					IntrusiveAddSharedReference(target);
+				
+				if (old_target != nullptr)
+					IntrusiveSubSharedReference(old_target);
 			}		
 		}
 

@@ -83,10 +83,10 @@ namespace chaos
 
 				target = in_target;
 				if (target != nullptr)
-					IntrusiveSubSupervisedReference(target);
+					IntrusiveAddSupervisedReference(target);
 
 				if (old_target != nullptr)
-					IntrusiveAddSupervisedReference(old_target);
+					IntrusiveSubSupervisedReference(old_target);
 			}
 		}
 

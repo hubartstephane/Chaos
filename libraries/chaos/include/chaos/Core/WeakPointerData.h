@@ -121,8 +121,11 @@ namespace chaos
 		/** move operator */
 		WeakPointerData& operator = (WeakPointerData && src) noexcept
 		{
-			Swap(src);
-			src.Set(nullptr);
+			if (this != &src)
+			{
+				Swap(src);
+				src.Set(nullptr);
+			}
 			return *this;
 		}
 
@@ -140,10 +143,13 @@ namespace chaos
 
 			if (current_target != in_target)
 			{
+				type* old_target = std::exchange(target, nullptr);
+				WeakPointerControlBlock * old_control_block = std::exchange(control_block, nullptr);
+
 				if (current_target)
 				{
-					control_block->SubReference();
-					control_block = nullptr;
+					old_control_block->SubReference();
+					old_control_block = nullptr;
 				}
 				target = in_target;
 				if (target != nullptr)

@@ -52,15 +52,19 @@ namespace chaos
 		/** destructor */
 		~SharedPointerData()
 		{
-			if (target != nullptr)
-				IntrusiveSubSharedReference(target);
+			type* old_target = std::exchange(target, nullptr);
+			if (old_target != nullptr)
+				IntrusiveSubSharedReference(old_target);
 		}
 
 		/** move operator */
 		SharedPointerData& operator = (SharedPointerData&& src) noexcept
 		{
-			Swap(src);
-			src.Set(nullptr);
+			if (this != &src)
+			{
+				Swap(src);
+				src.Set(nullptr);
+			}
 			return *this;
 		}
 
@@ -75,8 +79,10 @@ namespace chaos
 		{
 			if (target != in_target)
 			{
-				if (target != nullptr)
-					IntrusiveSubSharedReference(target);
+				type * old_target = std::exchange(target, nullptr);
+
+				if (old_target != nullptr)
+					IntrusiveSubSharedReference(old_target);
 				target = in_target;
 				if (target != nullptr)
 					IntrusiveAddSharedReference(target);

@@ -52,15 +52,19 @@ namespace chaos
 		/** destructor */
 		~SupervisedPointerData()
 		{
-			if (target != nullptr)
-				IntrusiveSubSupervisedReference(target);
+			type* old_target = std::exchange(target, nullptr);
+			if (old_target != nullptr)
+				IntrusiveSubSupervisedReference(old_target);
 		}
 
 		/** move operator */
 		SupervisedPointerData& operator = (SupervisedPointerData&& src) noexcept
 		{
-			Swap(src);
-			src.Set(nullptr);
+			if (this != &src)
+			{
+				Swap(src);
+				src.Set(nullptr);
+			}
 			return *this;
 		}
 
@@ -75,8 +79,10 @@ namespace chaos
 		{
 			if (target != in_target)
 			{
-				if (target != nullptr)
-					IntrusiveSubSupervisedReference(target);
+				type* old_target = std::exchange(target, nullptr);
+
+				if (old_target != nullptr)
+					IntrusiveSubSupervisedReference(old_target);
 				target = in_target;
 				if (target != nullptr)
 					IntrusiveAddSupervisedReference(target);

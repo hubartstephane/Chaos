@@ -59,7 +59,8 @@ namespace chaos
 		/** move operator */
 		SupervisedPointerData& operator = (SupervisedPointerData&& src) noexcept
 		{
-			target = std::exchange(src.target, nullptr);
+			Swap(src);
+			src.Set(nullptr);
 			return *this;
 		}
 

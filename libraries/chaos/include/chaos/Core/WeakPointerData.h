@@ -121,8 +121,8 @@ namespace chaos
 		/** move operator */
 		WeakPointerData& operator = (WeakPointerData && src) noexcept
 		{
-			target = std::exchange(src.target, nullptr);
-			control_block = std::exchange(src.control_block, nullptr);
+			Swap(src);
+			src.Set(nullptr);
 			return *this;
 		}
 

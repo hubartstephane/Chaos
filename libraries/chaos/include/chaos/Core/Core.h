@@ -32,6 +32,7 @@
 #include "chaos/Core/JSONSerializableInterface.h"
 #include "chaos/Core/AutoCast.h"
 #include "chaos/Core/SmartPointer.h"
+#include "chaos/Core/OwnerPointerDataBase.h"
 #include "chaos/Core/SharedPointerData.h"
 #include "chaos/Core/WeakPointerData.h"
 #include "chaos/Core/SupervisedPointerData.h"

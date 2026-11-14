@@ -3,7 +3,10 @@ namespace chaos
 #ifdef CHAOS_FORWARD_DECLARATION
 
 	template<typename T>
-	class SupervisedPointerData;
+	class SupervisedPointerReferenceCounter;
+
+	template<typename T>
+	using SupervisedPointerData = OwnerPointerDataBase<T, SupervisedPointerReferenceCounter>;
 
 	template<typename T>
 	using supervised_ptr = SmartPointer<T, SupervisedPointerData>;
@@ -14,92 +17,24 @@ namespace chaos
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
-	 * SupervisedPointerData: internal implementation used by supervised_ptr
+	 * SupervisedPointerReferenceCounter: a class responsible for adding/removing supervised counters
 	 */
 
 	template<typename T>
-	class SupervisedPointerData
+	class SupervisedPointerReferenceCounter
 	{
 	public:
 
-		/** the type of object pointed */
-		using type = T;
-
-		/** default constructor */
-		SupervisedPointerData() = default;
-
-		/** constructor with initialization */
-		SupervisedPointerData(type* in_target) :
-			target(in_target)
+		/** adding a reference to a target object */
+		void AddReferenceToTarget(T * in_target)
 		{
-			if (target != nullptr)
-				IntrusiveAddSupervisedReference(target);
+			IntrusiveAddSupervisedReference(in_target);
 		}
-
-		/** copy constructor */
-		SupervisedPointerData(SupervisedPointerData const& src) :
-			SupervisedPointerData(src.Get())
+		/** removing a reference to a target object */
+		void SubReferenceToTarget(T* in_target)
 		{
+			IntrusiveSubSupervisedReference(in_target);
 		}
-
-		/** move constructor */
-		SupervisedPointerData(SupervisedPointerData&& src) noexcept :
-			target(src.target)
-		{
-			src.target = nullptr;
-		}
-
-		/** destructor */
-		~SupervisedPointerData()
-		{
-			type* old_target = std::exchange(target, nullptr);
-			if (old_target != nullptr)
-				IntrusiveSubSupervisedReference(old_target);
-		}
-
-		/** move operator */
-		SupervisedPointerData& operator = (SupervisedPointerData&& src) noexcept
-		{
-			if (this != &src)
-			{
-				Swap(src);
-				src.Set(nullptr);
-			}
-			return *this;
-		}
-
-		/** swapping */
-		void Swap(SupervisedPointerData& src)
-		{
-			std::swap(target, src.target);
-		}
-
-		/** set the pointed object */
-		void Set(type* in_target)
-		{
-			if (target != in_target)
-			{
-				type* old_target = target;
-
-				target = in_target;
-				if (target != nullptr)
-					IntrusiveAddSupervisedReference(target);
-
-				if (old_target != nullptr)
-					IntrusiveSubSupervisedReference(old_target);
-			}
-		}
-
-		/** get the pointed object */
-		type* Get() const
-		{
-			return target;
-		}
-
-	protected:
-
-		/** the object pointed */
-		T* target = nullptr;
 	};
 
 	/**
@@ -124,18 +59,4 @@ namespace chaos
 #endif
 
 }; // namespace chaos
-
-#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
-
-namespace std
-{
-	template<typename T>
-	void swap(chaos::SupervisedPointerData<T>& src1, chaos::SupervisedPointerData<T>& src2)
-	{
-		src1.Swap(src2);
-	}
-
-}; // namespace std
-
-#endif
 

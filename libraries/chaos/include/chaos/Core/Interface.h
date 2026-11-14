@@ -25,8 +25,8 @@ namespace chaos
 
 	class CHAOS_API Interface
 	{
-		friend class SharedPointerPolicy;
-		friend class WeakPointerPolicy;
+		template<typename T> friend class SharedPointerData;
+		template<typename T> friend class WeakPointerData;
 		friend void IntrusiveAddSharedReference(Interface* obj);
 		friend void IntrusiveSubSharedReference(Interface* obj);
 
@@ -61,7 +61,7 @@ namespace chaos
 		/** count shared reference */
 		std::atomic<int> shared_ref_count;
 		/** a reference to the weak structure */
-		mutable WeakPointerData* weak_ptr_data = nullptr;
+		mutable WeakPointerControlBlock* weak_ptr_control_block = nullptr;
 	};
 
 }; // namespace chaos

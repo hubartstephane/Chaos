@@ -23,14 +23,9 @@ namespace chaos
 	Interface::~Interface()
 	{
 		assert(shared_ref_count == 0);
-		// reset or destroy weak structure
-		if (weak_ptr_data != nullptr)
-		{
-			if (weak_ptr_data->weak_ref_count == 0)
-				delete weak_ptr_data;
-			else
-				weak_ptr_data->object_ptr = nullptr;
-		}
+		// reset or destroy weak pointer control structure
+		if (weak_ptr_control_block != nullptr)
+			weak_ptr_control_block->OnTargetDestroyed();
 	}
 
 	Interface& Interface::operator = (Interface&&)

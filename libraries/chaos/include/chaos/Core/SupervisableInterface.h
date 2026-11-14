@@ -26,7 +26,7 @@ namespace chaos
 
 	class CHAOS_API SupervisableInterface : public virtual Interface
 	{
-		friend class SupervisedPointerPolicy;
+		template<typename> friend class SupervisedPointerData;
 		friend void IntrusiveAddSupervisedReference(SupervisableInterface* obj);
 		friend void IntrusiveSubSupervisedReference(SupervisableInterface* obj);
 

@@ -26,12 +26,12 @@ namespace chaos
 	public:
 
 		/** adding a reference to a target object */
-		void AddReferenceToTarget(T* in_target)
+		static void AddReferenceToTarget(T* in_target)
 		{
 			IntrusiveAddSharedReference(in_target);
 		}
 		/** removing a reference to a target object */
-		void SubReferenceToTarget(T* in_target)
+		static void SubReferenceToTarget(T* in_target)
 		{
 			IntrusiveSubSharedReference(in_target);
 		}

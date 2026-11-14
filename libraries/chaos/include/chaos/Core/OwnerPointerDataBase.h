@@ -12,7 +12,7 @@ namespace chaos
 	 */
 
 	template<typename T, template<typename> class REFERENCE_COUNTER>
-	class OwnerPointerDataBase : public REFERENCE_COUNTER<T>
+	class OwnerPointerDataBase
 	{
 	public:
 
@@ -27,7 +27,7 @@ namespace chaos
 			target(in_target)
 		{
 			if (target != nullptr)
-				this->AddReferenceToTarget(target);
+				REFERENCE_COUNTER<T>::AddReferenceToTarget(target);
 		}
 
 		/** copy constructor */
@@ -48,7 +48,7 @@ namespace chaos
 		{
 			type* old_target = std::exchange(target, nullptr);
 			if (old_target != nullptr)
-				this->SubReferenceToTarget(old_target);
+				REFERENCE_COUNTER<T>::SubReferenceToTarget(old_target);
 		}
 
 		/** move operator */
@@ -77,10 +77,10 @@ namespace chaos
 
 				target = in_target;
 				if (target != nullptr)
-					this->AddReferenceToTarget(target);
+					REFERENCE_COUNTER<T>::AddReferenceToTarget(target);
 				
 				if (old_target != nullptr)
-					this->SubReferenceToTarget(old_target);
+					REFERENCE_COUNTER<T>::SubReferenceToTarget(old_target);
 			}		
 		}
 

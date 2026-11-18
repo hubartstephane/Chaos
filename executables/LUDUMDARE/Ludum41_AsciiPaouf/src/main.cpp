@@ -21,6 +21,7 @@ class B;
 friend class SUPERVISED_CLASSNAME;\
 public:\
 void Remove##SUPERVISED_SHORTNAME(SUPERVISED_CLASSNAME * obj);\
+void Insert##SUPERVISED_SHORTNAME(SUPERVISED_CLASSNAME * obj);\
 protected:\
 void Remove##SUPERVISED_SHORTNAME##At(size_t index);\
 protected:\
@@ -47,6 +48,13 @@ void SUPERVISER_CLASSNAME::Remove##SUPERVISED_SHORTNAME(SUPERVISED_CLASSNAME * o
 			return Remove##SUPERVISED_SHORTNAME##At(index);\
 	}\
 }\
+void SUPERVISER_CLASSNAME::Insert##SUPERVISED_SHORTNAME(SUPERVISED_CLASSNAME * obj)\
+{\
+	assert(obj != nullptr);\
+	assert(obj->SUPERVISED_PARENT_MEMBER_NAME == nullptr);\
+	SUPERVISER_VECTOR_MEMBER_NAME.push_back(obj);\
+	obj->SUPERVISED_PARENT_MEMBER_NAME = this;\
+}\
 void SUPERVISER_CLASSNAME::Remove##SUPERVISED_SHORTNAME##At(size_t index)\
 {\
 	shared_ptr<A> prevent_destruction = objects[index];\
@@ -61,21 +69,15 @@ void SUPERVISER_CLASSNAME::Remove##SUPERVISED_SHORTNAME##At(size_t index)\
 		SUPERVISER_VECTOR_MEMBER_NAME.erase(SUPERVISER_VECTOR_MEMBER_NAME.begin() + index);\
 	}\
 	prevent_destruction->SUPERVISED_PARENT_MEMBER_NAME = nullptr;\
-\
-	constexpr auto has_OnRemovedFromFunction = []<typename T>()\
+	auto CallOnRemovedFromIfExists = []<typename T>(T & obj)\
 	{\
-		return requires(T t)\
+		if constexpr (requires(T t) { t.OnRemovedFrom##SUPERVISER_SHORTNAME(); })\
 		{\
-			{ t.OnRemovedFrom##SUPERVISER_SHORTNAME() };\
-		};\
+			obj.OnRemovedFrom##SUPERVISER_SHORTNAME();\
+		}\
 	};\
-	if constexpr (has_OnRemovedFromFunction.operator()<SUPERVISED_CLASSNAME>())\
-		prevent_destruction->OnRemovedFrom##SUPERVISER_SHORTNAME();\
+	CallOnRemovedFromIfExists(*prevent_destruction);\
 }
-
-
-
-
 
 #define CHAOS_GENERATE_SUPERVISED_DECLARATION_FUNCTIONS(\
 	SUPERVISER_CLASSNAME,\
@@ -88,13 +90,14 @@ void SUPERVISER_CLASSNAME::Remove##SUPERVISED_SHORTNAME##At(size_t index)\
 friend class SUPERVISER_CLASSNAME;\
 public:\
 void RemoveFrom##SUPERVISER_SHORTNAME();\
+void InsertInto##SUPERVISER_SHORTNAME(SUPERVISER_CLASSNAME * owner);\
 protected:\
 virtual void RemoveFromSuperviser() override;\
 protected:\
 SUPERVISER_CLASSNAME * SUPERVISED_PARENT_MEMBER_NAME = nullptr;
 
 
-//virtual void OnRemovedFrom##SUPERVISER_SHORTNAME(); \
+
 
 
 
@@ -103,11 +106,17 @@ class A : public SupervisableInterface
 {
 public:
 
-	CHAOS_GENERATE_SUPERVISED_DECLARATION_FUNCTIONS(B, A, B, A, objects, owner)
+	CHAOS_GENERATE_SUPERVISED_DECLARATION_FUNCTIONS(B, A, B, A, objects, owner);
 
 
-	//CHAOS_GENERATE_SUPERVISED_DECLARATION_FUNCTIONS(CHAOS_SUPERVISION_A_B)
+public:
 
+	void OnRemovedFromB()
+	{
+		int i = 0;
+		++i;
+	
+	}
 };
 
 class B
@@ -137,32 +146,75 @@ void SUPERVISED_CLASSNAME::RemoveFrom##SUPERVISER_SHORTNAME()\
 		SUPERVISED_PARENT_MEMBER_NAME->Remove##SUPERVISED_SHORTNAME(this);\
 		SUPERVISED_PARENT_MEMBER_NAME = nullptr;\
 	}\
-}
-
-#if 0
-void SUPERVISED_CLASSNAME::OnRemovedFrom##SUPERVISER_SHORTNAME()\
-{\
 }\
-
-#endif
-//-----------------------------------------------------------
+void SUPERVISED_CLASSNAME::InsertInto##SUPERVISER_SHORTNAME(SUPERVISER_CLASSNAME * owner)\
+{\
+	assert(owner != nullptr);\
+	assert(SUPERVISED_PARENT_MEMBER_NAME == nullptr);\
+	owner->Insert##SUPERVISED_SHORTNAME(this);\
+}
 
 CHAOS_GENERATE_SUPERVISER_IMPLEMENTATION_FUNCTIONS(B, A, B, A, objects, owner, true)
 CHAOS_GENERATE_SUPERVISED_IMPLEMENTATION_FUNCTIONS(B, A, B, A, objects, owner, true)
 
 
+auto TransformSmartPointerToPointer = std::views::transform([](auto const& e)
+{
+	return e.get();
+});
+
+
+class C
+{
+public:
+
+	auto GetElements() const
+	{
+		return elements | TransformSmartPointerToPointer;
+	}
 
 
 
+	std::vector<chaos::shared_ptr<A>> elements;
+
+
+};
 
 
 
 int main(int argc, char ** argv, char ** env)
 {
-	B b;
+	B * b = new B;
 
-	A * a = new A;
+	A* a1 = new A;
+	A* a2 = new A;
+	A* a3 = new A;
 
+	b->InsertA(a1);
+	b->InsertA(a2);
+	b->InsertA(a3);
+
+	{
+		shared_ptr a4 = new A;
+		b->InsertA(a4.get());
+	
+	}
+
+	delete(b);
+
+
+
+
+	std::vector<int> v = {1,2,3};
+
+	auto x = v | std::views::transform([](int i){ return 6 * i;});
+
+	size_t sss = x.size();
+
+	for (auto i : x)
+	{
+		i = i;
+	}
 
 
 	chaos::GameApplicationData game_application_data;

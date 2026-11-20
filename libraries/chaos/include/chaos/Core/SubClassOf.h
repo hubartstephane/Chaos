@@ -65,7 +65,7 @@ namespace chaos
 			return *this;
 		}
 		/** assign operator */
-		SubClassOf<T>& operator = (SubClassOf<T> && src)
+		SubClassOf<T>& operator = (SubClassOf<T> && src) noexcept
 		{
 			internal_class = src.internal_class;
 			return *this;
@@ -81,7 +81,7 @@ namespace chaos
 		}
 		/** assign operator */
 		template<typename U>
-		SubClassOf<T>& operator = (SubClassOf<U>&& src)
+		SubClassOf<T>& operator = (SubClassOf<U>&& src) noexcept
 		{
 			static_assert(std::is_base_of_v<T, U>);
 

@@ -19,13 +19,13 @@ namespace chaos
 		// do not copy reference count related members 
 	}
 
-	SupervisableInterface::SupervisableInterface(SupervisableInterface&&) :
+	SupervisableInterface::SupervisableInterface(SupervisableInterface&&) noexcept :
 		SupervisableInterface()
 	{
 		// do not copy reference count related members 
 	}
 
-	SupervisableInterface& SupervisableInterface::operator = (SupervisableInterface&&)
+	SupervisableInterface& SupervisableInterface::operator = (SupervisableInterface&&) noexcept
 	{
 		return *this; // do not copy reference count related members 
 	}

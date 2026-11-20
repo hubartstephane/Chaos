@@ -36,7 +36,7 @@ namespace chaos
 		/** copy constructor */
 		SupervisableInterface(SupervisableInterface const&);
 		/** move constructor */
-		SupervisableInterface(SupervisableInterface&&);
+		SupervisableInterface(SupervisableInterface&&) noexcept;
 
 		/** destructor */
 		virtual ~SupervisableInterface();
@@ -44,7 +44,7 @@ namespace chaos
 		/** copy operator */
 		SupervisableInterface& operator = (SupervisableInterface const&);
 		/** move operator */
-		SupervisableInterface& operator = (SupervisableInterface&&);
+		SupervisableInterface& operator = (SupervisableInterface&&) noexcept;
 
 	protected:
 

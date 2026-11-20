@@ -116,7 +116,7 @@ namespace chaos
 		/** copy operator */
 		KeyboardLayout& operator = (KeyboardLayout const& src) = default;
 		/** move operator */
-		KeyboardLayout& operator = (KeyboardLayout&& src) = default;
+		KeyboardLayout& operator = (KeyboardLayout&& src) noexcept = default;
 
 		/** get the cached current layout */
 		static KeyboardLayout const& GetCurrentLayout();

@@ -14,7 +14,7 @@ namespace chaos
 		// do not copy reference count related members 
 	}
 	
-	Interface::Interface(Interface&&):
+	Interface::Interface(Interface&&) noexcept :
 		Interface()
 	{
 		// do not copy reference count related members 
@@ -28,7 +28,7 @@ namespace chaos
 			weak_ptr_control_block->OnTargetDestroyed();
 	}
 
-	Interface& Interface::operator = (Interface&&)
+	Interface& Interface::operator = (Interface&&) noexcept
 	{
 		return *this; // do not copy reference count related members 
 	}

@@ -36,7 +36,7 @@ namespace chaos
 		/** copy constructor */
 		Interface(Interface const &);
 		/** move constructor */
-		Interface(Interface &&);
+		Interface(Interface &&) noexcept;
 
 		/** destructor */
 		virtual ~Interface();
@@ -44,7 +44,7 @@ namespace chaos
 		/** copy operator */
 		Interface& operator = (Interface const&);
 		/** move operator */
-		Interface& operator = (Interface&&);
+		Interface& operator = (Interface&&) noexcept;
 
 	protected:
 

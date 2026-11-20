@@ -28,7 +28,7 @@ namespace chaos
 
 		Copyable() = default;
 		Copyable(Copyable&&) = default;
-		Copyable& operator = (Copyable&&) = default;
+		Copyable& operator = (Copyable&&) noexcept = default;
 		Copyable(Copyable const&) = delete;
 		Copyable& operator = (Copyable const&) = delete;
 	};

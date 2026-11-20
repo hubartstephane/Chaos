@@ -41,7 +41,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	* GamepadInputFilterSettings: some configuration describing how to handle gamepad input
 	*/
 
-	class GamepadInputFilterSettings
+	class CHAOS_API GamepadInputFilterSettings
 	{
 	public:
 

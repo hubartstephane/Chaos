@@ -109,8 +109,6 @@ namespace chaos
 	
 	void ParticleAllocationBase::RemoveFromSuperviser()
 	{
-		if (layer == nullptr)
-			return;
 		RemoveFromLayer();
 	}
 

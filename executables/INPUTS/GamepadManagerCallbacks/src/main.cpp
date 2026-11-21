@@ -136,7 +136,7 @@ protected:
 
 	chaos::ImGuiUserMessageObject imgui_user_message;
 
-	chaos::shared_ptr<chaos::Gamepad> main_gamepad;
+	chaos::supervised_ptr<chaos::Gamepad> main_gamepad;
 };
 
 int main(int argc, char** argv, char** env)

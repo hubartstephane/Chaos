@@ -57,7 +57,6 @@ namespace chaos
 	void Window::DestroyRenderContext()
 	{
 		assert(render_context != nullptr);
-		render_context->Destroy();
 		render_context = nullptr;
 	}
 

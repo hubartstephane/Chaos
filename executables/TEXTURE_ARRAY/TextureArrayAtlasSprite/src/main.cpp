@@ -180,7 +180,7 @@ protected:
 	/** the material */
 	chaos::shared_ptr<chaos::GPURenderMaterial> material;
 	/** allocation */
-	chaos::shared_ptr<chaos::ParticleAllocationBase> particles_allocation;
+	chaos::supervised_ptr<chaos::ParticleAllocationBase> particles_allocation;
   // the camera
   chaos::FPSViewController fps_view_controller;
 };

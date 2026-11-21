@@ -255,7 +255,7 @@ protected:
 	chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 
 	std::vector<chaos::shared_ptr<chaos::ParticleLayerBase>> particle_layers;
-	std::vector<chaos::shared_ptr<chaos::ParticleAllocationBase>> particle_allocations;
+	std::vector<chaos::supervised_ptr<chaos::ParticleAllocationBase>> particle_allocations;
 };
 
 

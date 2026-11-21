@@ -446,7 +446,7 @@ namespace chaos
 		/** the root widget for the window */
 		shared_ptr<WindowRootWidget> root_widget;
 		/** the render_context */
-		shared_ptr<GPURenderContext> render_context;
+		supervised_ptr<GPURenderContext> render_context;
 		/** previous mouse position */
 		std::optional<glm::vec2> mouse_position;
 		/** used to store data when toggling fullscreen */

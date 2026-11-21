@@ -114,8 +114,6 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
-		/** override */
 		virtual void RemoveFromSuperviser() override;
 
         /** compute the ranges for accessor (returns false in case of failure) */

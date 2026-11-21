@@ -158,6 +158,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 	public:
 
+		/** destructor */
+		~ForceFeedbackEffect();
+
 		/** returns the values for left and right motors. returns true whether the effect is to be finished */
 		virtual bool TickAndGetMotorValues(float delta_time, ForceFeedbackMotorValues& out_motor_values);
 		/** remove the forcefeedback from its gamepad */
@@ -165,8 +168,6 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 	protected:
 
-		/** override */
-		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
 		/** override */
 		virtual void RemoveFromSuperviser() override;
 
@@ -217,6 +218,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 		/** constructor */
 		Gamepad(GamepadManager* in_gamepad_manager, PhysicalGamepad* in_physical_gamepad, GamepadInputFilterSettings const* in_filter_settings, GamepadCallbacks* in_callbacks);
+		/** destructor */
+		~Gamepad();
 
 	public:
 
@@ -266,8 +269,6 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 	protected:
 
 		/** override */
-		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
-		/** override */
 		virtual void RemoveFromSuperviser() override;
 
 		/** override */
@@ -303,7 +304,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		bool force_feedback_paused = false;
 
 		/** the forcefeedback effects */
-		std::vector<supervised_ptr<ForceFeedbackEffect>> feedback_effects;
+		std::vector<shared_ptr<ForceFeedbackEffect>> feedback_effects;
 	};
 
 	/**
@@ -398,7 +399,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 		GamepadInputFilterSettings gamepad_filter_settings;
 
 		/** the logical gamepads */
-		std::vector<supervised_ptr<Gamepad>> user_gamepads;
+		std::vector<shared_ptr<Gamepad>> user_gamepads;
 
 		/** the physical gamepads */
 		std::array<PhysicalGamepad, CHAOS_SUPPORTED_GAMEPAD_COUNT> physical_gamepads;

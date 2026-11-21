@@ -51,15 +51,10 @@ namespace chaos
 		virtual ~GPURenderContext();
 
 		/** override */
-		virtual void SubReference() override; // necessary to get rid of some warning ('dominance')
-		/** override */
 		virtual void RemoveFromSuperviser() override;
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
-
-		/** destroy the context */
-		void Destroy();
 
 		/** called at the start of a new frame */
 		void BeginRenderingFrame();

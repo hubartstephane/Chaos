@@ -13,6 +13,8 @@ namespace chaos
 
 	GPURenderContext::~GPURenderContext()
 	{
+		vertex_array_cache.Destroy();
+		RemoveFromSuperviser();
 		assert(gpu_device == nullptr);
 	}
 
@@ -34,11 +36,6 @@ namespace chaos
 	{
 		//assert(IsRenderContextCurrent());
 		glBindVertexArray(0);
-	}
-
-	void GPURenderContext::Destroy()
-	{
-		vertex_array_cache.Destroy();
 	}
 
 	bool GPURenderContext::RenderIntoFramebuffer(GPUFramebuffer* framebuffer, bool generate_mipmaps, LightweightFunction<bool()> render_func)
@@ -215,11 +212,6 @@ namespace chaos
 	void GPURenderContext::OnProgramDestroyed(GLuint in_program_id)
 	{
 		vertex_array_cache.OnProgramDestroyed(in_program_id);
-	}
-
-	void GPURenderContext::SubReference()
-	{
-		SupervisableInterface::SubReference();
 	}
 
 	void GPURenderContext::RemoveFromSuperviser()

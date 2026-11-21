@@ -3,13 +3,6 @@
 
 using namespace chaos;
 
-class A;
-class B;
-
-#define CHAOS_SUPERVISION_A_B (B,A,B,A,objects, owner)
-
-
-
 #define CHAOS_GENERATE_SUPERVISER_DECLARATION_FUNCTIONS(\
 	SUPERVISER_CLASSNAME,\
 	SUPERVISED_CLASSNAME,\
@@ -96,36 +89,6 @@ virtual void RemoveFromSuperviser() override;\
 protected:\
 SUPERVISER_CLASSNAME * SUPERVISED_PARENT_MEMBER_NAME = nullptr;
 
-
-
-
-
-
-
-class A : public SupervisableInterface
-{
-public:
-
-	CHAOS_GENERATE_SUPERVISED_DECLARATION_FUNCTIONS(B, A, B, A, objects, owner);
-
-
-public:
-
-	void OnRemovedFromB()
-	{
-		int i = 0;
-		++i;
-	
-	}
-};
-
-class B
-{
-public:
-
-	CHAOS_GENERATE_SUPERVISER_DECLARATION_FUNCTIONS(B, A, B, A, objects, owner)
-};
-
 #define CHAOS_GENERATE_SUPERVISED_IMPLEMENTATION_FUNCTIONS(\
 	SUPERVISER_CLASSNAME,\
 	SUPERVISED_CLASSNAME,\
@@ -154,69 +117,11 @@ void SUPERVISED_CLASSNAME::InsertInto##SUPERVISER_SHORTNAME(SUPERVISER_CLASSNAME
 	owner->Insert##SUPERVISED_SHORTNAME(this);\
 }
 
-CHAOS_GENERATE_SUPERVISER_IMPLEMENTATION_FUNCTIONS(B, A, B, A, objects, owner, true)
-CHAOS_GENERATE_SUPERVISED_IMPLEMENTATION_FUNCTIONS(B, A, B, A, objects, owner, true)
-
-
-auto TransformSmartPointerToPointer = std::views::transform([](auto const& e)
-{
-	return e.get();
-});
-
-
-class C
-{
-public:
-
-	auto GetElements() const
-	{
-		return elements | TransformSmartPointerToPointer;
-	}
-
-
-
-	std::vector<chaos::shared_ptr<A>> elements;
-
-
-};
 
 
 
 int main(int argc, char ** argv, char ** env)
 {
-	B * b = new B;
-
-	A* a1 = new A;
-	A* a2 = new A;
-	A* a3 = new A;
-
-	b->InsertA(a1);
-	b->InsertA(a2);
-	b->InsertA(a3);
-
-	{
-		shared_ptr a4 = new A;
-		b->InsertA(a4.get());
-	
-	}
-
-	delete(b);
-
-
-
-
-	std::vector<int> v = {1,2,3};
-
-	auto x = v | std::views::transform([](int i){ return 6 * i;});
-
-	size_t sss = x.size();
-
-	for (auto i : x)
-	{
-		i = i;
-	}
-
-
 	chaos::GameApplicationData game_application_data;
 	game_application_data.game_class = LudumGame::GetStaticClass();
 	return chaos::RunApplication<chaos::GameApplication>(argc, argv, env, &game_application_data);

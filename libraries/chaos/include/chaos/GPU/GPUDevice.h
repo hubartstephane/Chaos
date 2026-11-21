@@ -69,7 +69,7 @@ namespace chaos
 		/** the pool for textures */
 		GPUTexturePool texture_pool;
 		/** the render contexts created by this */
-		std::vector<supervised_ptr<GPURenderContext>> render_contexts;
+		std::vector<shared_ptr<GPURenderContext>> render_contexts;
 
 		/** a time stamp for rendering */
 		uint64_t rendering_timestamp = 0;

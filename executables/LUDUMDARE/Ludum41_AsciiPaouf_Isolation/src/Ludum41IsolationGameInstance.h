@@ -151,7 +151,7 @@ protected:
 	int pending_split_count = 0;
 
 	/** some sprites */
-	chaos::shared_ptr<chaos::ParticleAllocationBase> balls_allocations;
+	chaos::supervised_ptr<chaos::ParticleAllocationBase> balls_allocations;
 	/** current the challenge */
 	chaos::shared_ptr<LudumChallenge> sequence_challenge;
 };

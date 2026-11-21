@@ -50,7 +50,7 @@ protected:
 public:
 
 	/** some sprites */
-	chaos::shared_ptr<chaos::ParticleAllocationBase> bricks_allocations;
+	chaos::supervised_ptr<chaos::ParticleAllocationBase> bricks_allocations;
 	/** the current word */
 	size_t word_index = 0;
 };

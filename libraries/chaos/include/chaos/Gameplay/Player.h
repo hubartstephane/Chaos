@@ -110,7 +110,7 @@ namespace chaos
 		GameInstance* game_instance = nullptr;
 
 		/** a gamepad that can be given to the player */
-		shared_ptr<Gamepad> gamepad;
+		supervised_ptr<Gamepad> gamepad;
 
 		/** the player pawn */
 		shared_ptr<PlayerPawn> pawn;

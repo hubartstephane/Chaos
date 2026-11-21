@@ -66,5 +66,5 @@ protected:
 	class LudumGameInstance * game_instance = nullptr;
 
 	/** the visible hud */
-	chaos::shared_ptr<chaos::ParticleAllocationBase> particle_range;
+	chaos::supervised_ptr<chaos::ParticleAllocationBase> particle_range;
 };

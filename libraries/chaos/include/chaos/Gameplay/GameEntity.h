@@ -110,7 +110,7 @@ namespace chaos
 		/** the box for the entity */
 		box2 bounding_box;
 		/** the allocation for the entity */
-		shared_ptr<ParticleAllocationBase> allocations;
+		supervised_ptr<ParticleAllocationBase> allocations;
 	};
 
 

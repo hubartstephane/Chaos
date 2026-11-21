@@ -11,6 +11,7 @@ namespace chaos
 
 	ParticleAllocationBase::~ParticleAllocationBase()
 	{
+		RemoveFromLayer();
 		assert(layer == nullptr);
 	}
 
@@ -102,11 +103,6 @@ namespace chaos
 	//                 from the layer
 	//
 
-	void ParticleAllocationBase::SubReference()
-	{
-		SupervisableInterface::SubReference();
-	}
-	
 	void ParticleAllocationBase::RemoveFromSuperviser()
 	{
 		RemoveFromLayer();

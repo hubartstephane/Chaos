@@ -48,9 +48,6 @@ namespace chaos
 
 	protected:
 
-		/** override */
-		virtual void SubReference() override;
-
 		/** add a supervised reference */
 		virtual void AddSuperviserReference();
 		/** remove a managed reference */

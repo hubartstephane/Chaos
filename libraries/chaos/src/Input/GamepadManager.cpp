@@ -81,14 +81,14 @@ namespace chaos
 	// ForceFeedbackEffect functions
 	//
 
-	void ForceFeedbackEffect::RemoveFromSuperviser()
+	ForceFeedbackEffect::~ForceFeedbackEffect()
 	{
 		RemoveFromGamepad();
 	}
 
-	void ForceFeedbackEffect::SubReference()
+	void ForceFeedbackEffect::RemoveFromSuperviser()
 	{
-		SupervisableInterface::SubReference();
+		RemoveFromGamepad();
 	}
 
 	bool ForceFeedbackEffect::TickAndGetMotorValues(float delta_time, ForceFeedbackMotorValues& out_motor_values)
@@ -137,16 +137,16 @@ namespace chaos
 		assert(in_filter_settings != nullptr);
 	}
 
+	Gamepad::~Gamepad()
+	{
+		RemoveFromSuperviser();
+	}
+
 	void Gamepad::RemoveFromSuperviser()
 	{
 		if (gamepad_manager == nullptr)
 			return;
 		gamepad_manager->RemoveGamepad(this);
-	}
-
-	void Gamepad::SubReference()
-	{
-		SupervisableInterface::SubReference();
 	}
 
 	bool Gamepad::EnumerateDeviceHierarchy(EnumerateDeviceHierarchyFunction func) const

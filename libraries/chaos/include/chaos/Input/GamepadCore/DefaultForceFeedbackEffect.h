@@ -1,6 +1,10 @@
 namespace chaos
 {
-#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+#ifdef CHAOS_FORWARD_DECLARATION
+
+	class DefaultForceFeedbackEffect;
+
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	 * DefaultForceFeedbackEffect : a simple constant effect with a timer
@@ -8,8 +12,6 @@ namespace chaos
 
 	class CHAOS_API DefaultForceFeedbackEffect : public ForceFeedbackEffect
 	{
-		CHAOS_GAMEPAD_ALL_FRIENDS
-
 	public:
 
 		/** constructor */

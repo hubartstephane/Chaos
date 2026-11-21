@@ -1,6 +1,11 @@
 namespace chaos
 {
-#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+#ifdef CHAOS_FORWARD_DECLARATION
+
+	class ForceFeedbackMotorValues;
+	class ForceFeedbackEffect;
+
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	 * ForceFeedbackMotorValues: get the motor values for forcefeedback effects
@@ -22,7 +27,7 @@ namespace chaos
 
 	class CHAOS_API ForceFeedbackEffect : public Object, public SupervisableInterface
 	{
-		CHAOS_GAMEPAD_ALL_FRIENDS
+		friend class Gamepad;
 
 	public:
 

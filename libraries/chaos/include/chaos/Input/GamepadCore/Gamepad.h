@@ -1,6 +1,10 @@
 namespace chaos
 {
-#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+#ifdef CHAOS_FORWARD_DECLARATION
+
+	class Gamepad;
+
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* Gamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
@@ -9,7 +13,7 @@ namespace chaos
 	{
 	public:
 
-		CHAOS_GAMEPAD_ALL_FRIENDS
+		friend class GamepadManager;
 
 	protected:
 

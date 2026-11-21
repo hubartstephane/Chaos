@@ -1,13 +1,18 @@
 namespace chaos
 {
-#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+#ifdef CHAOS_FORWARD_DECLARATION
+
+	class PhysicalGamepad;
+	
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* PhysicalGamepad : the physical device. Client do not directly use it
 	*/
 	class CHAOS_API PhysicalGamepad : public InputDeviceInterface
 	{
-		CHAOS_GAMEPAD_ALL_FRIENDS
+		friend class Gamepad;
+		friend class GamepadManager;
 
 	public:
 

@@ -1,7 +1,11 @@
 namespace chaos
 {
 
-#if !defined CHAOS_FORWARD_DECLARATION && !defined CHAOS_TEMPLATE_IMPLEMENTATION
+#ifdef CHAOS_FORWARD_DECLARATION
+
+	class GamepadCallbacks;
+
+#elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
 	/**
 	* GamepadCallbacks : some callbacks that may be plugged into a gamepad
@@ -9,8 +13,6 @@ namespace chaos
 
 	class CHAOS_API GamepadCallbacks : public Object
 	{
-		CHAOS_GAMEPAD_ALL_FRIENDS
-
 	public:
 
 		/** destructor */

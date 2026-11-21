@@ -2,11 +2,6 @@
 // ParticleAllocation<...>
 // ==============================================================
 //
-// XXX : remark on ParticleAllocation
-//
-//         The ParticleAllocation life time is special. see ReferenceCount remark in .cpp !!!
-//
-//
 // ParticleAllocation<...> use a template class to define particles behavior
 //
 //   - The class of the PARTICLES

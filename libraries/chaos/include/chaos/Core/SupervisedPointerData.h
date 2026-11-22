@@ -29,11 +29,13 @@ namespace chaos
 		static void AddReferenceToTarget(T * in_target)
 		{
 			IntrusiveAddSupervisedReference(in_target);
+			IntrusiveAddSharedReference(in_target);
 		}
 		/** removing a reference to a target object */
 		static void SubReferenceToTarget(T* in_target)
 		{
 			IntrusiveSubSupervisedReference(in_target);
+			IntrusiveSubSharedReference(in_target);
 		}
 	};
 

@@ -6,6 +6,8 @@ namespace chaos
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
 
+	CHAOS_API irrklang::vec3df ToIrrklangVector(glm::vec3 const& src);
+
 	CHAOS_DEFINE_LOG(SoundLog, "Sound")
 
 	class CHAOS_API SoundManager : public ResourceManager, public ConfigurationUserInterface

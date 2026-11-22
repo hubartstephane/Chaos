@@ -6,7 +6,7 @@
 #include "chaos/Debug/Debug.h"
 #include "chaos/Midi/Midi.h"
 #include "chaos/Misc/Misc.h"
-#include "chaos/Sound/Sound.h"
+#include "chaos/SoundCore/SoundCore.h"
 #include "chaos/System/System.h"
 #include "chaos/Image/Image.h"
 #include "chaos/Font/Font.h"

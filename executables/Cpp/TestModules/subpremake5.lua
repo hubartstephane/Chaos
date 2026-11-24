@@ -4,4 +4,4 @@
 
 local project = build:WindowedApp()
 project:DependOnLib("modulelib")
---project:DependOnLib("modulelibdll")
+project:DependOnLib("modulelibdll")

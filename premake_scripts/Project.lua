@@ -444,7 +444,9 @@ function Project:AddProjectToSolution()
 		defines('DEATH_BUILDING_EXECUTABLE') -- indicates whether we are building an EXECUTABLE (it does not indicate how a given project has been built)
 	end
 
-	defines('DEATH_IS_BUILDING_' .. self.project_name) -- the name of the the project beeing built
+	local upper_project_name = string.gsub(string.upper(self.project_name), "-", "_")
+
+	defines('DEATH_IS_BUILDING_' .. upper_project_name) -- the name of the the project beeing built
 
 	if _OPTIONS["linux-display-server"] == "x11" then
 		defines { "DEATH_USE_X11" }
@@ -579,16 +581,16 @@ end
 
 function Project:HandleGeneratedConfigFile()
 
-	local project_name = string.gsub(string.upper(self.project_name), "-", "_")
+	local upper_project_name = string.gsub(string.upper(self.project_name), "-", "_")
 
-	local patterns = { PROJECT_NAME = project_name}
+	local patterns = { PROJECT_NAME = upper_project_name}
 
 	if (self:IsExecutable()) then
-		patterns["PROJECT_BUILD_TYPE"] = project_name .. "_IS_EXECUTABLE"
+		patterns["PROJECT_BUILD_TYPE"] = upper_project_name .. "_IS_EXECUTABLE"
 	elseif (self:IsStaticLibrary()) then
-		patterns["PROJECT_BUILD_TYPE"] = project_name .. "_IS_STATIC_LIBRARY"
+		patterns["PROJECT_BUILD_TYPE"] = upper_project_name .. "_IS_STATIC_LIBRARY"
 	elseif (self:IsSharedLibrary()) then
-		patterns["PROJECT_BUILD_TYPE"] = project_name .. "_IS_SHARED_LIBRARY"
+		patterns["PROJECT_BUILD_TYPE"] = upper_project_name .. "_IS_SHARED_LIBRARY"
 	end
 
 	if (os.isfile(CONFIG_TEMPLATE_PATH)) then

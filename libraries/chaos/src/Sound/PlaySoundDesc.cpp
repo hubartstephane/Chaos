@@ -1,6 +1,9 @@
 #include "chaos/ChaosPCH.h"
 #include "chaos/ChaosInternals.h"
 
+//class SoundCategory;
+//#include "chaos/SoundCore/PlaySoundDesc.h"
+
 namespace chaos
 {
 	bool PlaySoundDesc::IsSound3D() const

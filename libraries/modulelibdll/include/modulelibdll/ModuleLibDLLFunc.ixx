@@ -1,8 +1,4 @@
-#include "modulelibdll/Config.h"
-
 export module modulelibdll;
 
-export 
-{
-	MODULELIBDLL_API void ModuleLibDLLFunc();
-}
+export  import :modulelibdll_Func1;
+export  import :modulelibdll_Func2;

@@ -494,7 +494,7 @@ function Project:AddProjectToSolution()
 
 	-- unity build
 	if self.enable_unity_build then
-		self:HandleUnityBuild()
+		self:HandleUnityBuild({src_c, src_cpp, src_ixx})
 	end
 
 	-- handle "natvis" files for visual studio
@@ -587,7 +587,7 @@ function Project:AddProjectToSolution()
 
 end
 
-function Project:HandleUnityBuild()
+function Project:HandleUnityBuild(source_directories)
 
 	local IsUnityBuildFile = function(filename)
 		return filename:lower():match("unitybuild.cpp$")
@@ -597,7 +597,7 @@ function Project:HandleUnityBuild()
 	-- mark directories that contains a "unitybuild.cpp" file
 	local directories_file_map = {} -- a map  DIRECTORY --> {FILES PATHS}
 	local unity_directories = {}
-	for _, srcs in pairs({src_c, src_cpp, src_ixx}) do
+	for _, srcs in pairs(source_directories) do
 		local matched_files = os.matchfiles(srcs)
 		for _, filename in pairs(matched_files) do
 

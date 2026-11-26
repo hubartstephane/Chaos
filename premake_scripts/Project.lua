@@ -489,6 +489,53 @@ function Project:AddProjectToSolution()
 		compileas "Module"
 	filter {}
 
+
+	local IsUnityBuildFile = function(filename)
+		return filename:lower():match("unitybuild.cpp$")
+	end
+
+	-- collect all directories and their content
+	-- mark directories that contains a "unitybuild.cpp" file
+	local directories_file_map = {} -- a map  DIRECTORY --> {FILES PATHS}
+	local unity_directories = {}
+	for _, srcs in pairs({src_c, src_cpp, src_ixx}) do
+		local matched_files = os.matchfiles(srcs)
+		for _, filename in pairs(matched_files) do
+
+			local dir_name = path.getdirectory(filename)
+
+			if IsUnityBuildFile(filename) then
+				unity_directories[dir_name] = true
+			end
+
+			if not directories_file_map[dir_name] then
+				directories_file_map[dir_name] = {filename}
+			else
+				table.insert(directories_file_map[dir_name], filename)
+			end
+		end
+	end
+
+	-- ignore NON UNITY files in a directory than contains a UnityBuild.cpp file
+	for unity_dir, _ in pairs(unity_directories) do
+
+		Log:Output("UNITY BUILD DIR : " .. unity_dir)
+
+		for _, filename in pairs(directories_file_map[unity_dir]) do
+			if not IsUnityBuildFile(filename) then
+
+				local relative_filename = path.getrelative(_SCRIPT_DIR, filename) -- XXX: beware, path like "C:/ ..." causes crashes
+
+				filter { "files:" .. relative_filename }
+				excludefrombuild "On"
+				filter {}
+
+				Log:Output("IGNORED FILE : " .. relative_filename)
+
+			end
+		end
+	end
+
 	-- handle "natvis" files for visual studio
 	filter "action:vs*"
 		files { path.join(ROOT_PATH, "natvis", "glm.natvis") }

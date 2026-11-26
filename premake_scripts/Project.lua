@@ -23,7 +23,8 @@ Project = Object:new({
 	project_build_path = "",
 	current_group      = "",
 	gen_zip            = false,
-	gen_doxygen        = false
+	gen_doxygen        = false,
+	enable_unity_build = true
 })
 
 --------------------------------------------------------------------
@@ -68,6 +69,7 @@ function Project:DisplayInformation()
 	Log:Output("CURRENT_GROUP      : " .. self.current_group)
 	Log:Output("GEN_DOXYGEN        : " .. tostring(self.gen_doxygen))
 	Log:Output("GEN_ZIP            : " .. tostring(self.gen_zip))
+	Log:Output("ENABLE UNITY BUILD : " .. tostring(self.enable_unity_build))
 	if (self.pch_header) then
 		Log:Output("PCH_HEADER         : " .. self.pch_header)
 	end
@@ -490,50 +492,9 @@ function Project:AddProjectToSolution()
 	filter {}
 
 
-	local IsUnityBuildFile = function(filename)
-		return filename:lower():match("unitybuild.cpp$")
-	end
-
-	-- collect all directories and their content
-	-- mark directories that contains a "unitybuild.cpp" file
-	local directories_file_map = {} -- a map  DIRECTORY --> {FILES PATHS}
-	local unity_directories = {}
-	for _, srcs in pairs({src_c, src_cpp, src_ixx}) do
-		local matched_files = os.matchfiles(srcs)
-		for _, filename in pairs(matched_files) do
-
-			local dir_name = path.getdirectory(filename)
-
-			if IsUnityBuildFile(filename) then
-				unity_directories[dir_name] = true
-			end
-
-			if not directories_file_map[dir_name] then
-				directories_file_map[dir_name] = {filename}
-			else
-				table.insert(directories_file_map[dir_name], filename)
-			end
-		end
-	end
-
-	-- ignore NON UNITY files in a directory than contains a UnityBuild.cpp file
-	for unity_dir, _ in pairs(unity_directories) do
-
-		Log:Output("UNITY BUILD DIR : " .. unity_dir)
-
-		for _, filename in pairs(directories_file_map[unity_dir]) do
-			if not IsUnityBuildFile(filename) then
-
-				local relative_filename = path.getrelative(_SCRIPT_DIR, filename) -- XXX: beware, path like "C:/ ..." causes crashes
-
-				filter { "files:" .. relative_filename }
-				excludefrombuild "On"
-				filter {}
-
-				Log:Output("IGNORED FILE : " .. relative_filename)
-
-			end
-		end
+	-- unity build
+	if self.enable_unity_build then
+		self:HandleUnityBuild()
 	end
 
 	-- handle "natvis" files for visual studio
@@ -624,6 +585,55 @@ function Project:AddProjectToSolution()
 	-- add precompiled headers
 	self:HandlePrecompiledHeader()
 
+end
+
+function Project:HandleUnityBuild()
+
+	local IsUnityBuildFile = function(filename)
+		return filename:lower():match("unitybuild.cpp$")
+	end
+
+	-- collect all directories and their content
+	-- mark directories that contains a "unitybuild.cpp" file
+	local directories_file_map = {} -- a map  DIRECTORY --> {FILES PATHS}
+	local unity_directories = {}
+	for _, srcs in pairs({src_c, src_cpp, src_ixx}) do
+		local matched_files = os.matchfiles(srcs)
+		for _, filename in pairs(matched_files) do
+
+			local dir_name = path.getdirectory(filename)
+
+			if IsUnityBuildFile(filename) then
+				unity_directories[dir_name] = true
+			end
+
+			if not directories_file_map[dir_name] then
+				directories_file_map[dir_name] = {filename}
+			else
+				table.insert(directories_file_map[dir_name], filename)
+			end
+		end
+	end
+
+	-- ignore NON UNITY files in a directory than contains a UnityBuild.cpp file
+	for unity_dir, _ in pairs(unity_directories) do
+
+		Log:Output("UNITY BUILD DIR : " .. unity_dir)
+
+		for _, filename in pairs(directories_file_map[unity_dir]) do
+			if not IsUnityBuildFile(filename) then
+
+				local relative_filename = path.getrelative(_SCRIPT_DIR, filename) -- XXX: beware, path like "C:/ ..." causes crashes
+
+				filter { "files:" .. relative_filename }
+				excludefrombuild "On"
+				filter {}
+
+				Log:Output("IGNORED FILE : " .. relative_filename)
+
+			end
+		end
+	end
 end
 
 function Project:HandleGeneratedConfigFile()

@@ -1,0 +1,13 @@
+#include "chaos/ChaosPCH.h"
+#include "chaos/ChaosInternals.h"
+
+#include "TiledMapBaseObject.cpp"
+#include "TiledMapGeometricObject.cpp"
+#include "TiledMapLayer.cpp"
+#include "TiledMapManager.cpp"
+#include "TiledMapManagerObject.cpp"
+#include "TiledMapMap.cpp"
+#include "TiledMapObjectTypeSet.cpp"
+#include "TiledMapPropertyOwner.cpp"
+#include "TiledMapTileFlagProcessor.cpp"
+#include "TiledMapTileSet.cpp"

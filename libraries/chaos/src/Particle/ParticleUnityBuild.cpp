@@ -1,0 +1,12 @@
+#include "chaos/ChaosPCH.h"
+#include "chaos/ChaosInternals.h"
+
+#include "DefaultMaterials.cpp"
+#include "ParticleAccessor.cpp"
+#include "ParticleAllocationBase.cpp"
+#include "ParticleDefault.cpp"
+#include "ParticleLayerBase.cpp"
+#include "ParticleManager.cpp"
+#include "ParticleSpawner.cpp"
+#include "ParticleTextGenerator.cpp"
+#include "ParticleTools.cpp"

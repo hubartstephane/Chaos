@@ -1,0 +1,12 @@
+#include "chaos/ChaosPCH.h"
+#include "chaos/ChaosInternals.h"
+
+#include "Axis.cpp"
+#include "Direction.cpp"
+#include "Edge.cpp"
+#include "Hotpoint.cpp"
+#include "Orientation.cpp"
+#include "RepeatedBoxScissor.cpp"
+#include "StreamTools.cpp"
+#include "TextAlignment.cpp"
+#include "XMLTools.cpp"

@@ -2,6 +2,8 @@
 // Chaos inclusions
 // ==========================================================================================
 
+#pragma once
+
 // warning 4251: stl objects should be declared with dllexport to be usable.
 //               if you compile a dll with a given version of STL/compiler... and you use it with another, some object like string may become broken
 //               (the size of a string may even change)

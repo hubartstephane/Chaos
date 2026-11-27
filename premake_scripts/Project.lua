@@ -125,15 +125,31 @@ end
 --------------------------------------------------------------------
 -- require documentation generation
 --------------------------------------------------------------------
-function Project:GenDoxygen()
+function Project:GenDoxygen(value)
+	if value == nil then
+		value = true
+	end
 	self.gen_doxygen = true
 end
 
 --------------------------------------------------------------------
 -- require ZIP generation
 --------------------------------------------------------------------
-function Project:GenZIP()
+function Project:GenZIP(value)
+	if value == nil then
+		value = true
+	end
 	self.gen_zip = true
+end
+
+--------------------------------------------------------------------
+-- Enable/Disable UnityBuild
+--------------------------------------------------------------------
+function Project:UnityBuild(value)
+	if value == nil then
+		value = true
+	end
+	self.enable_unity_build = value
 end
 
 --------------------------------------------------------------------
@@ -492,10 +508,8 @@ function Project:AddProjectToSolution()
 	filter {}
 
 
-	-- unity build
-	if self.enable_unity_build then
-		self:HandleUnityBuild({src_c, src_cpp, src_ixx})
-	end
+	-- unity build	
+	self:HandleUnityBuild({src_c, src_cpp, src_ixx})
 
 	-- handle "natvis" files for visual studio
 	filter "action:vs*"
@@ -589,8 +603,15 @@ end
 
 function Project:HandleUnityBuild(source_directories)
 
+	if not self.enable_unity_build then
+		filter { "files:**/*UnityBuild.cpp" }
+		excludefrombuild "On"
+		filter {}
+		return
+	end
+
 	local IsUnityBuildFile = function(filename)
-		return filename:lower():match("unitybuild.cpp$")
+		return filename:match("UnityBuild.cpp$")
 	end
 
 	-- collect all directories and their content

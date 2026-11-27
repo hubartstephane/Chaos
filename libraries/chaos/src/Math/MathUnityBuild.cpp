@@ -1,0 +1,11 @@
+#include "chaos/ChaosPCH.h"
+#include "chaos/ChaosInternals.h"
+
+#include "Box.cpp"
+#include "CollisionFramework.cpp"
+#include "ComparisonOperator.cpp"
+#include "EndianTools.cpp"
+#include "Interpolation.cpp"
+#include "MathTools.cpp"
+#include "Rotator.cpp"
+#include "WrapMode.cpp"

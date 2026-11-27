@@ -1,0 +1,12 @@
+#include "chaos/ChaosPCH.h"
+#include "chaos/ChaosInternals.h"
+
+#include "TMCollisionComputer.cpp"
+#include "TMLayerInstance.cpp"
+#include "TMLevel.cpp"
+#include "TMLevelInstance.cpp"
+#include "TMObject.cpp"
+#include "TMObjectReferenceSolver.cpp"
+#include "TMParticle.cpp"
+#include "TMParticlePopulator.cpp"
+#include "TMTools.cpp"

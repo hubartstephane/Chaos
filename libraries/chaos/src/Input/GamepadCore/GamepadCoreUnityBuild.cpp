@@ -1,0 +1,10 @@
+#include "chaos/ChaosPCH.h"
+#include "chaos/ChaosInternals.h"
+
+#include "DefaultForceFeedbackEffect.cpp"
+#include "ForceFeedbackEffect.cpp"
+#include "Gamepad.cpp"
+#include "GamepadInputFilterSettings.cpp"
+#include "GamepadManager.cpp"
+#include "GamepadPollInterface.cpp"
+#include "PhysicalGamepad.cpp"

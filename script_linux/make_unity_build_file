@@ -1,0 +1,20 @@
+#! /bin/bash
+
+APPNAME=$(basename $0)
+
+if [ "$#" -le 0 ]; then
+	echo "Usage: " $APPNAME " [PATH]"
+	exit 1
+fi
+
+BASEDIRNAME=$(basename $1)
+TARGET=$1/${BASEDIRNAME}UnityBuild.cpp
+FILES=$(ls $1/*.cpp)
+
+rm $TARGET 2>/dev/null
+
+for i in $FILES; do 
+	FILENAME=$(basename $i)
+ 	echo "#include \"$FILENAME\"" >> $TARGET
+done
+

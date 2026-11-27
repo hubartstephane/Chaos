@@ -1,0 +1,12 @@
+#include "chaos/ChaosPCH.h"
+#include "chaos/ChaosInternals.h"
+
+#include "FPSView.cpp"
+#include "FPSViewController.cpp"
+#include "LooseTree27.cpp"
+#include "MyAssimpImporter.cpp"
+#include "MyFbxImporter.cpp"
+#include "MyFbxImporterMesh.cpp"
+#include "MyFbxImporterSkeleton.cpp"
+#include "SceneNode.cpp"
+#include "SceneRenderer.cpp"

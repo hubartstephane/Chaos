@@ -8,7 +8,7 @@ namespace chaos
 	class WeakPointerData;
 
 	template<typename T>
-	using weak_ptr = SmartPointer<T, WeakPointerData>;
+	using weak_ptr = SmartPointer<T, WeakPointerData<T>>;
 
 	template<typename T>
 	struct is_weak_ptr;

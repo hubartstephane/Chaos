@@ -6,10 +6,10 @@ namespace chaos
 	class SharedPointerReferenceCounter;
 
 	template<typename T>
-	using SharedPointerData = OwnerPointerDataBase<T, SharedPointerReferenceCounter>;
+	using SharedPointerData = OwnerPointerDataBase<T, SharedPointerReferenceCounter<T>>;
 
 	template<typename T>
-	using shared_ptr = SmartPointer<T, SharedPointerData>;
+	using shared_ptr = SmartPointer<T, SharedPointerData<T>>;
 
 	template<typename T>
 	struct is_shared_ptr;

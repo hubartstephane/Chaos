@@ -6,10 +6,10 @@ namespace chaos
 	class SupervisedPointerReferenceCounter;
 
 	template<typename T>
-	using SupervisedPointerData = OwnerPointerDataBase<T, SupervisedPointerReferenceCounter>;
+	using SupervisedPointerData = OwnerPointerDataBase<T, SupervisedPointerReferenceCounter<T>>;
 
 	template<typename T>
-	using supervised_ptr = SmartPointer<T, SupervisedPointerData>;
+	using supervised_ptr = SmartPointer<T, SupervisedPointerData<T>>;
 
 	template<typename T>
 	struct is_supervised_ptr;

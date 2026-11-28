@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T, template<typename> class REFERENCE_COUNTER>
+	template<typename T, typename REFERENCE_COUNTER>
 	class OwnerPointerDataBase;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -11,7 +11,7 @@ namespace chaos
 	 * OwnerPointerDataBase: a base class for shared_ptr & supervised_ptr that gives responsability of references to some REFERENCE_COUNTER base
 	 */
 
-	template<typename T, template<typename> class REFERENCE_COUNTER>
+	template<typename T, typename REFERENCE_COUNTER>
 	class OwnerPointerDataBase
 	{
 	public:
@@ -27,7 +27,7 @@ namespace chaos
 			target(in_target)
 		{
 			if (target != nullptr)
-				REFERENCE_COUNTER<T>::AddReferenceToTarget(target);
+				REFERENCE_COUNTER::AddReferenceToTarget(target);
 		}
 
 		/** copy constructor */
@@ -48,7 +48,7 @@ namespace chaos
 		{
 			type* old_target = std::exchange(target, nullptr);
 			if (old_target != nullptr)
-				REFERENCE_COUNTER<T>::SubReferenceToTarget(old_target);
+				REFERENCE_COUNTER::SubReferenceToTarget(old_target);
 		}
 
 		/** move operator */
@@ -77,10 +77,10 @@ namespace chaos
 
 				target = in_target;
 				if (target != nullptr)
-					REFERENCE_COUNTER<T>::AddReferenceToTarget(target);
+					REFERENCE_COUNTER::AddReferenceToTarget(target);
 				
 				if (old_target != nullptr)
-					REFERENCE_COUNTER<T>::SubReferenceToTarget(old_target);
+					REFERENCE_COUNTER::SubReferenceToTarget(old_target);
 			}		
 		}
 
@@ -104,7 +104,7 @@ namespace chaos
 
 namespace std
 {
-	template<typename T, template<typename> class REFERENCE_COUNTER>
+	template<typename T, typename REFERENCE_COUNTER>
 	void swap(chaos::OwnerPointerDataBase<T, REFERENCE_COUNTER>& src1, chaos::OwnerPointerDataBase<T, REFERENCE_COUNTER>& src2)
 	{
 		src1.Swap(src2);

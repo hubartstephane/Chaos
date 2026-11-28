@@ -2,7 +2,7 @@ namespace chaos
 {
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	template<typename T, template<typename> class POINTER_DATA>
+	template<typename T, typename POINTER_DATA>
 	class SmartPointer;
 
 #elif !defined CHAOS_TEMPLATE_IMPLEMENTATION
@@ -11,7 +11,7 @@ namespace chaos
 	 * SmartPointer: base implementation for some smart pointers (shared, weak ...)
 	 */
 
-	template<typename T, template<typename> class POINTER_DATA>
+	template<typename T, typename POINTER_DATA>
 	class SmartPointer
 	{
 
@@ -39,7 +39,7 @@ namespace chaos
 		}
 
 		/** copy/cast constructor */
-		template<typename T2, template<typename> class POINTER_DATA2>
+		template<typename T2, typename POINTER_DATA2>
 		SmartPointer(SmartPointer<T2, POINTER_DATA2> const& src) :
 			SmartPointer(src.get())
 		{
@@ -75,7 +75,7 @@ namespace chaos
 		}
 
 		/** copy */
-		template<typename T2, template<typename> class POINTER_DATA2>
+		template<typename T2, typename POINTER_DATA2>
 		SmartPointer& operator = (SmartPointer<T2, POINTER_DATA2> const& src)
 		{
 			static_assert(std::is_base_of_v<T, T2>);
@@ -121,20 +121,20 @@ namespace chaos
 	protected:
 
 		/** the object that manage the pointer */
-		POINTER_DATA<T> pointer_data;
+		POINTER_DATA pointer_data;
 	};
 
 	/**
 	* SmartPointer / raw pointer comparaisons
 	*/
 	
-	template<typename T, template<typename> class POINTER_DATA, typename U>
+	template<typename T, typename POINTER_DATA, typename U>
 	bool operator == (SmartPointer<T, POINTER_DATA> const& src1, U* src2)
 	{
 		return (src1.get() == src2);
 	}
 
-	template<typename T, template<typename> class POINTER_DATA, typename U>
+	template<typename T, typename POINTER_DATA, typename U>
 	bool operator == (U* src1, SmartPointer<T, POINTER_DATA> const& src2)
 	{
 		return (src1 == src2.get());
@@ -144,13 +144,13 @@ namespace chaos
 	* SmartPointer / nullptr comparaisons
 	*/
 
-	template<typename T, template<typename> class POINTER_DATA>
+	template<typename T, typename POINTER_DATA>
 	bool operator == (SmartPointer<T, POINTER_DATA> const& src1, nullptr_t src2)
 	{
 		return (src1.get() == src2);
 	}
 
-	template<typename T, template<typename> class POINTER_DATA>
+	template<typename T, typename POINTER_DATA>
 	bool operator == (nullptr_t src1, SmartPointer<T, POINTER_DATA> const& src2)
 	{
 		return (src1 == src2.get());
@@ -160,7 +160,7 @@ namespace chaos
 	* SmartPointer / SmartPointer comparaisons
 	*/
 
-	template<typename T, template<typename> class POINTER_DATA, typename U, template<typename> class POINTER_DATA2>
+	template<typename T, typename POINTER_DATA, typename U, typename POINTER_DATA2>
 	bool operator == (SmartPointer<T, POINTER_DATA> const& src1, SmartPointer<U, POINTER_DATA2> const& src2)
 	{
 		return (src1.get() == src2.get());
@@ -170,7 +170,7 @@ namespace chaos
 	* Swap
 	*/
 
-	template<typename T, template<typename> class POINTER_DATA>
+	template<typename T, typename POINTER_DATA>
 	void Swap(SmartPointer<T, POINTER_DATA>& src1, SmartPointer<T, POINTER_DATA>& src2)
 	{
 		src1.swap(src2);
@@ -184,7 +184,7 @@ namespace chaos
 
 namespace std
 {
-	template<typename T, template<typename> class POINTER_DATA>
+	template<typename T, typename POINTER_DATA>
 	void swap(chaos::SmartPointer<T, POINTER_DATA>& src1, chaos::SmartPointer<T, POINTER_DATA>& src2)
 	{
 		src1.Swap(src2);

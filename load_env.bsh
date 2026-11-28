@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+
+echo [script_linux] added to PATH
+echo [.] added to PATH
+PATH=$PATH:script_linux:.
